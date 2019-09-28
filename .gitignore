@@ -1,0 +1,4 @@
+.vscode
+pokered/__pycache__/
+pokered/modules/__pycache__/
+*.py[cod]
