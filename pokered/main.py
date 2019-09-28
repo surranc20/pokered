@@ -5,7 +5,7 @@ from modules.drawable import Drawable
 from modules.player import Player
 
 # Two different sizes now! Screen size is the amount we show the player,
-#  and world size is the size of the interactable world
+#  and world size is the size of the interactable world.
 WORLD_SIZE = (208, 203)
 SCREEN_SIZE = (208, 203)
 SCALE = 3
