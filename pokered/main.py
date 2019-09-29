@@ -3,6 +3,7 @@ import os
 from modules.vector2D import Vector2
 from modules.drawable import Drawable
 from modules.player import Player
+from modules.battle import Battle
 
 # Two different sizes now! Screen size is the amount we show the player,
 #  and world size is the size of the interactable world.
@@ -53,7 +54,13 @@ def main():
         # Update everything
         ticks = game_clock.get_time() / 1000
         player.update(ticks)
+
         # Update Offset
+
+        # Test Battle
+        
+        
+
 
    
 if __name__ == "__main__":
