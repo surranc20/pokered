@@ -9,13 +9,10 @@ class Battle:
         self._opponent = opponent
         self._draw_surface = draw_surface
         self._battle_background = Drawable("battle_background.png", Vector2(0,0))
-        self._battle_background.draw(self._draw_surface)
         
     
-    def battle_loop(self, UPSCALED, screen):
-        while True:
-            pygame.transform.scale(self._draw_surface, UPSCALED, screen)
-            pygame.display.flip()
+    def draw(self):
+        self._battle_background.draw(self._draw_surface)
 
 
 
