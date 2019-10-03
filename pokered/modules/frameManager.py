@@ -27,15 +27,15 @@ class FrameManager(object):
       # Static information about the frame sizes of particular image sheets.
       _FRAME_SIZES = {
          "trainer.png" : (16, 22),
-         "battle_background.png" : (240, 112),
-         "battle_menus.png" : (240, 46)
+         join("battle" ,"battle_background.png") : (240, 112),
+         join("battle" ,"battle_menus.png") : (240, 48),
       }
       
       # A default frame size
       _DEFAULT_FRAME = (32,32)
       
       # A list of images that require to be loaded with transparency
-      _TRANSPARENCY = []
+      _TRANSPARENCY = ["battle_menus.png"]
       
       # A list of images that require to be loaded with a color key
       _COLOR_KEY = ["trainer.png"]
