@@ -27,7 +27,8 @@ class FrameManager(object):
       # Static information about the frame sizes of particular image sheets.
       _FRAME_SIZES = {
          "trainer.png" : (16, 22),
-         "battle_background.png" : (240, 112)
+         "battle_background.png" : (240, 112),
+         "battle_menus.png" : (240, 46)
       }
       
       # A default frame size
