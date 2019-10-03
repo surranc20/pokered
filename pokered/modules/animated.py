@@ -32,6 +32,8 @@ class Animated(Drawable):
 
             if self._flip: self._image = pygame.transform.flip(self._image, True, False)
 
+            
+
 
          
 

@@ -12,7 +12,7 @@ class Battle:
         self._draw_surface = draw_surface
         self._battle_background = Drawable(join("battle", "battle_background.png"), Vector2(0,0), offset= (0,0))
         self._battle_menus = Drawable(join("battle", "battle_menus.png"), Vector2(0,113), offset=(0, 1))
-        self._toss_anim = TrainerToss(Vector2(0, 0))
+        self._toss_anim = TrainerToss(Vector2(50, 48))
         self._finished = False
         pygame.mixer.music.load(join("music", "gym_battle_music.mp3"))
         pygame.mixer.music.play(-1)
