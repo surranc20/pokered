@@ -8,7 +8,7 @@ class Battle:
         self._player = player
         self._opponent = opponent
         self._draw_surface = draw_surface
-        self._battle_background = Drawable("battle_background.png", Vector2(0,0))
+        self._battle_background = Drawable("battle_background.png", Vector2(0,0), offset= (0,0))
         
     
     def draw(self):
