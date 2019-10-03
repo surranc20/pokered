@@ -61,16 +61,7 @@ def main():
             
 
         else:
-            battle.draw()
-            pygame.transform.scale(draw_surface, UPSCALED, screen)
-            pygame.display.flip()
-            
-            game_clock.tick(60)
-            for event in pygame.event.get():
-                # only do something if the event is of type QUIT or ESCAPE is pressed
-                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                    # change the value to False, to exit the main loop
-                    running = False
+            running = battle.battle_loop(game_clock, UPSCALED, screen, running)
 
 
         
