@@ -1,4 +1,4 @@
-
+import pygame
 from pygame import image, Surface, Rect
 from os.path import join
 
@@ -29,16 +29,17 @@ class FrameManager(object):
          "trainer.png" : (16, 22),
          join("battle" ,"battle_background.png") : (240, 112),
          join("battle" ,"battle_menus.png") : (240, 48),
+         join("battle", "trainer_toss_anim.png") : (64, 64)
       }
       
       # A default frame size
       _DEFAULT_FRAME = (32,32)
       
       # A list of images that require to be loaded with transparency
-      _TRANSPARENCY = ["battle_menus.png"]
+      _TRANSPARENCY = [join("battle" ,"battle_menus.png")]
       
       # A list of images that require to be loaded with a color key
-      _COLOR_KEY = ["trainer.png"]
+      _COLOR_KEY = ["trainer.png", join("battle", "trainer_toss_anim.png")]
       
       
       
