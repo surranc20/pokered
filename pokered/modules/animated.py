@@ -13,8 +13,7 @@ class Animated(Drawable):
       self._row = 0
       self._animationTimer = 0
       self._framesPerSecond = 10.0
-      self._nFrames = 2
-      
+      self._nFrames = 2      
       self._animate = True
       self._flip = False
       
@@ -32,10 +31,6 @@ class Animated(Drawable):
 
             if self._flip: self._image = pygame.transform.flip(self._image, True, False)
 
-            
-
-
-         
 
    def startAnimation(self):
       self._animate = True
