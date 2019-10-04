@@ -13,6 +13,9 @@ class Battle:
         self._battle_background = Drawable(join("battle", "battle_background.png"), Vector2(0,0), offset= (0,0))
         self._battle_menus = Drawable(join("battle", "battle_menus.png"), Vector2(0,113), offset=(0, 1))
         self._toss_anim = TrainerToss(Vector2(50, 48))
+        self._draw_list = [self._battle_background, self._battle_menus, self._toss_anim]
+        self._update_list = []
+
         self._finished = False
         pygame.mixer.music.load(join("music", "gym_battle_music.mp3"))
         pygame.mixer.music.play(-1)
@@ -35,12 +38,18 @@ class Battle:
         
     
     def draw(self):
-        self._battle_background.draw(self._draw_surface)
-        self._battle_menus.draw(self._draw_surface)
-        self._toss_anim.draw(self._draw_surface)
+        for obj in self._draw_list:
+            obj.draw(self._draw_surface)
 
     def update(self, ticks):
-        self._toss_anim.update(ticks)
+        ball = self._toss_anim.update(ticks)
+        if ball:
+            self._draw_list.append(ball)
+            self._update_list.append(ball)
+
+        for obj in self._update_list:
+            obj.update(ticks)
+        
 
 
 

@@ -29,7 +29,9 @@ class FrameManager(object):
          "trainer.png" : (16, 22),
          join("battle" ,"battle_background.png") : (240, 112),
          join("battle" ,"battle_menus.png") : (240, 48),
-         join("battle", "trainer_toss_anim.png") : (64, 64)
+         join("battle", "trainer_toss_anim.png") : (64, 64),
+         join("battle", "pokeball_anim.png") : (16, 16)
+
       }
       
       # A default frame size
@@ -39,7 +41,7 @@ class FrameManager(object):
       _TRANSPARENCY = [join("battle" ,"battle_menus.png")]
       
       # A list of images that require to be loaded with a color key
-      _COLOR_KEY = ["trainer.png", join("battle", "trainer_toss_anim.png")]
+      _COLOR_KEY = ["trainer.png", join("battle", "trainer_toss_anim.png"), join("battle", "pokeball_anim.png")]
       
       
       
