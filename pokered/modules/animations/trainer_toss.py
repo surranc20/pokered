@@ -30,7 +30,7 @@ class TrainerToss(Animated):
             self._image = FRAMES.getFrame(self._imageName, (self._frame, self._row))
             if self._frame == self._nFrames - 1: 
                 self._animate = False
-                return BallToss(Vector2(50,50))
+                return BallToss(Vector2(25,70))
 
             if self._flip: self._image = pygame.transform.flip(self._image, True, False)
 

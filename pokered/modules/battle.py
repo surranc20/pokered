@@ -34,6 +34,8 @@ class Battle:
                     running = False
             
             self.update(game_clock.get_time() / 1000)
+            self._update_list = [obj for obj in self._update_list if not obj.is_dead()]
+            self._draw_list = [obj for obj in self._draw_list if not obj.is_dead()]
         return running
         
     
