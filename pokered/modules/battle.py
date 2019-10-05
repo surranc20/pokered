@@ -1,6 +1,9 @@
 from .vector2D import Vector2
 from .drawable import Drawable
+from .animated import AnimatedGroup
 from .animations.trainer_toss import TrainerToss
+from .animations.ball_toss import BallToss
+from .animations.poke_emerge import PokeEmerge
 from os.path import join
 import pygame
 
@@ -12,9 +15,9 @@ class Battle:
         self._draw_surface = draw_surface
         self._battle_background = Drawable(join("battle", "battle_background.png"), Vector2(0,0), offset= (0,0))
         self._battle_menus = Drawable(join("battle", "battle_menus.png"), Vector2(0,113), offset=(0, 1))
-        self._toss_anim = TrainerToss(Vector2(50, 48))
+        self._toss_anim = AnimatedGroup([TrainerToss(Vector2(50, 48), 0), BallToss(Vector2(25,70), 1), PokeEmerge(Vector2(48, 55), "pikachu", 2)]) # TrainerToss(Vector2(50, 48), "pikachu")
         self._draw_list = [self._battle_background, self._battle_menus, self._toss_anim]
-        self._update_list = []
+        self._update_list = [self._toss_anim]
 
         self._finished = False
         pygame.mixer.music.load(join("music", "gym_battle_music.mp3"))
@@ -44,11 +47,6 @@ class Battle:
             obj.draw(self._draw_surface)
 
     def update(self, ticks):
-        ball = self._toss_anim.update(ticks)
-        if ball:
-            self._draw_list.append(ball)
-            self._update_list.append(ball)
-
         for obj in self._update_list:
             obj.update(ticks)
         
