@@ -35,7 +35,7 @@ class FrameManager(object):
       }
       
       # A default frame size
-      _DEFAULT_FRAME = (32,32)
+      _DEFAULT_FRAME = (64,64)
       
       # A list of images that require to be loaded with transparency
       _TRANSPARENCY = [join("battle" ,"battle_menus.png")]
@@ -106,7 +106,7 @@ class FrameManager(object):
                   frame.blit(fullImage, (0,0), Rect((x,y), spriteSize))
                   
                   # If we need to set the color key
-                  if colorKey:
+                  if colorKey or fileName[-5] == "~":
                      frame.set_colorkey(frame.get_at((0,0)))
                   
                   self[fileName][-1].append(frame)

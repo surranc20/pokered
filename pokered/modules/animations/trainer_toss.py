@@ -1,13 +1,13 @@
 from os.path import join
-from ..animated import Animated
+from ..animated import AnimatedGroupPart
 from ..frameManager import FRAMES
 from ..vector2D import Vector2
 from .ball_toss import BallToss
 
 
-class TrainerToss(Animated):
-    def __init__(self, position):
-        super().__init__(join("battle", "trainer_toss_anim.png"), position)
+class TrainerToss(AnimatedGroupPart):
+    def __init__(self, position, anim_sequence_pos):
+        super().__init__(join("battle", "trainer_toss_anim.png"), position, anim_sequence_pos)
         self._nFrames = 5
         self._framesPerSecond = 12
     
@@ -30,7 +30,7 @@ class TrainerToss(Animated):
             self._image = FRAMES.getFrame(self._imageName, (self._frame, self._row))
             if self._frame == self._nFrames - 1: 
                 self._animate = False
-                return BallToss(Vector2(25,70))
+                return self._anim_sequence_pos + 1
 
             if self._flip: self._image = pygame.transform.flip(self._image, True, False)
 
