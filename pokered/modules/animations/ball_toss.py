@@ -22,12 +22,10 @@ class BallToss(AnimatedGroupPart):
         return "Ball Toss"
 
     def update(self, ticks):
-        #print(self, self.is_dead())
         super().update(ticks)
         if len(self._parabola) != 0:
             self._position = self._parabola.pop(0)
         else: 
             self.kill()
-            print("KILLLLLLLLED")
             return self._anim_sequence_pos + 1
         

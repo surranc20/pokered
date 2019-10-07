@@ -49,7 +49,6 @@ class Battle:
 
     def update(self, ticks):
         for obj in self._update_list:
-            print(obj)
             new_anim = obj.update(ticks)
             if new_anim != None: 
                 self._draw_list.append(new_anim)
