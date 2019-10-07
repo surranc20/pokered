@@ -32,7 +32,6 @@ def main():
     game_clock = pygame.time.Clock()
     battle = Battle(player, player, draw_surface)
    
-   
     # Main loop
     while running:
         if battle == None:

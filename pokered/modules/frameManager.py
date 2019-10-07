@@ -41,7 +41,7 @@ class FrameManager(object):
       _TRANSPARENCY = [join("battle" ,"battle_menus.png")]
       
       # A list of images that require to be loaded with a color key
-      _COLOR_KEY = ["trainer.png", join("battle", "trainer_toss_anim.png"), join("battle", "pokeball_anim.png")]
+      _COLOR_KEY = ["trainer.png", join("battle", "trainer_toss_anim.png"), join("battle", "pokeball_anim.png"), join("pokemon", "pokemon_big.png")]
       
       
       
@@ -106,7 +106,7 @@ class FrameManager(object):
                   frame.blit(fullImage, (0,0), Rect((x,y), spriteSize))
                   
                   # If we need to set the color key
-                  if colorKey or fileName[-5] == "~":
+                  if colorKey:
                      frame.set_colorkey(frame.get_at((0,0)))
                   
                   self[fileName][-1].append(frame)

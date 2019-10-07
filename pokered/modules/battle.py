@@ -4,6 +4,7 @@ from .animated import AnimatedGroup
 from .animations.trainer_toss import TrainerToss
 from .animations.ball_toss import BallToss
 from .animations.poke_emerge import PokeEmerge
+from .pokemon import Pokemon
 from os.path import join
 import pygame
 
@@ -15,7 +16,7 @@ class Battle:
         self._draw_surface = draw_surface
         self._battle_background = Drawable(join("battle", "battle_background.png"), Vector2(0,0), offset= (0,0))
         self._battle_menus = Drawable(join("battle", "battle_menus.png"), Vector2(0,113), offset=(0, 1))
-        self._toss_anim = AnimatedGroup([TrainerToss(Vector2(50, 48), 0), BallToss(Vector2(25,70), 1), PokeEmerge(Vector2(48, 55), "pikachu", 2)]) # TrainerToss(Vector2(50, 48), "pikachu")
+        self._toss_anim = AnimatedGroup([TrainerToss(Vector2(50, 48), 0), BallToss(Vector2(25,70), 1), PokeEmerge(Vector2(48, 55), "pikachu", 2)], Pokemon("pikachu")) 
         self._draw_list = [self._battle_background, self._battle_menus, self._toss_anim]
         self._update_list = [self._toss_anim]
 
@@ -48,7 +49,13 @@ class Battle:
 
     def update(self, ticks):
         for obj in self._update_list:
-            obj.update(ticks)
+            print(obj)
+            new_anim = obj.update(ticks)
+            if new_anim != None: 
+                self._draw_list.append(new_anim)
+                if type(new_anim) != Pokemon:
+                    self._update_list.append(new_anim)
+                
         
 
 

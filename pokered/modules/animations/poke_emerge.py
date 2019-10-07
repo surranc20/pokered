@@ -8,22 +8,27 @@ from ..vector2D import Vector2
 
 class PokeEmerge(AnimatedGroupPart):
 
-    PLAYER_POKE_POS = Vector2(78, 105)
+    PLAYER_POKE_POS = Vector2(78, 112)
     ENEMY_POKE_POS = Vector2(180, 70)
+    POKEMON_LOOKUP = {"pikachu" : (6,3)}
 
     def __init__(self, position, pokemon_name, anim_sequence_pos, thrower = "player"):
-        super().__init__(join("pokemon", pokemon_name + "~.png"), position, anim_sequence_pos)
+        _lookup = self.POKEMON_LOOKUP[pokemon_name]
+        _offset = _lookup if thrower != "player" else (_lookup[0] + 1, _lookup[1])
+        super().__init__(join("pokemon", "pokemon_big.png"), position, anim_sequence_pos, offset=_offset)
         self._thrower = "player"
         self._frame = 1
-        self._image = FRAMES.getFrame(self._imageName, (self._frame, self._row))
         self._orig_image = self._image.copy()
         
         self._anim_started = False
         self._nFrames = 2
         self._animate = True
-        self._framesPerSecond = 1
+        self._framesPerSecond = 40
 
         self._image = self.scale_pokemon()
+    
+    def __repr__(self):
+        return "poke emerge"
     
     def update(self, ticks):
         if self._animate:
@@ -50,7 +55,8 @@ class PokeEmerge(AnimatedGroupPart):
             next_scale_size = self._image.get_height() + 8
 
         if next_scale_size >= 64 and self._anim_started: 
-            #self.kill()
+            self._update_position(self._orig_image)
+            self.kill()
             return self._orig_image
     
         
