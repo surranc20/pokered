@@ -44,7 +44,6 @@ class PokeEmerge(AnimatedGroupPart):
 
         self._position.x = pos.x  - copy.get_width() // 2
         self._position.y = pos.y - copy.get_height()
-        print(self._position.y + copy.get_height())
 
 
 
