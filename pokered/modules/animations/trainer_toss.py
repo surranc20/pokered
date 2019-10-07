@@ -11,6 +11,9 @@ class TrainerToss(AnimatedGroupPart):
         self._nFrames = 5
         self._framesPerSecond = 12
     
+    def __repr__(self):
+            return "trainer toss"
+    
     def update(self, ticks):
         self.setPosition(self.getPosition() - Vector2(2, 0))
 
@@ -33,6 +36,12 @@ class TrainerToss(AnimatedGroupPart):
                 return self._anim_sequence_pos + 1
 
             if self._flip: self._image = pygame.transform.flip(self._image, True, False)
+        
+        if self.getPosition().x + self._image.get_width() < 0:
+            self.kill()
 
             
         return False
+
+
+        

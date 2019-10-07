@@ -18,11 +18,16 @@ class BallToss(AnimatedGroupPart):
         (43, 72), (44, 74), (44, 76), (44, 79), (45, 80), (45, 81), (45, 83), (46, 83),
         (46, 87), (46, 90), (46, 93), (47, 97), (48, 99)] # These are just coordinates of the balls parabolic arc
     
+    def __repr__(self):
+        return "Ball Toss"
+
     def update(self, ticks):
+        #print(self, self.is_dead())
         super().update(ticks)
         if len(self._parabola) != 0:
             self._position = self._parabola.pop(0)
         else: 
             self.kill()
+            print("KILLLLLLLLED")
             return self._anim_sequence_pos + 1
         
