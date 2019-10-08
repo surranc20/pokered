@@ -8,7 +8,7 @@ from ..vector2D import Vector2
 
 class PokeEmerge(AnimatedGroupPart):
 
-    PLAYER_POKE_POS = Vector2(78, 112)
+    PLAYER_POKE_POS = Vector2(68, 112)
     ENEMY_POKE_POS = Vector2(180, 70)
     POKEMON_LOOKUP = {"bulbasaur":(0,0), "charmander":(2,0), "squirtle":(4,0), "caterpie":(6,0), "weedle":(8,0), "golem":(10,0), "slowpoke":(12,0), "magneton":(14,0), "dodrio":(16,0), "grimer":(18,0),
     "ivysaur":(0,1), "charmeleon":(2,1), "wartortle":(4,1), "metapod":(6,1), "kakuna":(8,1), "ponyta":(10,1), "slowbro":(12,1), "farfetch'd":(14,1), "seel":(16,1), "muk":(18,1),
