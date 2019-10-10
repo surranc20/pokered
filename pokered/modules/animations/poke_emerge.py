@@ -27,18 +27,18 @@ class PokeEmerge(AnimatedGroupPart):
     "abra":(0,14), "machop":(2,14), "bellsprout":(4,14), "tentacool":(6,14), "graveler":(8,14), "omanyte":(10,14), "kabutops":(12,14), "articuno":(14,14), "dratini":(16,14), "mewtwo":(18,14),
     "mew":(0,15)}
 
-    def __init__(self, position, pokemon_name, anim_sequence_pos, thrower = "player"):
+    def __init__(self, position, pokemon_name, anim_sequence_pos, enemy = False):
         _lookup = self.POKEMON_LOOKUP[pokemon_name]
-        _offset = _lookup if thrower != "player" else (_lookup[0] + 1, _lookup[1])
+        _offset = _lookup if enemy else (_lookup[0] + 1, _lookup[1])
         super().__init__(join("pokemon", "pokemon_big.png"), position, anim_sequence_pos, offset=_offset)
-        self._thrower = "player"
+        self._enemy = enemy
         self._frame = 1
         self._orig_image = self._image.copy()
         
         self._anim_started = False
         self._nFrames = 2
         self._animate = True
-        self._framesPerSecond = 40
+        self._framesPerSecond = 25
 
         self._image = self.scale_pokemon()
     
@@ -54,7 +54,7 @@ class PokeEmerge(AnimatedGroupPart):
             self._image = self.scale_pokemon()
             
     def _update_position(self, copy):
-        if self._thrower == "player": pos = self.PLAYER_POKE_POS
+        if not self._enemy: pos = self.PLAYER_POKE_POS
         else: pos = self.ENEMY_POKE_POS
 
         self._position.x = pos.x  - copy.get_width() // 2
