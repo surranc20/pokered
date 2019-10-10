@@ -11,7 +11,7 @@ class EnemyDrop(AnimatedGroupPart):
         self._initial_position = position
 
     def update(self, ticks):
-        self.setPosition(self.getPosition() + Vector2(3, 0))
+        self.setPosition(self.getPosition() + Vector2(2, 0))
         if self.getPosition().x > self._initial_position.x + 4:
             if self.getPosition().x > 240: self.kill()
             return self._anim_sequence_pos + 1
