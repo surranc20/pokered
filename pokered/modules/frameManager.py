@@ -31,6 +31,7 @@ class FrameManager(object):
          join("battle" ,"battle_menus.png") : (240, 48),
          join("battle", "trainer_toss_anim.png") : (64, 64),
          join("battle", "pokeball_anim.png") : (16, 16),
+         join("battle", "pokeball_open_anim.png") : (16, 16),
          join("battle", "health_bars.png") : (108, 42)
 
       }
@@ -42,7 +43,7 @@ class FrameManager(object):
       _TRANSPARENCY = [join("battle" ,"battle_menus.png")]
       
       # A list of images that require to be loaded with a color key
-      _COLOR_KEY = ["trainer.png", join("battle", "trainer_toss_anim.png"), join("battle", "pokeball_anim.png"), join("pokemon", "pokemon_big.png"), join("battle", "health_bars.png")]
+      _COLOR_KEY = ["trainer.png", join("battle", "trainer_toss_anim.png"), join("battle", "pokeball_anim.png"), join("battle", "pokeball_open_anim.png"), join("pokemon", "pokemon_big.png"), join("battle", "health_bars.png")]
       
       
       

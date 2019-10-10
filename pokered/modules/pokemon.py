@@ -23,10 +23,10 @@ class Pokemon(Drawable):
     "abra":(0,14), "machop":(2,14), "bellsprout":(4,14), "tentacool":(6,14), "graveler":(8,14), "omanyte":(10,14), "kabutops":(12,14), "articuno":(14,14), "dratini":(16,14), "mewtwo":(18,14),
     "mew":(0,15)}
 
-    def __init__(self, pokemon_name, trainer="player"):
-        _pos = self.PLAYER_POKE_POS if trainer == "player" else self.ENEMY_POKE_POS
+    def __init__(self, pokemon_name, enemy=False):
+        _pos = self.PLAYER_POKE_POS if not enemy else self.ENEMY_POKE_POS
         _lookup = self.POKEMON_LOOKUP[pokemon_name]
-        _offset = _lookup if trainer != "player" else (_lookup[0] + 1, _lookup[1])
+        _offset = _lookup if enemy else (_lookup[0] + 1, _lookup[1])
         self._name = pokemon_name
         super().__init__(join("pokemon", "pokemon_big.png"), _pos, offset= _offset)
         
