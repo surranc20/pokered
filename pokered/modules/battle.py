@@ -16,10 +16,10 @@ class Battle:
         self._battle_menus = Drawable(join("battle", "battle_menus.png"), Vector2(0,113), offset=(0, 1))
         self._health_menu_enemy = Drawable(join("battle", "health_bars.png"), Vector2(7, 10), offset=(0,0))
         self._health_menu_player = Drawable(join("battle", "health_bars.png"), Vector2(130, 72), offset=(0,1))
-        self._toss_anim = TossPokemon("articuno", lead_off=True, enemy=True)
-        #self._enemy_toss_anim = TossPokemon("articuno")
-        self._draw_list = [self._battle_background, self._battle_menus, self._toss_anim, self._health_menu_enemy, self._health_menu_player]
-        self._update_list = [self._toss_anim]
+        self._toss_anim = TossPokemon("articuno", lead_off=True, enemy=False)
+        self._enemy_toss_anim = TossPokemon("pikachu", lead_off=True, enemy=True)
+        self._draw_list = [self._battle_background, self._battle_menus, self._toss_anim, self._enemy_toss_anim, self._health_menu_enemy, self._health_menu_player]
+        self._update_list = [self._toss_anim, self._enemy_toss_anim]
 
         self._finished = False
         pygame.mixer.music.load(join("music", "gym_battle_music.mp3"))
