@@ -38,7 +38,7 @@ class PokeEmerge(AnimatedGroupPart):
         self._anim_started = False
         self._nFrames = 2
         self._animate = True
-        self._framesPerSecond = 25
+        self._framesPerSecond = 30
 
         self._image = self.scale_pokemon()
     
