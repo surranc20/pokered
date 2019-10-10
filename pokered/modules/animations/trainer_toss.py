@@ -2,7 +2,6 @@ from os.path import join
 from ..animated import AnimatedGroupPart
 from ..frameManager import FRAMES
 from ..vector2D import Vector2
-from .ball_toss import BallToss
 
 
 class TrainerToss(AnimatedGroupPart):
