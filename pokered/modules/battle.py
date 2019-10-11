@@ -3,6 +3,7 @@ from .drawable import Drawable
 from .animated import AnimatedGroup
 from .animations.toss_pokemon import TossPokemon
 from .battle_menus.poke_info import PokeInfo
+from .battle_menus.pokemon_remaining import PokemonRemaining
 from .pokemon import Pokemon
 from os.path import join, exists
 import pygame
@@ -20,9 +21,9 @@ class Battle:
         self._health_menu_player = PokeInfo(Pokemon("articuno", gender="female"))
         self._toss_anim = TossPokemon("articuno", lead_off=True, enemy=False)
         self._enemy_toss_anim = TossPokemon("pikachu", lead_off=True, enemy=True)
-        #font = Drawable("pokemon_fire_red_battle_font.png", Vector2(0,0))
+        self._pokemon_remaining = PokemonRemaining(player)
         self._draw_list = [self._battle_background, self._battle_menus, self._toss_anim, self._enemy_toss_anim, self._health_menu_enemy, self._health_menu_player]
-        self._update_list = [self._toss_anim, self._enemy_toss_anim]
+        self._update_list = [self._toss_anim, self._enemy_toss_anim, self._pokemon_remaining]
 
 
         self._finished = False

@@ -25,7 +25,6 @@ class PokeInfo(Drawable):
             font_index = int(ord(char)) - 97
             font_char = FRAMES.getFrame("pokemon_fire_red_battle_font.png", offset=(font_index, 0))
             font_char.set_colorkey((255,255,255))
-            print(font_char)
             self._image.blit(font_char, (current_pos.x, current_pos.y))
             current_pos.x += 5
         

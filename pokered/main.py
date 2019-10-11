@@ -4,6 +4,7 @@ from modules.vector2D import Vector2
 from modules.drawable import Drawable
 from modules.player import Player
 from modules.battle import Battle
+from modules.pokemon import Pokemon
 
 # Two different sizes now! Screen size is the amount we show the player,
 #  and world size is the size of the interactable world.
@@ -26,11 +27,19 @@ def main():
    
     # Images
     player = Player(Vector2(WORLD_SIZE[0]//2 - 8, WORLD_SIZE[1]//2 - 11))
+    enemy = Player(Vector2(WORLD_SIZE[0]//2 - 8, WORLD_SIZE[1]//2 - 11), enemy=True)
+    enemy._pokemon_team.append(Pokemon("pikachu"))
+    enemy._pokemon_team.append(Pokemon("pikachu"))
+    enemy._pokemon_team.append(Pokemon("pikachu"))
+    player._pokemon_team.append(Pokemon("pikachu"))
+    player._pokemon_team.append(Pokemon("pikachu"))
+    player._pokemon_team.append(Pokemon("pikachu"))
+    
    
     # Define a variable to control the main loop
     running = True
     game_clock = pygame.time.Clock()
-    battle = Battle(player, player, draw_surface)
+    battle = Battle(player, enemy, draw_surface)
    
     # Main loop
     while running:
