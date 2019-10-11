@@ -66,15 +66,8 @@ def main():
 
             # Update Offset
 
-            
-
         else:
             running = battle.battle_loop(game_clock, UPSCALED, screen, running)
-
-
-        
-        
-
 
    
 if __name__ == "__main__":
