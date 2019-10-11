@@ -17,7 +17,7 @@ class Battle:
         self._battle_background = Drawable(join("battle", "battle_background.png"), Vector2(0,0), offset= (0,0))
         self._battle_menus = Drawable(join("battle", "battle_menus.png"), Vector2(0,113), offset=(0, 1))
         self._health_menu_enemy = PokeInfo(Pokemon("pikachu", enemy=True), enemy=True)
-        self._health_menu_player = PokeInfo(Pokemon("articuno"))
+        self._health_menu_player = PokeInfo(Pokemon("articuno", gender="female"))
         self._toss_anim = TossPokemon("articuno", lead_off=True, enemy=False)
         self._enemy_toss_anim = TossPokemon("pikachu", lead_off=True, enemy=True)
         #font = Drawable("pokemon_fire_red_battle_font.png", Vector2(0,0))
