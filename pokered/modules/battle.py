@@ -5,16 +5,17 @@ from .animations.toss_pokemon import TossPokemon
 from .battle_menus.poke_info import PokeInfo
 from .battle_menus.pokemon_remaining import PokemonRemaining
 from .pokemon import Pokemon
+from .battle_fsm import BattleFSM
 from os.path import join, exists
 import pygame
 
 class Battle:
     def __init__(self, player, opponent, draw_surface):
         """Create and show a battle with the player and an npc"""
-        self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"), 16)
         self._player = player
         self._opponent = opponent
         self._draw_surface = draw_surface
+        self._battle_fsm = BattleFSM()
         self._battle_background = Drawable(join("battle", "battle_background.png"), Vector2(0,0), offset= (0,0))
         self._battle_menus = Drawable(join("battle", "battle_menus.png"), Vector2(0,113), offset=(0, 1))
         self._health_menu_enemy = PokeInfo(Pokemon("pikachu", enemy=True), enemy=True)
