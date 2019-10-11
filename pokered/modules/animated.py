@@ -39,9 +39,9 @@ class Animated(Drawable):
       if self._flip: self._image = pygame.transform.flip(self._image, True, False)
 
 class AnimatedGroup():
-   def __init__(self, animations, terminating_animation=False):
+   def __init__(self, animations, terminating_animation=False, all_on=False):
       self._animations = animations
-      self._active_anims = {anim : False for anim in animations}
+      self._active_anims = {anim : all_on for anim in animations}
       self._active_anims[animations[0]] = True
       self._is_dead = False
       self._terminating_animation = terminating_animation

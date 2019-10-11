@@ -40,6 +40,9 @@ class Pokemon(Drawable):
     
     def get_gender(self):
         return self._gender
+    
+    def is_alive(self):
+        return True
         
 
     def __str__(self):
