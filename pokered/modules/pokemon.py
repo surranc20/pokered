@@ -28,7 +28,14 @@ class Pokemon(Drawable):
         _lookup = self.POKEMON_LOOKUP[pokemon_name]
         _offset = _lookup if enemy else (_lookup[0] + 1, _lookup[1])
         self._name = pokemon_name
+        self._nick_name = self._name
         super().__init__(join("pokemon", "pokemon_big.png"), _pos, offset= _offset)
+    
+    def get_nick_name(self):
+        return self._nick_name
+    
+    def get_name(self):
+        return self._name
         
 
     def __str__(self):
