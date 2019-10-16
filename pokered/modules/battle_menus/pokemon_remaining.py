@@ -7,7 +7,10 @@ class PokemonRemaining(AnimatedGroup):
     PLAYER_POSITION = Vector2(156,85)
     ENEMY_POSITION = Vector2(26,33)
 
-    def __init__(self, player, all_on=True):
+    def __init__(self, player):
+        """This is the little bar that has six pokeballs and indicates how many pokemon
+        are left in you or your opponents party. Extends AnimatedGroup to inherit some of the
+        functionality of that class even though nothing here is truly an animation."""
         self._is_enemy = player.is_enemy()
         self._total_pokemon = len(player.get_pokemon_team())
         self._total_pokemon_alive = len([pokemon for pokemon in player.get_pokemon_team() if pokemon.is_alive()])
@@ -16,6 +19,9 @@ class PokemonRemaining(AnimatedGroup):
         super().__init__(self._create_animations_list(), all_on=True)
 
     def _create_animations_list(self):
+        """Helper method that fills the animations list of the AnimatedGroup with the correct pokeballs
+        based on the health status of each pokemon in the party"""
+
         anims = []
         anim_sequence_pos = 1
         position = self.ENEMY_POSITION if self._is_enemy else self.PLAYER_POSITION
@@ -29,6 +35,7 @@ class PokemonRemaining(AnimatedGroup):
 
 
 class PokeballRemainingBall(AnimatedGroupPart):
+    """Simple AnimatedGroupPart which is just an image of either an empty, colored, or greyed-out pokeball"""
     def __init__(self,pokeball_status, position, anim_sequence_pos):
         if pokeball_status == "empty": offset = (0, 0)
         elif pokeball_status == "dead": offset = (2, 0)
@@ -41,7 +48,9 @@ class PokeballRemainingBall(AnimatedGroupPart):
         pass
 
 class PokeballRemainingContainer(AnimatedGroupPart):
-    
+    """Simple AnimatedGroupPart which contains the container that appears on screen and
+    holds the balls"""
+
     PLAYER_POSIITON = Vector2(136, 85)
     ENEMY_POSITION = Vector2(0,33)
 
