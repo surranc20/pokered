@@ -25,7 +25,7 @@ def main():
     # Let's make a background so we can see if we're moving
     background = Drawable("gym.png", Vector2(0, 0))
    
-    # Images
+    # Create Player and Enemy for Test Battle
     player = Player(Vector2(WORLD_SIZE[0]//2 - 8, WORLD_SIZE[1]//2 - 11), "Chris")
     enemy = Player(Vector2(WORLD_SIZE[0]//2 - 8, WORLD_SIZE[1]//2 - 11), "CHAMPION GARY", enemy=True)
     enemy._pokemon_team.append(Pokemon("caterpie", enemy=True))
@@ -34,7 +34,6 @@ def main():
     player._pokemon_team.append(Pokemon("pikachu"))
     player._pokemon_team.append(Pokemon("pikachu"))
     player._pokemon_team.append(Pokemon("pikachu"))
-    #player.set_active_pokemon(0)
     
    
     # Define a variable to control the main loop
@@ -45,13 +44,14 @@ def main():
     # Main loop
     while running:
         if battle == None:
-            # Draw everything, based on the offset
+
+            # Draw everything from level
             background.draw(draw_surface)
             player.draw(draw_surface)
             pygame.transform.scale(draw_surface, UPSCALED, screen)
             pygame.display.flip()
             
-            # event handling, gets all event from the eventqueue
+            # event handling, gets all event from the event queue
             game_clock.tick(60)
             for event in pygame.event.get():
                 # only do something if the event is of type QUIT or ESCAPE is pressed
@@ -65,9 +65,10 @@ def main():
             ticks = game_clock.get_time() / 1000
             player.update(ticks)
 
-            # Update Offset
+            
 
         else:
+            # Run Battle Loop, this is temporary and will be handled differently in final product
             running = battle.battle_loop(game_clock, UPSCALED, screen, running)
 
    
