@@ -8,8 +8,16 @@ from ..vector2D import Vector2
 
 class PokeEmerge(AnimatedGroupPart):
 
+    # Locations on battle_map where pokemon emerge. 
+    # Pokemon will be centered width wise on this location
+    # and will terminate height wise on this location.
     PLAYER_POKE_POS = Vector2(68, 112)
     ENEMY_POKE_POS = Vector2(180, 70)
+
+    # Simmple Pokemon Lookup list that tells where each pokemon is on the pokemon sprite sheet. 
+    # Increases by two each time because each pokemon has a front and back image with the front
+    # being the first. 
+    # TODO: Should extract this out to own file since it is used in more than one place
     POKEMON_LOOKUP = {"bulbasaur":(0,0), "charmander":(2,0), "squirtle":(4,0), "caterpie":(6,0), "weedle":(8,0), "golem":(10,0), "slowpoke":(12,0), "magneton":(14,0), "dodrio":(16,0), "grimer":(18,0),
     "ivysaur":(0,1), "charmeleon":(2,1), "wartortle":(4,1), "metapod":(6,1), "kakuna":(8,1), "ponyta":(10,1), "slowbro":(12,1), "farfetch'd":(14,1), "seel":(16,1), "muk":(18,1),
     "venusaur":(0,2), "charazard":(2,2), "blastoise":(4,2), "butterfree":(6,2), "beedrill":(8,2), "rapidash":(10,2), "magnemite":(12,2), "doduo": (14,2), "dewgong":(16,2), "shellder":(18,2),
@@ -28,9 +36,17 @@ class PokeEmerge(AnimatedGroupPart):
     "mew":(0,15)}
 
     def __init__(self, position, pokemon_name, anim_sequence_pos, enemy = False):
+        """This is animation that plays when a pokemon is emerging from a pokeball. Has all the 
+        same arguments as an AnimatedGroupPart as well as an enemy argument which is necessary 
+        becuase it tells PokeEmerge whether or not to use the front or back of the pokemon and 
+        where to draw the animation when it is occuring."""
+
+        # Look up pokemon position in sprite sheet and determine whether or not to use the 
+        # front or back image of the pokemon
         _lookup = self.POKEMON_LOOKUP[pokemon_name]
         _offset = _lookup if enemy else (_lookup[0] + 1, _lookup[1])
         super().__init__(join("pokemon", "pokemon_big.png"), position, anim_sequence_pos, offset=_offset)
+
         self._enemy = enemy
         self._frame = 1
         self._orig_image = self._image.copy()
@@ -40,12 +56,17 @@ class PokeEmerge(AnimatedGroupPart):
         self._animate = True
         self._framesPerSecond = 30
 
+        # Initial image for PokeEmerge needs to be the smallest version of the pokemon
         self._image = self.scale_pokemon()
     
     def __repr__(self):
-        return "poke emerge"
+        """Returns the representation of PokeEmerge. Simply 'Poke Emerge'. 
+        Used primarily for debugging."""
+        return "Poke Emerge"
     
     def update(self, ticks):
+        """Overrides the update of AnimatedGroupPart. Decides whether the pokemon should be
+        scaled up to the next size based on the animation timer"""
         if self._animate:
             self._animationTimer += ticks
 
@@ -53,30 +74,39 @@ class PokeEmerge(AnimatedGroupPart):
             self._animationTimer -= 1 / self._framesPerSecond
             self._image = self.scale_pokemon()
             
-    def _update_position(self, copy):
+    def _update_position(self, image):
+        """Helper method used to update the position of the image after it has been scalled. 
+        This is necessary because scaling changes the dimensions of the image and the image needs
+        to be centered on the position specified in PLAYER_POKE_POS of ENEMY_POKE_POS."""
         if not self._enemy: pos = self.PLAYER_POKE_POS
         else: pos = self.ENEMY_POKE_POS
 
-        self._position.x = pos.x  - copy.get_width() // 2
-        self._position.y = pos.y - copy.get_height()
+        self._position.x = pos.x  - image.get_width() // 2
+        self._position.y = pos.y - image.get_height()
 
 
 
     def scale_pokemon(self):
-        if not self._anim_started:
-            next_scale_size = 8
-        else:
-            next_scale_size = self._image.get_height() + 8
+        """Calculates the next valid size for the pokemon and then scales to that
+        size. Also makes the pokemon image purple. Returns the new scaled image 
+        after scaling operation is complete."""
 
+        if not self._anim_started: 
+            next_scale_size = 8
+            self._anim_started = True
+        else: next_scale_size = self._image.get_height() + 8
+
+        # If the next_scale_size is > 64 then the animation is done.
         if next_scale_size >= 64 and self._anim_started: 
             self._update_position(self._orig_image)
             self.kill()
             return self._orig_image
-    
-        
-        self._anim_started = True
+
+        # Scale pokemon and then update its position
         copy = pygame.transform.scale(self._orig_image, (next_scale_size, next_scale_size))
         self._update_position(copy)
+
+        # Turn all non-transparent pixels purple
         pygame.transform.threshold(copy, copy, self._image.get_colorkey(), set_color=(244, 189, 244))
         return  copy
 
