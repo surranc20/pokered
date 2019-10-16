@@ -43,7 +43,7 @@ class Pokemon(Drawable):
     
     def is_alive(self):
         return True
-        
+    
 
     def __str__(self):
         return self._name

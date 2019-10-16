@@ -3,14 +3,16 @@ from .cardinality import Cardinality
 import pygame
 
 class Player(Mobile):
-    def __init__(self, position, enemy=False):
+    def __init__(self, position, name, enemy=False):
         super().__init__("trainer.png", position, Cardinality.NORTH)
         self._nFrames = 4
         self._framesPerSecond = 4
         self._running = False
         self._moving = False
         self._pokemon_team = []
+        self._active_pokemon = None
         self._is_enemy = enemy
+        self._name = name
 
     def move(self, event):
         """Updates the players moving, flip, and orientation values based on the event"""
@@ -78,6 +80,16 @@ class Player(Mobile):
     def is_enemy(self):
         return self._is_enemy
 
+    def get_active_pokemon(self):
+        return self._active_pokemon
+    
+    def set_active_pokemon(self, index):
+        self._active_pokemon = self.get_pokemon_team()[index]
 
-        
+    def get_pokemon_by_index(self, index):
+        print(self.get_pokemon_team()[index])
+        return self.get_pokemon_team()[index]
+    
+    def get_name(self):
+        return self._name
         

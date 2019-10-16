@@ -122,6 +122,11 @@ class FrameManager(object):
             # If we need to set the color key
             if colorKey:
                self[fileName].set_colorkey(self[fileName].get_at((0,0)))
+         
+      def reload(self, fileName, offset=False):
+         self._surfaces.pop(fileName)
+         return self.getFrame(fileName, offset=offset)
+
                
             
          

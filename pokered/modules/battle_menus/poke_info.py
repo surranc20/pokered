@@ -22,6 +22,7 @@ class PokeInfo(Drawable):
         start_pos = Vector2(10,7) if self._enemy else Vector2(20,7)
         current_pos = start_pos
         for char in self._pokemon.get_nick_name().lower():
+            print(char)
             font_index = int(ord(char)) - 97
             font_char = FRAMES.getFrame("pokemon_fire_red_battle_font.png", offset=(font_index, 0))
             font_char.set_colorkey((255,255,255))
@@ -38,5 +39,5 @@ class PokeInfo(Drawable):
             font_char = FRAMES.getFrame("pokemon_fire_red_battle_font.png", offset=(font_index, 3))
             self._image.blit(font_char, (current_pos.x, current_pos.y))
 
-        
-            
+    def is_dead(self):
+        return not self._pokemon.is_alive()
