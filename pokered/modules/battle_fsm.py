@@ -12,6 +12,7 @@ from .battle_menus.pokemon_remaining import PokemonRemaining
 from .pokemon import Pokemon
 from .frameManager import FRAMES
 
+#TODO: Never display the number of pokemon remaining
 
 class BattleStates(Enum):
     """Simple Enumeration of battle states. The value is a list of valid actions

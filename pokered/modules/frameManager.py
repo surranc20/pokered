@@ -124,6 +124,8 @@ class FrameManager(object):
                self[fileName].set_colorkey(self[fileName].get_at((0,0)))
          
       def reload(self, fileName, offset=False):
+         """This is a hack that I currently need becuase of the way PokeInfo is implemented. 
+         It resets the surfaces for a given filename"""
          self._surfaces.pop(fileName)
          return self.getFrame(fileName, offset=offset)
 
