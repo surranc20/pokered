@@ -26,14 +26,15 @@ def main():
     background = Drawable("gym.png", Vector2(0, 0))
    
     # Images
-    player = Player(Vector2(WORLD_SIZE[0]//2 - 8, WORLD_SIZE[1]//2 - 11))
-    enemy = Player(Vector2(WORLD_SIZE[0]//2 - 8, WORLD_SIZE[1]//2 - 11), enemy=True)
-    enemy._pokemon_team.append(Pokemon("pikachu"))
-    enemy._pokemon_team.append(Pokemon("pikachu"))
-    enemy._pokemon_team.append(Pokemon("pikachu"))
+    player = Player(Vector2(WORLD_SIZE[0]//2 - 8, WORLD_SIZE[1]//2 - 11), "Chris")
+    enemy = Player(Vector2(WORLD_SIZE[0]//2 - 8, WORLD_SIZE[1]//2 - 11), "CHAMPION GARY", enemy=True)
+    enemy._pokemon_team.append(Pokemon("caterpie", enemy=True))
+    enemy._pokemon_team.append(Pokemon("pikachu", enemy=True))
+    enemy._pokemon_team.append(Pokemon("charazard", enemy=True))
     player._pokemon_team.append(Pokemon("pikachu"))
     player._pokemon_team.append(Pokemon("pikachu"))
     player._pokemon_team.append(Pokemon("pikachu"))
+    #player.set_active_pokemon(0)
     
    
     # Define a variable to control the main loop
