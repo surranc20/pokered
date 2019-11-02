@@ -97,7 +97,7 @@ class PokeEmerge(AnimatedGroupPart):
         else: next_scale_size = self._image.get_height() + 8
 
         # If the next_scale_size is > 64 then the animation is done.
-        if next_scale_size >= 64 and self._anim_started: 
+        if next_scale_size >= 64: 
             self._update_position(self._orig_image)
             self.kill()
             return self._orig_image

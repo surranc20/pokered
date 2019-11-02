@@ -16,7 +16,9 @@ from .frameManager import FRAMES
 
 class BattleStates(Enum):
     """Simple Enumeration of battle states. The value is a list of valid actions
-    and the corresponding state after that action is taken"""
+    and the corresponding state after that action is taken. There are numbers in the
+    tuple just so that the states are not viewed as synonyms for eachother. The actual 
+    numbers have no meaning."""
     NOT_STARTED = ("auto", 1)
     OPENING_ANIMS = ("wait", 2)
     OPPONENT_TOSSING_POKEMON = ("auto", 3)
@@ -38,10 +40,10 @@ class BattleActions(Enum):
     """Simple Enumeration of battle actions"""
     SELECT = auto()
     BACK = auto()
-    UP = auto()
-    LEFT = auto()
-    DOWN = auto()
-    RIGHT = auto()
+    UP = pygame.K_w
+    LEFT = pygame.K_a
+    DOWN = pygame.K_s
+    RIGHT = pygame.K_d
 
 
 
@@ -54,7 +56,7 @@ class BattleFSM:
     def __init__(self, player, opponent, draw_surface, state=BattleStates.NOT_STARTED):
         self._state = state
         self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"), 16)
-        self._cursor = 0
+        self._cursor = Cursor()
         self._draw_surface = draw_surface
         self._active_player = opponent
         self._active_animation = None
@@ -100,9 +102,10 @@ class BattleFSM:
 
         if self._state.value[0] == "wait":
             if self._state == BattleStates.CHOOSING_MOVE:
-                self._active_string = str("What will " + self._player.get_active_pokemon().get_name().upper() + " do?")
-                self._wrap_text(12)
-                self._draw_list.append(self._fight_run)
+                pass
+                
+                
+                
 
     
         elif self._state.value[0] == "text":
@@ -174,6 +177,11 @@ class BattleFSM:
             self._draw_list.append(PokeInfo(self._opponent.get_active_pokemon(), enemy=True))
             if self._player.get_active_pokemon() != None:
                 self._state = BattleStates.CHOOSING_MOVE
+                self._active_string = str("What will " + self._player.get_active_pokemon().get_name().upper() + " do?")
+                self._wrap_text(12)
+                self._draw_list.append(self._fight_run)
+                self._cursor.activate()
+                self._draw_list.append(self._cursor)
 
             elif self._player.get_active_pokemon() == None:
                 self._state = BattleStates.DISPLAY_PLAYER_TOSS_TEXT
@@ -191,26 +199,20 @@ class BattleFSM:
             self._draw_list.append(PokeInfo(self._player.get_active_pokemon()))
 
             self._state = BattleStates.CHOOSING_MOVE
+            self._active_string = str("What will " + self._player.get_active_pokemon().get_name().upper() + " do?")
+            self._wrap_text(12)
+            self._draw_list.append(self._fight_run)
+            self._cursor.activate()
+            self._draw_list.append(self._cursor)
+           
     
     def handle_action_during_wait_event(self, action):
         if (self._state, action) in list(self.TRANSITIONS.keys()):
             self._state = self.TRANSITIONS[(self._state, action)]
-
-            if action == BattleActions.UP.value:
-                if self._cursor == 2 or self._cursor == 3:
-                    self._cursor -= 2
-            
-            elif action == BattleActions.DOWN.value:
-                if self._cursor == 0 or self._cursor == 1:
-                    self._cursor += 2
-            
-            elif action == BattleActions.LEFT.value:
-                if self._cursor == 1 or self._cursor == 3:
-                    self._cursor -= 1
-            
-            elif action == BattleActions.RIGHT.value:
-                if self._cursor == 0 or self._cursor == 2:
-                    self._cursor += 1
+        
+        elif action.type == pygame.KEYDOWN and action.key in [BattleActions.UP.value, BattleActions.DOWN.value, BattleActions.LEFT.value, BattleActions.RIGHT.value]:
+            print("HORRAY")
+            self._cursor.change_cursor_pos(action)
     
     
     def _wrap_text(self, width):
@@ -221,4 +223,43 @@ class BattleFSM:
             self._battle_menus._image.blit(self._font.render(string, False, (200, 200, 200)), (10, height))
             height += 15
     
+class Cursor(Drawable):
+    """Small Cursor class that keeps track of the in battle cursor"""
+    CURSOR_POSITIONS = {0 : (127, 124), 2 : (127, 140), 1 : (182, 124), 3 : (182, 140)}
+    def __init__(self):
+        self._is_active = False
+        self._cursor = 0
+        super().__init__(join("battle", "cursor.png"), self.CURSOR_POSITIONS[self._cursor])
     
+    def activate(self):
+        self._is_active = True
+    
+    def deactivate(self):
+        self._is_active = False
+    
+    def draw(self, draw_surface):
+        if self._is_active:
+            super().draw(draw_surface)
+    
+    def __add__(self, other):
+        return self._cursor + other
+    
+    def change_cursor_pos(self, action):
+        if action.key == BattleActions.UP.value:
+            if self._cursor == 2 or self._cursor == 3:
+                self._cursor -= 2
+
+        elif action.key == BattleActions.DOWN.value:
+            print("INNNNNNNNN")
+            if self._cursor == 0 or self._cursor == 1:
+                self._cursor += 2
+        
+        elif action.key == BattleActions.LEFT.value:
+            if self._cursor == 1 or self._cursor == 3:
+                self._cursor -= 1
+        
+        elif action.key == BattleActions.RIGHT.value:
+            if self._cursor == 0 or self._cursor == 2:
+                self._cursor += 1
+        self._position = self.CURSOR_POSITIONS[self._cursor]
+        print(self._position)
