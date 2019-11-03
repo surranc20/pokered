@@ -31,7 +31,12 @@ def main():
     enemy._pokemon_team.append(Pokemon("caterpie", enemy=True))
     enemy._pokemon_team.append(Pokemon("pikachu", enemy=True))
     enemy._pokemon_team.append(Pokemon("charazard", enemy=True))
-    player._pokemon_team.append(Pokemon("pikachu"))
+    poke = Pokemon("pikachu")
+    poke.add_move("Thunder", 5, "Electric")
+    poke.add_move("Thunder", 6, "Electric")
+    poke.add_move("Thunder", 7, "Electric")
+    poke.add_move("Thunder", 8, "Electric")
+    player._pokemon_team.append(poke)
     player._pokemon_team.append(Pokemon("pikachu"))
     player._pokemon_team.append(Pokemon("pikachu"))
     
