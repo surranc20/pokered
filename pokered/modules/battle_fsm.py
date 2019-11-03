@@ -11,6 +11,7 @@ from .battle_menus.poke_info import PokeInfo
 from .battle_menus.pokemon_remaining import PokemonRemaining
 from .pokemon import Pokemon
 from .frameManager import FRAMES
+from .soundManager import SoundManager
 
 #TODO: Never display the number of pokemon remaining
 
@@ -155,11 +156,15 @@ class BattleFSM:
         if action.type == pygame.KEYDOWN:
             if action.key == BattleActions.SELECT.value:
                 self._handle_state_change(self.TRANSITIONS[(self._state), self._cursor.get_value()])
+                SoundManager.getInstance().playSound("firered_0005.wav")
+
 
             elif action.key == BattleActions.BACK.value and (self._state, BattleActions.BACK) in self.TRANSITIONS.keys():
                 self._handle_state_change(self.TRANSITIONS[(self._state, BattleActions.BACK)])
+                SoundManager.getInstance().playSound("firered_0005.wav")
             
             elif action.type == pygame.KEYDOWN and action.key in [BattleActions.UP.value, BattleActions.DOWN.value, BattleActions.LEFT.value, BattleActions.RIGHT.value]:
+                SoundManager.getInstance().playSound("firered_0005.wav")
                 self._cursor.change_cursor_pos(action)
                 if self._state == BattleStates.CHOOSING_MOVE:
                     self._pp_surface._update_cursor(self._cursor.get_value())
