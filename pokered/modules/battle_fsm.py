@@ -110,6 +110,7 @@ class BattleFSM:
             self._active_string = "There is no running from a trainer battle!"
             self._wrap_text(25)
             
+            
 
         elif self._state.value[0] == "auto":
             if self._active_animation == None:
@@ -191,6 +192,7 @@ class BattleFSM:
             self._draw_list.pop(self._draw_list.index(self._move_select))
             self._draw_list.pop(self._draw_list.index(self._pp_surface))
             self._draw_list.pop(self._draw_list.index(self._moves_surface))
+            
         
         if new_state == BattleStates.CHOOSING_FIGHT_OR_RUN:
             self._active_string = str("What will " + self._player.get_active_pokemon().get_name().upper() + " do?")
@@ -200,6 +202,12 @@ class BattleFSM:
             self._cursor.set_positions(new_state)
             self._cursor.reset()
             self._draw_list.append(self._cursor)
+        
+        elif new_state == BattleStates.RUNNING:
+            try:
+                self._draw_list.pop(self._draw_list.index(self._cursor))
+            except ValueError:
+                pass
         
         elif new_state == BattleStates.CHOOSING_MOVE:
             self._cursor.set_positions(new_state)
