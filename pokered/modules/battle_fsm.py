@@ -48,7 +48,7 @@ class BattleActions(Enum):
 
 class BattleFSM:
 
-    TRANSITIONS = {(BattleStates.CHOOSING_FIGHT_OR_RUN, 0) : BattleStates.CHOOSING_MOVE, BattleStates.PLAYER_TOSSING_POKEMON : BattleStates.PLAYER_POKEMON_MENU, BattleStates.OPPONENT_TOSSING_POKEMON : BattleStates.OPPONENT_POKEMON_MENU, BattleStates.DISPLAY_OPPONENT_TOSS_TEXT : BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.DISPLAY_PLAYER_TOSS_TEXT : BattleStates.PLAYER_TOSSING_POKEMON}
+    TRANSITIONS = {(BattleStates.CHOOSING_MOVE, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN, (BattleStates.CHOOSING_FIGHT_OR_RUN, 0) : BattleStates.CHOOSING_MOVE, BattleStates.PLAYER_TOSSING_POKEMON : BattleStates.PLAYER_POKEMON_MENU, BattleStates.OPPONENT_TOSSING_POKEMON : BattleStates.OPPONENT_POKEMON_MENU, BattleStates.DISPLAY_OPPONENT_TOSS_TEXT : BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.DISPLAY_PLAYER_TOSS_TEXT : BattleStates.PLAYER_TOSSING_POKEMON}
 
     def __init__(self, player, opponent, draw_surface, state=BattleStates.NOT_STARTED):
         self._state = state
@@ -156,29 +156,41 @@ class BattleFSM:
             if action.key == BattleActions.SELECT.value:
                 self._handle_state_change(self.TRANSITIONS[(self._state), self._cursor.get_value()])
 
-            elif action.key == BattleActions.BACK.value and (self._state, BattleActions.BACK.value) in self.TRANSITIONS.keys():
-                self._handle_state_change(self.TRANSITIONS[(self._state, BattleActions.BACK.value)])
+            elif action.key == BattleActions.BACK.value and (self._state, BattleActions.BACK) in self.TRANSITIONS.keys():
+                self._handle_state_change(self.TRANSITIONS[(self._state, BattleActions.BACK)])
             
             elif action.type == pygame.KEYDOWN and action.key in [BattleActions.UP.value, BattleActions.DOWN.value, BattleActions.LEFT.value, BattleActions.RIGHT.value]:
                 self._cursor.change_cursor_pos(action)
+                if self._state == BattleStates.CHOOSING_MOVE:
+                    self._pp_surface._update_cursor(self._cursor.get_value())
     
     def _handle_state_change(self, new_state):
         # Clean up draw list and update list if neccessary
         if self._state == BattleStates.CHOOSING_FIGHT_OR_RUN:
             self._draw_list.pop(self._draw_list.index(self._fight_run))
             self._draw_list.pop(self._draw_list.index(self._cursor))
+        elif self._state == BattleStates.CHOOSING_MOVE:
+            self._draw_list.pop(self._draw_list.index(self._move_select))
+            self._draw_list.pop(self._draw_list.index(self._pp_surface))
+            self._draw_list.pop(self._draw_list.index(self._moves_surface))
 
         if new_state == BattleStates.CHOOSING_FIGHT_OR_RUN:
             self._active_string = str("What will " + self._player.get_active_pokemon().get_name().upper() + " do?")
             self._wrap_text(12)
             self._draw_list.append(self._fight_run)
             self._cursor.activate()
+            self._cursor.set_positions(new_state)
+            self._cursor.reset()
             self._draw_list.append(self._cursor)
         
         elif new_state == BattleStates.CHOOSING_MOVE:
             self._cursor.set_positions(new_state)
             self._cursor.reset()
             self._draw_list.append(self._move_select)
+            self._moves_surface = MovesSurface(self._player.get_active_pokemon())
+            self._pp_surface = PPSurface(self._player.get_active_pokemon())
+            self._draw_list.append(self._moves_surface)
+            self._draw_list.append(self._pp_surface)
             self._draw_list.append(self._cursor)
         
         elif new_state == BattleStates.DISPLAY_OPPONENT_TOSS_TEXT:
@@ -210,6 +222,8 @@ class Cursor(Drawable):
     def set_positions(self, state):
         if state == BattleStates.CHOOSING_MOVE:
             self._active_pos_dict = self.CHOOSE_MOVE_POSITIONS
+        if state == BattleStates.CHOOSING_FIGHT_OR_RUN:
+            self._active_pos_dict = self.CURSOR_POSITIONS
     
     def get_value(self):
         return self._cursor
@@ -249,3 +263,45 @@ class Cursor(Drawable):
                 self._cursor += 1
         self._position = self._active_pos_dict[self._cursor]
         
+class MovesSurface(Drawable):
+    """This class displays the moves when the player is selecting their move"""
+    def __init__(self, pokemon):
+        super().__init__("", (7,120))
+        self._image = pygame.Surface((145, 33))
+        self._image.fill((255,255,255,0))
+        self._image.set_colorkey((255, 255, 255))
+        self._pokemon = pokemon
+        self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"), 14)
+        self._add_moves()
+    
+    def _add_moves(self):
+        pos = [(11, 2), (11, 18), (81, 2), (81, 18)]
+        for move in self._pokemon.get_moves():
+            move_name = move[0].upper()
+            self._image.blit(self._font.render(move_name, False, (69, 60, 60)), pos.pop(0))
+
+class PPSurface(Drawable):
+    """This class displays the pp status of the selected move"""
+    def __init__(self, pokemon):
+        super().__init__("", (168, 120))
+        self._image = pygame.Surface((65, 33))
+        self._image.fill((255,255,255,0))
+        self._image.set_colorkey((255, 255, 255))
+        self._pokemon = pokemon
+        self._cursor_pos = 0
+        self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"), 14)
+        self._add_pp()
+        
+    
+    def _add_pp(self):
+        move = self._pokemon.get_moves()[self._cursor_pos]
+        self._image.blit(self._font.render(str(move[1]), False, (69, 60, 60)), (40, 2))
+        self._image.blit(self._font.render(str(move[2]), False, (69, 60, 60)), (53, 2))
+        self._image.blit(self._font.render(move[3].upper(), False, (69, 60, 60)), (24, 19))
+
+    def _update_cursor(self, new_cursor_pos):
+        self._cursor_pos = new_cursor_pos
+        self._image = pygame.Surface((65, 33))
+        self._image.fill((255,255,255,0))
+        self._image.set_colorkey((255, 255, 255))
+        self._add_pp()

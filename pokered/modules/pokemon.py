@@ -1,4 +1,5 @@
 from os.path import join
+import json
 from .drawable import Drawable
 from .vector2D import Vector2
 
@@ -30,6 +31,7 @@ class Pokemon(Drawable):
         self._name = pokemon_name
         self._nick_name = self._name
         self._gender = gender
+        self._moves = []
         super().__init__(join("pokemon", "pokemon_big.png"), _pos, offset= _offset)
     
     def get_nick_name(self):
@@ -41,9 +43,15 @@ class Pokemon(Drawable):
     def get_gender(self):
         return self._gender
     
+    def get_moves(self):
+        return self._moves
+    
     def is_alive(self):
         return True
     
+    def add_move(self, move, pp, move_type):
+        if len(self._moves) < 4:
+            self._moves.append((move, pp, pp, move_type))
 
     def __str__(self):
         return self._name
