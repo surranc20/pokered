@@ -23,10 +23,6 @@ class Battle:
         self._toss_anim = TossPokemon("articuno", lead_off=True, enemy=False)
         self._enemy_toss_anim = TossPokemon("pikachu", lead_off=True, enemy=True)
         self._pokemon_remaining = PokemonRemaining(player)
-        
-
-
-        
         pygame.mixer.music.load(join("music", "gym_battle_music.mp3"))
         pygame.mixer.music.play(-1)
     
