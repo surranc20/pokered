@@ -1,0 +1,43 @@
+[
+    {
+        "name": "Absorb",
+        "Move type":  "Grass",
+        "Accuracy":   100,
+        "Move power": 20,
+        "PP":         20,
+        "Effects":    "Pokemon heals half the dealt damage"
+    },
+    {
+        "name": "Thunderbolt",
+        "Move type": "Electric",
+        "Move power": 95,
+        "Accuracy": 100,
+        "PP": 15,
+        "Effects": "10% chance to paralyze the target."
+    },
+    {
+        "name": "Thunder Wave",
+        "Move type": "Electric",
+        "Move power": "N/A",
+        "Accuracy": 100,
+        "PP": 20,
+        "Effects": "The target is paralyzed."
+    },
+    {
+        "name": "Thunder",
+        "Move type": "Electric",
+        "Move power": 120,
+        "Accuracy": 70,
+        "PP": 10,
+        "Effects": "30% chance to paralyze target. Move has 100% accuracy when rain sance is in effect. Move has 40% accuracy when sunny day is in effect. Move does double damage to pokemon using fly."
+    },
+    {
+        "name": "Thundershock",
+        "Move type": "Electric",
+        "Move power": 40,
+        "Accuracy": 100,
+        "PP": 30,
+        "Effects": "10% chance to paralyze the target."
+    }
+
+]
