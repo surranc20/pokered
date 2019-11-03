@@ -11,7 +11,8 @@ class Drawable(object):
       self._offset = offset
 
       # Let frame manager handle loading the image
-      self._image = FRAMES.getFrame(self._imageName, offset)
+      if self._imageName != "":
+         self._image = FRAMES.getFrame(self._imageName, offset)
       self._position = position
       self._is_dead = False
 
