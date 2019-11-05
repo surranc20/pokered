@@ -28,17 +28,26 @@ def main():
     # Create Player and Enemy for Test Battle
     player = Player(Vector2(WORLD_SIZE[0]//2 - 8, WORLD_SIZE[1]//2 - 11), "Chris")
     enemy = Player(Vector2(WORLD_SIZE[0]//2 - 8, WORLD_SIZE[1]//2 - 11), "CHAMPION GARY", enemy=True)
-    enemy._pokemon_team.append(Pokemon("caterpie", enemy=True))
+    enemy._pokemon_team.append(Pokemon("charazard", enemy=True))
     enemy._pokemon_team.append(Pokemon("pikachu", enemy=True))
     enemy._pokemon_team.append(Pokemon("charazard", enemy=True))
     poke = Pokemon("pikachu")
+    poke2 = Pokemon("bulbasaur")
+    poke3 = Pokemon("mankey")
+    poke4 = Pokemon("charazard")
+    poke5 = Pokemon("pidgeot")
+    poke6 = Pokemon("mew")
     poke.add_move("Thunder", 5, "Electric")
     poke.add_move("Thunder", 6, "Electric")
     poke.add_move("Thunder", 7, "Electric")
     poke.add_move("Thunder", 8, "Electric")
     player._pokemon_team.append(poke)
-    player._pokemon_team.append(Pokemon("pikachu"))
-    player._pokemon_team.append(Pokemon("pikachu"))
+    player._pokemon_team.append(poke2)
+    player._pokemon_team.append(poke3)
+    player._pokemon_team.append(poke4)
+    player._pokemon_team.append(poke5)
+    player._pokemon_team.append(poke6)
+    
     
    
     # Define a variable to control the main loop
