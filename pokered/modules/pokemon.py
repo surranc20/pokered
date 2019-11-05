@@ -32,6 +32,16 @@ class Pokemon(Drawable):
         self._nick_name = self._name
         self._gender = gender
         self._moves = []
+        self._stats = {
+            "LVL" : 99,
+            "HP": 45,
+            "Current HP" : 45,
+            "Attack": 49,
+            "Defense": 49,
+            "Sp. Attack": 65,
+            "Sp. Defense": 65,
+            "Speed": 45
+        }
         super().__init__(join("pokemon", "pokemon_big.png"), _pos, offset= _offset)
     
     def get_nick_name(self):
@@ -52,6 +62,9 @@ class Pokemon(Drawable):
     def add_move(self, move, pp, move_type):
         if len(self._moves) < 4:
             self._moves.append((move, pp, pp, move_type))
+    
+    def get_lvl(self):
+        return self._stats["LVL"]
 
     def __str__(self):
         return self._name

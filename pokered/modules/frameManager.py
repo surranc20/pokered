@@ -27,6 +27,10 @@ class FrameManager(object):
       # Static information about the frame sizes of particular image sheets.
       _FRAME_SIZES = {
          "trainer.png" : (16, 22),
+         "party_active_poke_bar.png" : (84, 57),
+         "party_individual_poke_bar.png" : (150, 24),
+         "party_cancel_bar.png" : (54, 24),
+         "party_text_box.png" : (180, 28),
          join("battle" ,"battle_background.png") : (240, 112),
          join("battle" ,"battle_menus.png") : (240, 48),
          join("battle", "trainer_toss_anim.png") : (64, 64),
@@ -36,7 +40,11 @@ class FrameManager(object):
          join("battle", "pokemon_remaining_balls.png") : (7, 7),
          join("battle", "pokemon_remaining.png") : (104, 12),
          join("battle", "cursor.png") : (8, 12),
-         "pokemon_fire_red_battle_font.png" : (5, 9)
+         join("pokemon", "pokemon_small.png") : (32,32),
+         "pokemon_fire_red_battle_font.png" : (5, 9),
+         "party_txt_font.png" : (5, 9),
+         "party_font.png" : (5, 8)
+         
 
       }
       
@@ -47,7 +55,7 @@ class FrameManager(object):
       _TRANSPARENCY = [join("battle" ,"battle_menus.png")]
       
       # A list of images that require to be loaded with a color key
-      _COLOR_KEY = ["trainer.png", join("battle", "trainer_toss_anim.png"), join("battle", "pokeball_anim.png"), join("battle", "pokeball_open_anim.png"), join("pokemon", "pokemon_big.png"), join("battle", "health_bars.png"), join("battle", "gary_battle.png"), "pokemon_fire_red_battle_font.png", join("battle", "pokemon_remaining_balls.png"), join("battle", "pokemon_remaining.png"), join("battle", "cursor.png")]
+      _COLOR_KEY = ["trainer.png", "party_text_box.png", "party_cancel_bar.png", join("pokemon", "pokemon_small.png"), join("battle", "trainer_toss_anim.png"), join("battle", "pokeball_anim.png"), join("battle", "pokeball_open_anim.png"), join("pokemon", "pokemon_big.png"), join("battle", "health_bars.png"), join("battle", "gary_battle.png"), "pokemon_fire_red_battle_font.png", join("battle", "pokemon_remaining_balls.png"), join("battle", "pokemon_remaining.png"), join("battle", "cursor.png"), "party_active_poke_bar.png", "party_individual_poke_bar.png"]
       
       
       

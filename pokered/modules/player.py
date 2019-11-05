@@ -85,6 +85,9 @@ class Player(Mobile):
     
     def set_active_pokemon(self, index):
         self._active_pokemon = self.get_pokemon_team()[index]
+    
+    def get_pokemon_team(self):
+        return self._pokemon_team
 
     def get_pokemon_by_index(self, index):
         print(self.get_pokemon_team()[index])
