@@ -4,40 +4,74 @@ from ..drawable import Drawable
 from ..animated import Animated
 from ..vector2D import Vector2
 from ..frameManager import FRAMES
+from ..battle_actions import BattleActions
+from ..soundManager import SoundManager
 
 
 class PokeParty(Drawable):
     def __init__(self, player):
         self._player = player
         super().__init__("party_background.png",(0,0))
+        self._selectable_items = []
         self._blit_active_pokemon()
         self._blit_secondary_pokemon()
         self._cancel_button = CancelButton()
         self._text_bar = PartyTextBar()
         self._text_bar.blit_string("Choose a POKeMON.")
+        self._cursor = 0
     
     def _blit_active_pokemon(self):
         self._active_pokemon = ActivePokemon(self._player.get_active_pokemon(), selected=True)
+        self._selectable_items.append(self._active_pokemon)
     
     def _blit_secondary_pokemon(self):
-        self._secondary_pokemon = []
         position = (88,9)
         for pokemon in self._player.get_pokemon_team()[1:]:
-            self._secondary_pokemon.append(SecondaryPokemon(pokemon, position))
+            self._selectable_items.append(SecondaryPokemon(pokemon, position))
             position = (88, position[1] + 24)
     
     def draw(self, draw_surface):
         super().draw(draw_surface)
-        self._active_pokemon.draw(draw_surface)
         self._cancel_button.draw(draw_surface)
         self._text_bar.draw(draw_surface)
-        for pokemon in self._secondary_pokemon:
-            pokemon.draw(draw_surface)
+        for item in self._selectable_items:
+            item.draw(draw_surface)
+    
+    def change_cursor_pos(self, action):
+        old_pos = self._cursor
+        if action.key == BattleActions.UP.value:
+            if self._cursor > 0:
+                SoundManager.getInstance().playSound("firered_0005.wav")
+                self._cursor -= 1
+
+        elif action.key == BattleActions.DOWN.value:
+            if self._cursor <= 5:
+                SoundManager.getInstance().playSound("firered_0005.wav")
+                self._cursor += 1
+        
+        elif action.key == BattleActions.LEFT.value:
+            if self._cursor == 1:
+                SoundManager.getInstance().playSound("firered_0005.wav")
+                self._cursor = 0
+        
+        elif action.key == BattleActions.RIGHT.value:
+            if self._cursor == 0:
+                SoundManager.getInstance().playSound("firered_0005.wav")
+                self._cursor = 1
+        if old_pos != self._cursor: self._update_selected_pos(old_pos)
+
+    def _update_selected_pos(self, old_pos):
+        if self._cursor == 6:
+            self._cancel_button.set_selected()
+        else: 
+            self._selectable_items[self._cursor].set_selected()
+        
+        if old_pos == 6: self._cancel_button.set_unselected()
+        else: self._selectable_items[old_pos].set_unselected()
     
     def update(self, ticks):
-        self._active_pokemon.update(ticks)
-        for pokemon in self._secondary_pokemon:
-            pokemon.update(ticks)
+        for item in self._selectable_items:
+            item.update(ticks)
         
 
 class ActivePokemon(Drawable):
@@ -49,6 +83,12 @@ class ActivePokemon(Drawable):
         self._blit_level()
         self._blit_hp_bar()
         self._blit_hp_remaining()
+    
+    def set_selected(self):
+        self._image = FRAMES.getFrame(self._imageName, (1,0))
+    
+    def set_unselected(self):
+        self._image = FRAMES.getFrame(self._imageName, (0,0))
 
     def draw(self, draw_surface):
         super().draw(draw_surface)
@@ -116,6 +156,12 @@ class SecondaryPokemon(Drawable):
         self._blit_hp_bar()
         self._blit_hp_remaining()
         self._blit_level()
+    
+    def set_selected(self):
+        self._image = FRAMES.getFrame(self._imageName, (1,0))
+    
+    def set_unselected(self):
+        self._image = FRAMES.getFrame(self._imageName, (0,0))
 
     def draw(self, draw_surface):
         super().draw(draw_surface)
@@ -205,6 +251,14 @@ class CancelButton(Drawable):
     def __init__(self, selected=False):
         _offset = (1,0) if selected else (0,0)
         super().__init__("party_cancel_bar.png", (184, 132), offset=_offset)
+    
+    def set_selected(self):
+        self._image = FRAMES.getFrame(self._imageName, (1,0))
+    
+    def set_unselected(self):
+        self._image = FRAMES.getFrame(self._imageName, (0,0))
+    
+
 
 class PartyTextBar(Drawable):
     def __init__(self):
@@ -215,7 +269,6 @@ class PartyTextBar(Drawable):
         super().draw(draw_surface)
         draw_surface.blit(self._txt, self._position)
 
-    
     def blit_string(self, string):
         self._txt = pygame.Surface((100, 22))
         self._txt.fill((255,255,255))
