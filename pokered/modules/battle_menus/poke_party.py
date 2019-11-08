@@ -20,6 +20,7 @@ class PokeParty(Drawable):
         self._text_bar = PartyTextBar()
         self._text_bar.blit_string("Choose a POKeMON.")
         self._cursor = 0
+        self._selected_pokemon = False
     
     def _blit_active_pokemon(self):
         self._active_pokemon = ActivePokemon(self._player.get_active_pokemon(), selected=True)
@@ -73,6 +74,13 @@ class PokeParty(Drawable):
     def handle_select_event(self):
         if self._cursor == 6: 
             return (BattleStates.CHOOSING_FIGHT_OR_RUN, 0)
+        else:
+            if not self._selected_pokemon:
+                self._selected_pokemon = True
+                
+
+
+            
         
     
     def update(self, ticks):
