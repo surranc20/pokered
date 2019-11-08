@@ -15,46 +15,13 @@ from .pokemon import Pokemon
 from .frameManager import FRAMES
 from .soundManager import SoundManager
 from .battle_actions import BattleActions
+from .battle_states import BattleStates
 
 #TODO: Never display the number of pokemon remaining
 
-class BattleStates(Enum):
-    """Simple Enumeration of battle states. The value is a list of valid actions
-    and the corresponding state after that action is taken. There are numbers in the
-    tuple just so that the states are not viewed as synonyms for eachother. The actual 
-    numbers have no meaning."""
-    NOT_STARTED = ("auto", 1)
-    OPENING_ANIMS = ("wait", 2)
-    OPPONENT_TOSSING_POKEMON = ("auto", 3)
-    OPPONENTS_CHOOSING_POKEMON = ("compute", 4)
-    CHOOSING_POKEMON = ("wait", 5)
-    CHOOSING_FIGHT_OR_RUN = ("wait", 6)
-    CHOOSING_MOVE = ("wait", 7)
-    POKEMON_DEAD = (8)
-    PLAYER_TOSSING_POKEMON = ("auto", 9)
-    CHOOSING_ITEM = ("wait", 10)
-    EXECUTING_MOVE = ("auto", 11)
-    FINISHED = ("finished", 12)
-    PLAYER_POKEMON_MENU = ("auto", 13)
-    OPPONENT_POKEMON_MENU = ("auto", 14)
-    DISPLAY_OPPONENT_TOSS_TEXT = ("text", 15)
-    DISPLAY_PLAYER_TOSS_TEXT = ("text", 16)
-    RUNNING = ("text wait", 17)
-    TEST = ("auto", 18)
-
-class BattleActions(Enum):
-    """Simple Enumeration of battle actions"""
-    SELECT = pygame.K_RETURN
-    BACK = pygame.K_b
-    UP = pygame.K_w
-    LEFT = pygame.K_a
-    DOWN = pygame.K_s
-    RIGHT = pygame.K_d
-
-
 class BattleFSM:
 
-    TRANSITIONS = {(BattleStates.CHOOSING_MOVE, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN, (BattleStates.CHOOSING_FIGHT_OR_RUN, 0) : BattleStates.CHOOSING_MOVE, (BattleStates.CHOOSING_FIGHT_OR_RUN, 1) : BattleStates.TEST, (BattleStates.CHOOSING_FIGHT_OR_RUN, 2) : BattleStates.CHOOSING_POKEMON, (BattleStates.CHOOSING_FIGHT_OR_RUN, 3) : BattleStates.RUNNING,BattleStates.PLAYER_TOSSING_POKEMON : BattleStates.PLAYER_POKEMON_MENU, BattleStates.OPPONENT_TOSSING_POKEMON : BattleStates.OPPONENT_POKEMON_MENU, BattleStates.DISPLAY_OPPONENT_TOSS_TEXT : BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.DISPLAY_PLAYER_TOSS_TEXT : BattleStates.PLAYER_TOSSING_POKEMON}
+    TRANSITIONS = {(BattleStates.CHOOSING_POKEMON, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN, (BattleStates.CHOOSING_MOVE, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN, (BattleStates.CHOOSING_FIGHT_OR_RUN, 0) : BattleStates.CHOOSING_MOVE, (BattleStates.CHOOSING_FIGHT_OR_RUN, 1) : BattleStates.TEST, (BattleStates.CHOOSING_FIGHT_OR_RUN, 2) : BattleStates.CHOOSING_POKEMON, (BattleStates.CHOOSING_FIGHT_OR_RUN, 3) : BattleStates.RUNNING,BattleStates.PLAYER_TOSSING_POKEMON : BattleStates.PLAYER_POKEMON_MENU, BattleStates.OPPONENT_TOSSING_POKEMON : BattleStates.OPPONENT_POKEMON_MENU, BattleStates.DISPLAY_OPPONENT_TOSS_TEXT : BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.DISPLAY_PLAYER_TOSS_TEXT : BattleStates.PLAYER_TOSSING_POKEMON}
 
     def __init__(self, player, opponent, draw_surface, state=BattleStates.NOT_STARTED):
         self._state = state
@@ -67,7 +34,7 @@ class BattleFSM:
         self._opponent = opponent
         self._player = player
         self._background = Drawable(join("battle", "battle_background.png"), Vector2(0,0), offset= (0,0))
-        self._battle_text_background = Drawable(join("battle", "battle_menus.png"), Vector2(0,113), offset=(0, 1))
+        self._battle_text_background = Drawable(join("battle", "battle_menus.png"), Vector2(0,112), offset=(0, 1))
         self._move_select = Drawable(join("battle", "battle_menus.png"), Vector2(0, 113), offset=(0, 0))
         self._fight_run = Drawable(join("battle", "battle_menus.png"), Vector2(120, 113), offset=(0, 2))
 
@@ -97,7 +64,7 @@ class BattleFSM:
         return update_list
 
     def update(self, ticks):
-        print(self._state)
+        print(self._draw_list)
         if self._opponent.get_active_pokemon() == None and self._state != BattleStates.OPPONENT_TOSSING_POKEMON:
             self._state = BattleStates.OPPONENTS_CHOOSING_POKEMON
 
@@ -177,8 +144,12 @@ class BattleFSM:
     def handle_action_during_wait_event(self, action):
         if action.type == pygame.KEYDOWN:
             if action.key == BattleActions.SELECT.value:
-                self._handle_state_change(self.TRANSITIONS[(self._state), self._cursor.get_value()])
-                SoundManager.getInstance().playSound("firered_0005.wav")
+                if self._state == BattleStates.CHOOSING_POKEMON:
+                    self._handle_state_change(self._poke_party.handle_select_event()[0])
+                else:
+                    self._handle_state_change(self.TRANSITIONS[(self._state), self._cursor.get_value()])
+                    SoundManager.getInstance().playSound("firered_0005.wav")
+
 
 
             elif action.key == BattleActions.BACK.value and (self._state, BattleActions.BACK) in self.TRANSITIONS.keys():
@@ -209,6 +180,9 @@ class BattleFSM:
             self._draw_list.pop(self._draw_list.index(self._moves_surface))
         elif self._state == BattleStates.TEST:
             self._player_poke_info = PokeInfo(self._player.get_active_pokemon())
+        elif self._state == BattleStates.CHOOSING_POKEMON:
+            self._draw_list.pop()
+            self._update_list.pop()
             
         if new_state == BattleStates.CHOOSING_FIGHT_OR_RUN:
             self._active_string = str("What will " + self._player.get_active_pokemon().get_name().upper() + " do?")
@@ -225,9 +199,9 @@ class BattleFSM:
             except ValueError: pass
         
         elif new_state == BattleStates.CHOOSING_POKEMON:
-            poke_party = PokeParty(self._player)
-            self._draw_list.append(poke_party)
-            self._update_list.append(poke_party)
+            self._poke_party = PokeParty(self._player)
+            self._draw_list.append(self._poke_party)
+            self._update_list.append(self._poke_party)
         
         elif new_state == BattleStates.CHOOSING_MOVE:
             self._cursor.set_positions(new_state)
@@ -245,6 +219,7 @@ class BattleFSM:
         elif new_state == BattleStates.DISPLAY_PLAYER_TOSS_TEXT:
             self._active_string = str("Go! " + self._player.get_active_pokemon().get_name().upper() +"!")
         
+        print("new state: ", new_state)
         self._state = new_state
     
     def _wrap_text(self, width):
