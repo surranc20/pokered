@@ -5,6 +5,7 @@ from ..animated import Animated
 from ..vector2D import Vector2
 from ..frameManager import FRAMES
 from ..battle_actions import BattleActions
+from ..battle_states import BattleStates
 from ..soundManager import SoundManager
 
 
@@ -68,6 +69,11 @@ class PokeParty(Drawable):
         
         if old_pos == 6: self._cancel_button.set_unselected()
         else: self._selectable_items[old_pos].set_unselected()
+    
+    def handle_select_event(self):
+        if self._cursor == 6: 
+            return (BattleStates.CHOOSING_FIGHT_OR_RUN, 0)
+        
     
     def update(self, ticks):
         for item in self._selectable_items:
