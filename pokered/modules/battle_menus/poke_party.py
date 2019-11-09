@@ -20,7 +20,8 @@ class PokeParty(Drawable):
         self._text_bar = PartyTextBar()
         self._text_bar.blit_string("Choose a POKeMON.")
         self._cursor = 0
-        self._selected_pokemon = False
+        self._selected_pokemon = None
+        self._pokemon_selected_menu = None
     
     def _blit_active_pokemon(self):
         self._active_pokemon = ActivePokemon(self._player.get_active_pokemon(), selected=True)
@@ -38,29 +39,34 @@ class PokeParty(Drawable):
         self._text_bar.draw(draw_surface)
         for item in self._selectable_items:
             item.draw(draw_surface)
+        if self._pokemon_selected_menu != None:
+            self._pokemon_selected_menu.draw(draw_surface)
     
     def change_cursor_pos(self, action):
-        old_pos = self._cursor
-        if action.key == BattleActions.UP.value:
-            if self._cursor > 0:
-                SoundManager.getInstance().playSound("firered_0005.wav")
-                self._cursor -= 1
+        if self._selected_pokemon == None:
+            old_pos = self._cursor
+            if action.key == BattleActions.UP.value:
+                if self._cursor > 0:
+                    SoundManager.getInstance().playSound("firered_0005.wav")
+                    self._cursor -= 1
 
-        elif action.key == BattleActions.DOWN.value:
-            if self._cursor <= 5:
-                SoundManager.getInstance().playSound("firered_0005.wav")
-                self._cursor += 1
-        
-        elif action.key == BattleActions.LEFT.value:
-            if self._cursor == 1:
-                SoundManager.getInstance().playSound("firered_0005.wav")
-                self._cursor = 0
-        
-        elif action.key == BattleActions.RIGHT.value:
-            if self._cursor == 0:
-                SoundManager.getInstance().playSound("firered_0005.wav")
-                self._cursor = 1
-        if old_pos != self._cursor: self._update_selected_pos(old_pos)
+            elif action.key == BattleActions.DOWN.value:
+                if self._cursor <= 5:
+                    SoundManager.getInstance().playSound("firered_0005.wav")
+                    self._cursor += 1
+            
+            elif action.key == BattleActions.LEFT.value:
+                if self._cursor == 1:
+                    SoundManager.getInstance().playSound("firered_0005.wav")
+                    self._cursor = 0
+            
+            elif action.key == BattleActions.RIGHT.value:
+                if self._cursor == 0:
+                    SoundManager.getInstance().playSound("firered_0005.wav")
+                    self._cursor = 1
+            if old_pos != self._cursor: self._update_selected_pos(old_pos)
+        else:
+            self._pokemon_selected_menu.handle_event(action)
 
     def _update_selected_pos(self, old_pos):
         if self._cursor == 6:
@@ -71,22 +77,92 @@ class PokeParty(Drawable):
         if old_pos == 6: self._cancel_button.set_unselected()
         else: self._selectable_items[old_pos].set_unselected()
     
-    def handle_select_event(self):
+    def handle_select_event(self, action):
         if self._cursor == 6: 
             return (BattleStates.CHOOSING_FIGHT_OR_RUN, 0)
         else:
             if not self._selected_pokemon:
+                pokemon = self._player.get_pokemon_by_index(self._cursor)
                 self._selected_pokemon = True
-                
-
-
-            
-        
+                self._pokemon_selected_menu = PokemonSelectedMenu(pokemon, battle=True)
+                self._text_bar.blit_string("Do what with this PKMN?")
+            else:
+                response = self._pokemon_selected_menu.handle_event(action)
+                if response == "cancel":
+                    self._selected_pokemon = None
+                    self._pokemon_selected_menu = None
     
     def update(self, ticks):
         for item in self._selectable_items:
             item.update(ticks)
         
+class PokemonSelectedMenu(Drawable):
+    def __init__(self, pokemon, battle=False):
+        self._pokemon = pokemon
+        self._battle = battle
+        self._cursor = 0
+        super().__init__("menu.png", (177, 113))
+        self.blit_text()
+        self.blit_arrow()
+    
+    def handle_event(self, action):
+        if action.key == BattleActions.UP.value:
+            if self._cursor > 0:
+                SoundManager.getInstance().playSound("firered_0005.wav")
+                self._cursor -= 1
+                self.blit_arrow()
+
+        elif action.key == BattleActions.DOWN.value:
+            if self._cursor < self._num_lines - 1:
+                SoundManager.getInstance().playSound("firered_0005.wav")
+                self._cursor += 1
+                self.blit_arrow()
+        
+        elif action.key == BattleActions.SELECT.value:
+            if self._cursor == 2:
+                return "cancel" # cancel
+            elif self._cursor == 1:
+                pass # summary
+            else:
+                pass # shift
+
+        
+    def blit_arrow(self):
+        y_pos = self._cursor * 12
+        position = (5, y_pos + 5)
+
+        self._arrow = pygame.Surface((20,60))
+        self._arrow.fill((255,255,255))
+        self._arrow.set_colorkey((255,255,255))
+        arrow_frame = FRAMES.getFrame(join("battle", "cursor.png"))
+        self._arrow.blit(arrow_frame, position)
+
+    def blit_text(self):
+        if self._battle:
+            lines = ["SHIFT", "SUMMARY", "CANCEL"]
+            self._txt = pygame.Surface((160, 50))
+            self._txt.fill((255,255,255))
+            self._txt.set_colorkey((255,255,255))
+            current_pos = Vector2(15, 7)
+            for line in lines:
+                for char in line:
+                    font_index = int(ord(char)) - 65
+                    font_char = FRAMES.getFrame("party_txt_font.png", offset=(font_index, 0))
+                    font_char.set_colorkey((255,255,255))
+                    self._txt.blit(font_char, (current_pos.x, current_pos.y))
+                    if char != "I": current_pos.x += 5
+                    else: current_pos.x += 4
+                current_pos.y += 12
+                current_pos.x = 15
+            self._num_lines = len(lines)
+            
+        else: #TODO: Will be implemented later
+            pass
+    
+    def draw(self, draw_surface):
+        super().draw(draw_surface)
+        draw_surface.blit(self._txt, self._position)
+        draw_surface.blit(self._arrow, self._position)
 
 class ActivePokemon(Drawable):
     def __init__(self, pokemon, selected=False):
@@ -284,26 +360,31 @@ class PartyTextBar(Drawable):
         draw_surface.blit(self._txt, self._position)
 
     def blit_string(self, string):
-        self._txt = pygame.Surface((100, 22))
+        self._txt = pygame.Surface((160, 22))
         self._txt.fill((255,255,255))
         self._txt.set_colorkey((255,255,255))
         current_pos = Vector2(4, 4)
         for char in string:
             if char.islower(): 
                 font_index = int(ord(char)) - 97
-                print(font_index)
                 font_char = FRAMES.getFrame("party_txt_font.png", offset=(font_index, 1))
                 font_char.set_colorkey((255,255,255))
                 self._txt.blit(font_char, (current_pos.x, current_pos.y))
             elif char == " ": pass
             else:
+                off = 0
                 font_index = int(ord(char)) - 65
-                print(char, font_index)
                 if char in [".", ","]: font_index = [",", "."].index(char) + 25
-                font_char = FRAMES.getFrame("party_txt_font.png", offset=(font_index, 0))
+                elif char in ["!", "?"]: 
+                    font_index = ["!", "?"].index(char)
+                    off = 3
+                font_char = FRAMES.getFrame("party_txt_font.png", offset=(font_index, off))
                 font_char.set_colorkey((255,255,255))
                 self._txt.blit(font_char, (current_pos.x, current_pos.y))
-            current_pos.x += 5
+            if char != "i":
+                current_pos.x += 5
+            else:
+                current_pos.x += 3
     
 
     

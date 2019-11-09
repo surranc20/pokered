@@ -64,7 +64,6 @@ class BattleFSM:
         return update_list
 
     def update(self, ticks):
-        print(self._draw_list)
         if self._opponent.get_active_pokemon() == None and self._state != BattleStates.OPPONENT_TOSSING_POKEMON:
             self._state = BattleStates.OPPONENTS_CHOOSING_POKEMON
 
@@ -145,7 +144,9 @@ class BattleFSM:
         if action.type == pygame.KEYDOWN:
             if action.key == BattleActions.SELECT.value:
                 if self._state == BattleStates.CHOOSING_POKEMON:
-                    self._handle_state_change(self._poke_party.handle_select_event()[0])
+                    response = self._poke_party.handle_select_event(action)
+                    if response != None:
+                        self._handle_state_change(response[0])
                 else:
                     self._handle_state_change(self.TRANSITIONS[(self._state), self._cursor.get_value()])
                     SoundManager.getInstance().playSound("firered_0005.wav")
