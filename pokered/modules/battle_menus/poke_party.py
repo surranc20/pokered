@@ -20,7 +20,7 @@ class PokeParty(Drawable):
         self._text_bar = PartyTextBar()
         self._text_bar.blit_string("Choose a POKeMON.")
         self._cursor = 0
-        self._selected_pokemon = None
+        self._selected_pokemon = False
         self._pokemon_selected_menu = None
     
     def _blit_active_pokemon(self):
@@ -43,7 +43,7 @@ class PokeParty(Drawable):
             self._pokemon_selected_menu.draw(draw_surface)
     
     def change_cursor_pos(self, action):
-        if self._selected_pokemon == None:
+        if self._selected_pokemon == False:
             old_pos = self._cursor
             if action.key == BattleActions.UP.value:
                 if self._cursor > 0:
@@ -82,24 +82,29 @@ class PokeParty(Drawable):
             return (BattleStates.CHOOSING_FIGHT_OR_RUN, 0)
         else:
             if not self._selected_pokemon:
-                pokemon = self._player.get_pokemon_by_index(self._cursor)
                 self._selected_pokemon = True
-                self._pokemon_selected_menu = PokemonSelectedMenu(pokemon, battle=True)
+                self._pokemon_selected_menu = PokemonSelectedMenu(self._player, self._cursor, battle=True)
                 self._text_bar.blit_string("Do what with this PKMN?")
             else:
                 response = self._pokemon_selected_menu.handle_event(action)
                 if response == "cancel":
-                    self._selected_pokemon = None
+                    self._selected_pokemon = False
                     self._pokemon_selected_menu = None
+                    self._text_bar.blit_string("Choose a POKeMON.")
+                elif response == BattleStates.DISPLAY_PLAYER_TOSS_TEXT:
+                    return (response, 0)
+                elif response == "PKMN is already in battle!":
+                    self._text_bar.blit_string(response)
     
     def update(self, ticks):
         for item in self._selectable_items:
             item.update(ticks)
         
 class PokemonSelectedMenu(Drawable):
-    def __init__(self, pokemon, battle=False):
-        self._pokemon = pokemon
+    def __init__(self, player, selected_pos, battle=False):
+        self._player = player
         self._battle = battle
+        self._selected_pos = selected_pos
         self._cursor = 0
         super().__init__("menu.png", (177, 113))
         self.blit_text()
@@ -119,12 +124,20 @@ class PokemonSelectedMenu(Drawable):
                 self.blit_arrow()
         
         elif action.key == BattleActions.SELECT.value:
+            SoundManager.getInstance().playSound("firered_0005.wav")
             if self._cursor == 2:
                 return "cancel" # cancel
             elif self._cursor == 1:
                 pass # summary
-            else:
-                pass # shift
+            elif self._cursor == 0:
+                if self._selected_pos != 0:
+                    self._player._pokemon_team[0], self._player._pokemon_team[self._selected_pos] = \
+                        self._player._pokemon_team[self._selected_pos], self._player._pokemon_team[0]
+                    self._player.set_active_pokemon(0)
+                    print(self._player._pokemon_team)
+                    return BattleStates.DISPLAY_PLAYER_TOSS_TEXT
+                else:
+                    return "PKMN is already in battle!"
 
         
     def blit_arrow(self):

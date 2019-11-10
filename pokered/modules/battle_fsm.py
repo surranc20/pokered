@@ -33,13 +33,17 @@ class BattleFSM:
         self._active_string = None
         self._opponent = opponent
         self._player = player
+        self._active_player_pokemon = None
+        self._active_opponent_pokemon = None
+        self._player_poke_info = None
+        self._opponent_poke_info = None
         self._background = Drawable(join("battle", "battle_background.png"), Vector2(0,0), offset= (0,0))
         self._battle_text_background = Drawable(join("battle", "battle_menus.png"), Vector2(0,112), offset=(0, 1))
         self._move_select = Drawable(join("battle", "battle_menus.png"), Vector2(0, 113), offset=(0, 0))
         self._fight_run = Drawable(join("battle", "battle_menus.png"), Vector2(120, 113), offset=(0, 2))
 
 
-        self._draw_list = [self._background, self._battle_text_background]
+        self._draw_list = [self._background, self._battle_text_background, self._active_player_pokemon, self._active_opponent_pokemon, self._player_poke_info, self._opponent_poke_info]
         self._update_list = []
     
     def manage_action(self, action):
@@ -50,9 +54,12 @@ class BattleFSM:
         return self._state
 
     def get_draw_list(self):
-        draw_list = [item for item in self._draw_list if not item.is_dead()]
+
+        draw_list = [item for item in self._draw_list if item != None and not item.is_dead()]
         if self._active_animation != None:
             draw_list.append(self._active_animation)
+        print()
+        print(self._draw_list)
         return draw_list
     
     def get_update_list(self):
@@ -120,8 +127,9 @@ class BattleFSM:
     
     def handle_nebulous_transition(self):
         if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
-            self._draw_list.append(self._opponent.get_active_pokemon())
-            self._draw_list.append(PokeInfo(self._opponent.get_active_pokemon(), enemy=True))
+            self._draw_list[3] = self._opponent.get_active_pokemon()
+            self._draw_list[5] = PokeInfo(self._opponent.get_active_pokemon(), enemy=True)
+            
             if self._player.get_active_pokemon() != None:
                 self._handle_state_change(BattleStates.CHOOSING_FIGHT_OR_RUN)
 
@@ -130,9 +138,9 @@ class BattleFSM:
                 self._handle_state_change(BattleStates.DISPLAY_PLAYER_TOSS_TEXT)
         
         elif self._state == BattleStates.PLAYER_TOSSING_POKEMON:
-            self._draw_list.append(self._player.get_active_pokemon())
+            self._draw_list[2] = self._player.get_active_pokemon()
             self._player_poke_info = PokeInfo(self._player.get_active_pokemon())
-            self._draw_list.append(self._player_poke_info)
+            self._draw_list[4] = self._player_poke_info
             self._handle_state_change(BattleStates.CHOOSING_FIGHT_OR_RUN)
         
         elif self._state == BattleStates.TEST:
@@ -214,13 +222,16 @@ class BattleFSM:
             self._draw_list.append(self._pp_surface)
             self._draw_list.append(self._cursor)
         
+        
         elif new_state == BattleStates.DISPLAY_OPPONENT_TOSS_TEXT:
             self._active_string = str(self._opponent.get_name() + " sent out " + self._opponent.get_active_pokemon().get_name().upper() + "!")
         
         elif new_state == BattleStates.DISPLAY_PLAYER_TOSS_TEXT:
             self._active_string = str("Go! " + self._player.get_active_pokemon().get_name().upper() +"!")
-        
-        print("new state: ", new_state)
+            self._draw_list[2] = None
+            self._draw_list[4] = None
+            self._cursor.deactivate()
+
         self._state = new_state
     
     def _wrap_text(self, width):
