@@ -41,6 +41,11 @@ def main():
     poke.add_move("Thunder", 6, "Electric")
     poke.add_move("Thunder", 7, "Electric")
     poke.add_move("Thunder", 8, "Electric")
+
+    poke2.add_move("Thunder", 5, "Electric")
+    poke2.add_move("Thunder", 6, "Electric")
+    poke2.add_move("Thunder", 7, "Electric")
+    poke2.add_move("Thunder", 8, "Electric")
     player._pokemon_team.append(poke)
     player._pokemon_team.append(poke2)
     player._pokemon_team.append(poke3)

@@ -48,7 +48,8 @@ class Battle:
     
     def draw(self):
         for obj in self._battle_fsm.get_draw_list():
-            obj.draw(self._draw_surface)
+            if obj != None:
+                obj.draw(self._draw_surface)
 
     def update(self, ticks):
         self._battle_fsm.update(ticks)
