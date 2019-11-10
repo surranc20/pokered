@@ -1,43 +1,46 @@
-[
-    {
-        "name": "Absorb",
+{
+    "Absorb" : {
         "Move type":  "Grass",
+        "Category":   "Special",
         "Accuracy":   100,
         "Move power": 20,
         "PP":         20,
+        "Crit":       0.0625,
         "Effects":    "Pokemon heals half the dealt damage"
     },
-    {
-        "name": "Thunderbolt",
+    "Thunderbolt" : {
         "Move type": "Electric",
+        "Category":   "Special",
         "Move power": 95,
         "Accuracy": 100,
         "PP": 15,
         "Effects": "10% chance to paralyze the target."
     },
-    {
-        "name": "Thunder Wave",
+    "Thunder Wave" : {
         "Move type": "Electric",
+        "Category":   "Status",
         "Move power": "N/A",
         "Accuracy": 100,
         "PP": 20,
+        "Crit":       0.0625,
         "Effects": "The target is paralyzed."
     },
-    {
-        "name": "Thunder",
+    "Thunder" : {
         "Move type": "Electric",
+        "Category":   "Special",
         "Move power": 120,
         "Accuracy": 70,
         "PP": 10,
-        "Effects": "30% chance to paralyze target. Move has 100% accuracy when rain sance is in effect. Move has 40% accuracy when sunny day is in effect. Move does double damage to pokemon using fly."
+        "Crit":       0.0625,
+        "Effects": "30% chance to paralyze target. Move has 100% accuracy when rain dance is in effect. Move has 40% accuracy when sunny day is in effect. Move does double damage to pokemon using fly."
     },
-    {
-        "name": "Thundershock",
+    "Thundershock" : {
         "Move type": "Electric",
+        "Category":   "Special",
         "Move power": 40,
         "Accuracy": 100,
         "PP": 30,
+        "Crit":       0.0625,
         "Effects": "10% chance to paralyze the target."
     }
-
-]
+}

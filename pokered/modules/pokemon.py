@@ -9,7 +9,7 @@ class Pokemon(Drawable):
     ENEMY_POKE_POS = Vector2(148, 6)
     POKEMON_LOOKUP = {"bulbasaur":(0,0), "charmander":(2,0), "squirtle":(4,0), "caterpie":(6,0), "weedle":(8,0), "golem":(10,0), "slowpoke":(12,0), "magneton":(14,0), "dodrio":(16,0), "grimer":(18,0),
     "ivysaur":(0,1), "charmeleon":(2,1), "wartortle":(4,1), "metapod":(6,1), "kakuna":(8,1), "ponyta":(10,1), "slowbro":(12,1), "farfetch'd":(14,1), "seel":(16,1), "muk":(18,1),
-    "venusaur":(0,2), "charazard":(2,2), "blastoise":(4,2), "butterfree":(6,2), "beedrill":(8,2), "rapidash":(10,2), "magnemite":(12,2), "doduo": (14,2), "dewgong":(16,2), "shellder":(18,2),
+    "venusaur":(0,2), "charizard":(2,2), "blastoise":(4,2), "butterfree":(6,2), "beedrill":(8,2), "rapidash":(10,2), "magnemite":(12,2), "doduo": (14,2), "dewgong":(16,2), "shellder":(18,2),
     "pidgy":(0,3), "rattata":(2,3), "fearow":(4,3), "pikachu":(6,3), "sandslash":(8,3), "cloyster":(10,3), "gengar":(12,3), "hypno":(14,3), "voltorb":(16,3), "exeggutor":(18,3),
     "pidgeotto":(0,4), "raticate":(2,4), "ekans":(4,4), "raichu":(6,4), "nidoran_g":(8,4), "gastly":(10,4), "onyx":(12,4), "krabby":(14,4), "electrode":(16,4), "cubone":(18,4),
     "pidgeot":(0,5), "spearow":(2,5), "arbok":(4,5), "sandshrew":(6,5), "nidorina":(8,5), "haunter":(10,5), "drowsee":(12,5), "kingler":(14,5), "exeggcute":(16,5), "marowak":(18,5),
@@ -32,6 +32,9 @@ class Pokemon(Drawable):
         self._nick_name = self._name
         self._gender = gender
         self._moves = []
+        self._held_item = None
+        self._ability = None
+        self._status = []
         self._stats = {
             "LVL" : 99,
             "HP": 45,
@@ -42,6 +45,13 @@ class Pokemon(Drawable):
             "Sp. Defense": 65,
             "Speed": 45
         }
+
+        with open("pokemon.json", "r") as pokemon_json:
+            pokemon = json.load(pokemon_json)
+            pokemon_data = pokemon[pokemon_name.capitalize()]
+
+        self._type = pokemon_data["type"]
+
         super().__init__(join("pokemon", "pokemon_big.png"), _pos, offset= _offset)
     
     def get_nick_name(self):
@@ -49,6 +59,12 @@ class Pokemon(Drawable):
     
     def get_name(self):
         return self._name
+    
+    def get_ability(self):
+        return self._ability
+    
+    def get_status(self):
+        return self._status
     
     def get_gender(self):
         return self._gender
@@ -59,15 +75,18 @@ class Pokemon(Drawable):
     def is_alive(self):
         return True
     
-    def add_move(self, move, pp, move_type):
+    def add_move(self, move):
         if len(self._moves) < 4:
-            self._moves.append((move, pp, pp, move_type))
+            self._moves.append(move)
     
     def get_lvl(self):
         return self._stats["LVL"]
     
-    def get_type(self, poke_type):
-        return poke_type
+    def get_type(self):
+        return self._type
+    
+    def get_held_item(self):
+        return self._held_item
 
     def __str__(self):
         return self._name

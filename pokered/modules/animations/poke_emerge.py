@@ -20,7 +20,7 @@ class PokeEmerge(AnimatedGroupPart):
     # TODO: Should extract this out to own file since it is used in more than one place
     POKEMON_LOOKUP = {"bulbasaur":(0,0), "charmander":(2,0), "squirtle":(4,0), "caterpie":(6,0), "weedle":(8,0), "golem":(10,0), "slowpoke":(12,0), "magneton":(14,0), "dodrio":(16,0), "grimer":(18,0),
     "ivysaur":(0,1), "charmeleon":(2,1), "wartortle":(4,1), "metapod":(6,1), "kakuna":(8,1), "ponyta":(10,1), "slowbro":(12,1), "farfetch'd":(14,1), "seel":(16,1), "muk":(18,1),
-    "venusaur":(0,2), "charazard":(2,2), "blastoise":(4,2), "butterfree":(6,2), "beedrill":(8,2), "rapidash":(10,2), "magnemite":(12,2), "doduo": (14,2), "dewgong":(16,2), "shellder":(18,2),
+    "venusaur":(0,2), "charizard":(2,2), "blastoise":(4,2), "butterfree":(6,2), "beedrill":(8,2), "rapidash":(10,2), "magnemite":(12,2), "doduo": (14,2), "dewgong":(16,2), "shellder":(18,2),
     "pidgy":(0,3), "rattata":(2,3), "fearow":(4,3), "pikachu":(6,3), "sandslash":(8,3), "cloyster":(10,3), "gengar":(12,3), "hypno":(14,3), "voltorb":(16,3), "exeggutor":(18,3),
     "pidgeotto":(0,4), "raticate":(2,4), "ekans":(4,4), "raichu":(6,4), "nidoran_g":(8,4), "gastly":(10,4), "onyx":(12,4), "krabby":(14,4), "electrode":(16,4), "cubone":(18,4),
     "pidgeot":(0,5), "spearow":(2,5), "arbok":(4,5), "sandshrew":(6,5), "nidorina":(8,5), "haunter":(10,5), "drowsee":(12,5), "kingler":(14,5), "exeggcute":(16,5), "marowak":(18,5),

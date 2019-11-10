@@ -326,7 +326,7 @@ class SecondaryPokemon(Drawable):
 class BouncingPokemon(Animated):
     POKEMON_LOOKUP = {"bulbasaur": 0, "charmander":1, "squirtle":2, "caterpie":3, "weedle":4, "golem":5, "slowpoke":6, "magneton":7, "dodrio":8, "grimer":9,
     "ivysaur":10, "charmeleon":11, "wartortle":12, "metapod":13, "kakuna":14, "ponyta":15, "slowbro":16, "farfetch'd":17, "seel":18, "muk":19,
-    "venusaur":20, "charazard":21, "blastoise":22, "butterfree":23, "beedrill":24, "rapidash":25, "magnemite":26, "doduo":27, "dewgong":28, "shellder":29,
+    "venusaur":20, "charizard":21, "blastoise":22, "butterfree":23, "beedrill":24, "rapidash":25, "magnemite":26, "doduo":27, "dewgong":28, "shellder":29,
     "pidgy":30, "rattata":31, "fearow":32, "pikachu":33, "sandslash":34, "cloyster":35, "gengar":36, "hypno":37, "voltorb":38, "exeggutor":39,
     "pidgeotto":40, "raticate":41, "ekans":42, "raichu":43, "nidoran_g":44, "gastly":45, "onyx":46, "krabby":47, "electrode":48, "cubone":49,
     "pidgeot":50, "spearow":51, "arbok":52, "sandshrew":53, "nidorina":54, "haunter":55, "drowsee":56, "kingler":57, "exeggcute":58, "marowak":59,
