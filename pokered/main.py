@@ -5,6 +5,7 @@ from modules.drawable import Drawable
 from modules.player import Player
 from modules.battle import Battle
 from modules.pokemon import Pokemon
+from modules.damage_calculator import DamageCalculator
 
 # Two different sizes now! Screen size is the amount we show the player,
 #  and world size is the size of the interactable world.
@@ -52,7 +53,11 @@ def main():
     player._pokemon_team.append(poke4)
     player._pokemon_team.append(poke5)
     player._pokemon_team.append(poke6)
-    
+
+
+    calc = DamageCalculator(poke, poke2)
+    calc.get_type_modifier()
+      
     
    
     # Define a variable to control the main loop

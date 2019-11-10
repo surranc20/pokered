@@ -58,8 +58,7 @@ class BattleFSM:
         draw_list = [item for item in self._draw_list if item != None and not item.is_dead()]
         if self._active_animation != None:
             draw_list.append(self._active_animation)
-        print()
-        print(self._draw_list)
+
         return draw_list
     
     def get_update_list(self):
@@ -342,3 +341,6 @@ class PPSurface(Drawable):
         self._image.fill((255,255,255,0))
         self._image.set_colorkey((255, 255, 255))
         self._add_pp()
+
+
+    

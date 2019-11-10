@@ -65,6 +65,9 @@ class Pokemon(Drawable):
     
     def get_lvl(self):
         return self._stats["LVL"]
+    
+    def get_type(self, poke_type):
+        return poke_type
 
     def __str__(self):
         return self._name
