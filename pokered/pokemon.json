@@ -1,4 +1,4 @@
-[{
+{   "Bulbasaur" :{
     "id": 1,
     "name": {
       "english": "Bulbasaur",
@@ -19,7 +19,7 @@
       "Speed": 45
     }
   },
-  {
+  "Ivysaur" :{
     "id": 2,
     "name": {
       "english": "Ivysaur",
@@ -40,7 +40,7 @@
       "Speed": 60
     }
   },
-  {
+  "Venusaur" :{
     "id": 3,
     "name": {
       "english": "Venusaur",
@@ -61,7 +61,7 @@
       "Speed": 80
     }
   },
-  {
+  "Charmander" :{
     "id": 4,
     "name": {
       "english": "Charmander",
@@ -81,7 +81,7 @@
       "Speed": 65
     }
   },
-  {
+  "Charmeleon" :{
     "id": 5,
     "name": {
       "english": "Charmeleon",
@@ -101,7 +101,7 @@
       "Speed": 80
     }
   },
-  {
+  "Charizard" :{
     "id": 6,
     "name": {
       "english": "Charizard",
@@ -122,7 +122,7 @@
       "Speed": 100
     }
   },
-  {
+  "Squirtle" :{
     "id": 7,
     "name": {
       "english": "Squirtle",
@@ -142,7 +142,7 @@
       "Speed": 43
     }
   },
-  {
+  "Wartortle" :{
     "id": 8,
     "name": {
       "english": "Wartortle",
@@ -162,7 +162,7 @@
       "Speed": 58
     }
   },
-  {
+  "Blastoise" :{
     "id": 9,
     "name": {
       "english": "Blastoise",
@@ -182,7 +182,7 @@
       "Speed": 78
     }
   },
-  {
+  "Caterpie" :{
     "id": 10,
     "name": {
       "english": "Caterpie",
@@ -202,7 +202,7 @@
       "Speed": 45
     }
   },
-  {
+  "Metapod" :{
     "id": 11,
     "name": {
       "english": "Metapod",
@@ -222,7 +222,7 @@
       "Speed": 30
     }
   },
-  {
+  "Butterfree" :{
     "id": 12,
     "name": {
       "english": "Butterfree",
@@ -243,7 +243,7 @@
       "Speed": 70
     }
   },
-  {
+  "Weedle" :{
     "id": 13,
     "name": {
       "english": "Weedle",
@@ -264,7 +264,7 @@
       "Speed": 50
     }
   },
-  {
+  "Kakuna" :{
     "id": 14,
     "name": {
       "english": "Kakuna",
@@ -285,7 +285,7 @@
       "Speed": 35
     }
   },
-  {
+  "Beedrill" :{
     "id": 15,
     "name": {
       "english": "Beedrill",
@@ -306,7 +306,7 @@
       "Speed": 75
     }
   },
-  {
+  "Pidgey" :{
     "id": 16,
     "name": {
       "english": "Pidgey",
@@ -327,7 +327,7 @@
       "Speed": 56
     }
   },
-  {
+  "Pidgeotto" :{
     "id": 17,
     "name": {
       "english": "Pidgeotto",
@@ -348,7 +348,7 @@
       "Speed": 71
     }
   },
-  {
+  "Pidgeot" :{
     "id": 18,
     "name": {
       "english": "Pidgeot",
@@ -369,7 +369,7 @@
       "Speed": 101
     }
   },
-  {
+  "Rattata" :{
     "id": 19,
     "name": {
       "english": "Rattata",
@@ -389,7 +389,7 @@
       "Speed": 72
     }
   },
-  {
+  "Raticate" :{
     "id": 20,
     "name": {
       "english": "Raticate",
@@ -409,7 +409,7 @@
       "Speed": 97
     }
   },
-  {
+  "Spearow" :{
     "id": 21,
     "name": {
       "english": "Spearow",
@@ -430,7 +430,7 @@
       "Speed": 70
     }
   },
-  {
+  "Fearow" :{
     "id": 22,
     "name": {
       "english": "Fearow",
@@ -451,7 +451,7 @@
       "Speed": 100
     }
   },
-  {
+  "Ekans" :{
     "id": 23,
     "name": {
       "english": "Ekans",
@@ -471,7 +471,7 @@
       "Speed": 55
     }
   },
-  {
+  "Arbok" :{
     "id": 24,
     "name": {
       "english": "Arbok",
@@ -491,7 +491,7 @@
       "Speed": 80
     }
   },
-  {
+  "Pikachu" :{
     "id": 25,
     "name": {
       "english": "Pikachu",
@@ -511,7 +511,7 @@
       "Speed": 90
     }
   },
-  {
+  "Raichu" :{
     "id": 26,
     "name": {
       "english": "Raichu",
@@ -531,7 +531,7 @@
       "Speed": 110
     }
   },
-  {
+  "Sandshrew" :{
     "id": 27,
     "name": {
       "english": "Sandshrew",
@@ -551,7 +551,7 @@
       "Speed": 40
     }
   },
-  {
+  "Sandslash" :{
     "id": 28,
     "name": {
       "english": "Sandslash",
@@ -571,7 +571,7 @@
       "Speed": 65
     }
   },
-  {
+  "Nidoran_g" :{
     "id": 29,
     "name": {
       "english": "Nidoran♀",
@@ -591,7 +591,7 @@
       "Speed": 41
     }
   },
-  {
+  "Nidorina" :{
     "id": 30,
     "name": {
       "english": "Nidorina",
@@ -611,7 +611,7 @@
       "Speed": 56
     }
   },
-  {
+  "Nidoqueen" :{
     "id": 31,
     "name": {
       "english": "Nidoqueen",
@@ -632,7 +632,7 @@
       "Speed": 76
     }
   },
-  {
+  "Nidoran_b" :{
     "id": 32,
     "name": {
       "english": "Nidoran♂",
@@ -652,7 +652,7 @@
       "Speed": 50
     }
   },
-  {
+  "Nidorino" :{
     "id": 33,
     "name": {
       "english": "Nidorino",
@@ -672,7 +672,7 @@
       "Speed": 65
     }
   },
-  {
+  "Nidoking" :{
     "id": 34,
     "name": {
       "english": "Nidoking",
@@ -693,7 +693,7 @@
       "Speed": 85
     }
   },
-  {
+  "Clefairy" :{
     "id": 35,
     "name": {
       "english": "Clefairy",
@@ -713,7 +713,7 @@
       "Speed": 35
     }
   },
-  {
+  "Clefable" :{
     "id": 36,
     "name": {
       "english": "Clefable",
@@ -733,7 +733,7 @@
       "Speed": 60
     }
   },
-  {
+  "Vulpix" :{
     "id": 37,
     "name": {
       "english": "Vulpix",
@@ -753,7 +753,7 @@
       "Speed": 65
     }
   },
-  {
+  "Ninetales" :{
     "id": 38,
     "name": {
       "english": "Ninetales",
@@ -773,7 +773,7 @@
       "Speed": 100
     }
   },
-  {
+  "Jigglypuff" :{
     "id": 39,
     "name": {
       "english": "Jigglypuff",
@@ -794,7 +794,7 @@
       "Speed": 20
     }
   },
-  {
+  "Wigglytuff" :{
     "id": 40,
     "name": {
       "english": "Wigglytuff",
@@ -815,7 +815,7 @@
       "Speed": 45
     }
   },
-  {
+  "Zubat" :{
     "id": 41,
     "name": {
       "english": "Zubat",
@@ -836,7 +836,7 @@
       "Speed": 55
     }
   },
-  {
+  "Golbat" :{
     "id": 42,
     "name": {
       "english": "Golbat",
@@ -857,7 +857,7 @@
       "Speed": 90
     }
   },
-  {
+  "Oddish" :{
     "id": 43,
     "name": {
       "english": "Oddish",
@@ -878,7 +878,7 @@
       "Speed": 30
     }
   },
-  {
+  "Gloom" :{
     "id": 44,
     "name": {
       "english": "Gloom",
@@ -899,7 +899,7 @@
       "Speed": 40
     }
   },
-  {
+  "Vileplume" :{
     "id": 45,
     "name": {
       "english": "Vileplume",
@@ -920,7 +920,7 @@
       "Speed": 50
     }
   },
-  {
+  "Paras" :{
     "id": 46,
     "name": {
       "english": "Paras",
@@ -941,7 +941,7 @@
       "Speed": 25
     }
   },
-  {
+  "Parasect" :{
     "id": 47,
     "name": {
       "english": "Parasect",
@@ -962,7 +962,7 @@
       "Speed": 30
     }
   },
-  {
+  "Venonat" :{
     "id": 48,
     "name": {
       "english": "Venonat",
@@ -983,7 +983,7 @@
       "Speed": 45
     }
   },
-  {
+  "Venomoth" :{
     "id": 49,
     "name": {
       "english": "Venomoth",
@@ -1004,7 +1004,7 @@
       "Speed": 90
     }
   },
-  {
+  "Diglett" :{
     "id": 50,
     "name": {
       "english": "Diglett",
@@ -1024,7 +1024,7 @@
       "Speed": 95
     }
   },
-  {
+  "Dugtrio" :{
     "id": 51,
     "name": {
       "english": "Dugtrio",
@@ -1044,7 +1044,7 @@
       "Speed": 120
     }
   },
-  {
+  "Meowth" :{
     "id": 52,
     "name": {
       "english": "Meowth",
@@ -1064,7 +1064,7 @@
       "Speed": 90
     }
   },
-  {
+  "Persian" :{
     "id": 53,
     "name": {
       "english": "Persian",
@@ -1084,7 +1084,7 @@
       "Speed": 115
     }
   },
-  {
+  "Psyduck" :{
     "id": 54,
     "name": {
       "english": "Psyduck",
@@ -1104,7 +1104,7 @@
       "Speed": 55
     }
   },
-  {
+  "Golduck" :{
     "id": 55,
     "name": {
       "english": "Golduck",
@@ -1124,7 +1124,7 @@
       "Speed": 85
     }
   },
-  {
+  "Mankey" :{
     "id": 56,
     "name": {
       "english": "Mankey",
@@ -1144,7 +1144,7 @@
       "Speed": 70
     }
   },
-  {
+  "Primeape" :{
     "id": 57,
     "name": {
       "english": "Primeape",
@@ -1164,7 +1164,7 @@
       "Speed": 95
     }
   },
-  {
+  "Growlithe" :{
     "id": 58,
     "name": {
       "english": "Growlithe",
@@ -1184,7 +1184,7 @@
       "Speed": 60
     }
   },
-  {
+  "Arcanine" :{
     "id": 59,
     "name": {
       "english": "Arcanine",
@@ -1204,7 +1204,7 @@
       "Speed": 95
     }
   },
-  {
+  "Poliwag" :{
     "id": 60,
     "name": {
       "english": "Poliwag",
@@ -1224,7 +1224,7 @@
       "Speed": 90
     }
   },
-  {
+  "Poliwhirl" :{
     "id": 61,
     "name": {
       "english": "Poliwhirl",
@@ -1244,7 +1244,7 @@
       "Speed": 90
     }
   },
-  {
+  "Poliwrath" :{
     "id": 62,
     "name": {
       "english": "Poliwrath",
@@ -1265,7 +1265,7 @@
       "Speed": 70
     }
   },
-  {
+  "Abra": {
     "id": 63,
     "name": {
       "english": "Abra",
@@ -1285,7 +1285,7 @@
       "Speed": 90
     }
   },
-  {
+  "Kadabra" :{
     "id": 64,
     "name": {
       "english": "Kadabra",
@@ -1305,7 +1305,7 @@
       "Speed": 105
     }
   },
-  {
+  "Alakazam" :{
     "id": 65,
     "name": {
       "english": "Alakazam",
@@ -1325,7 +1325,7 @@
       "Speed": 120
     }
   },
-  {
+  "Machop" :{
     "id": 66,
     "name": {
       "english": "Machop",
@@ -1345,7 +1345,7 @@
       "Speed": 35
     }
   },
-  {
+  "Machoke" :{
     "id": 67,
     "name": {
       "english": "Machoke",
@@ -1365,7 +1365,7 @@
       "Speed": 45
     }
   },
-  {
+  "Machamp" :{
     "id": 68,
     "name": {
       "english": "Machamp",
@@ -1385,7 +1385,7 @@
       "Speed": 55
     }
   },
-  {
+  "Bellsprout" :{
     "id": 69,
     "name": {
       "english": "Bellsprout",
@@ -1406,7 +1406,7 @@
       "Speed": 40
     }
   },
-  {
+  "Weepinbell" :{
     "id": 70,
     "name": {
       "english": "Weepinbell",
@@ -1427,7 +1427,7 @@
       "Speed": 55
     }
   },
-  {
+  "Victreebel" :{
     "id": 71,
     "name": {
       "english": "Victreebel",
@@ -1448,7 +1448,7 @@
       "Speed": 70
     }
   },
-  {
+  "Tentacool" :{
     "id": 72,
     "name": {
       "english": "Tentacool",
@@ -1469,7 +1469,7 @@
       "Speed": 70
     }
   },
-  {
+  "Tentacruel" :{
     "id": 73,
     "name": {
       "english": "Tentacruel",
@@ -1490,7 +1490,7 @@
       "Speed": 100
     }
   },
-  {
+  "Geodude" :{
     "id": 74,
     "name": {
       "english": "Geodude",
@@ -1511,7 +1511,7 @@
       "Speed": 20
     }
   },
-  {
+  "Graveler" :{
     "id": 75,
     "name": {
       "english": "Graveler",
@@ -1532,7 +1532,7 @@
       "Speed": 35
     }
   },
-  {
+  "Golem" :{
     "id": 76,
     "name": {
       "english": "Golem",
@@ -1553,7 +1553,7 @@
       "Speed": 45
     }
   },
-  {
+  "Ponyta" :{
     "id": 77,
     "name": {
       "english": "Ponyta",
@@ -1573,7 +1573,7 @@
       "Speed": 90
     }
   },
-  {
+  "Rapidash" :{
     "id": 78,
     "name": {
       "english": "Rapidash",
@@ -1593,7 +1593,7 @@
       "Speed": 105
     }
   },
-  {
+  "Slowpoke" :{
     "id": 79,
     "name": {
       "english": "Slowpoke",
@@ -1614,7 +1614,7 @@
       "Speed": 15
     }
   },
-  {
+  "Slowbro" :{
     "id": 80,
     "name": {
       "english": "Slowbro",
@@ -1635,7 +1635,7 @@
       "Speed": 30
     }
   },
-  {
+  "Magnemite" :{
     "id": 81,
     "name": {
       "english": "Magnemite",
@@ -1656,7 +1656,7 @@
       "Speed": 45
     }
   },
-  {
+  "Magneton" :{
     "id": 82,
     "name": {
       "english": "Magneton",
@@ -1677,7 +1677,7 @@
       "Speed": 70
     }
   },
-  {
+  "Farfetch'd" :{
     "id": 83,
     "name": {
       "english": "Farfetch'd",
@@ -1698,7 +1698,7 @@
       "Speed": 60
     }
   },
-  {
+  "Doduo" :{
     "id": 84,
     "name": {
       "english": "Doduo",
@@ -1719,7 +1719,7 @@
       "Speed": 75
     }
   },
-  {
+  "Dodrio" :{
     "id": 85,
     "name": {
       "english": "Dodrio",
@@ -1740,7 +1740,7 @@
       "Speed": 110
     }
   },
-  {
+  "Seel" :{
     "id": 86,
     "name": {
       "english": "Seel",
@@ -1760,7 +1760,7 @@
       "Speed": 45
     }
   },
-  {
+  "Dewgong" :{
     "id": 87,
     "name": {
       "english": "Dewgong",
@@ -1781,7 +1781,7 @@
       "Speed": 70
     }
   },
-  {
+  "Grimer" :{
     "id": 88,
     "name": {
       "english": "Grimer",
@@ -1801,7 +1801,7 @@
       "Speed": 25
     }
   },
-  {
+  "Muk" :{
     "id": 89,
     "name": {
       "english": "Muk",
@@ -1821,7 +1821,7 @@
       "Speed": 50
     }
   },
-  {
+  "Shellder" :{
     "id": 90,
     "name": {
       "english": "Shellder",
@@ -1841,7 +1841,7 @@
       "Speed": 40
     }
   },
-  {
+  "Cloyster" :{
     "id": 91,
     "name": {
       "english": "Cloyster",
@@ -1862,7 +1862,7 @@
       "Speed": 70
     }
   },
-  {
+  "Gastly" :{
     "id": 92,
     "name": {
       "english": "Gastly",
@@ -1883,7 +1883,7 @@
       "Speed": 80
     }
   },
-  {
+  "Haunter" :{
     "id": 93,
     "name": {
       "english": "Haunter",
@@ -1904,7 +1904,7 @@
       "Speed": 95
     }
   },
-  {
+  "Gengar" :{
     "id": 94,
     "name": {
       "english": "Gengar",
@@ -1925,7 +1925,7 @@
       "Speed": 110
     }
   },
-  {
+  "Onix" :{
     "id": 95,
     "name": {
       "english": "Onix",
@@ -1946,7 +1946,7 @@
       "Speed": 70
     }
   },
-  {
+  "Drowzee" :{
     "id": 96,
     "name": {
       "english": "Drowzee",
@@ -1966,7 +1966,7 @@
       "Speed": 42
     }
   },
-  {
+  "Hypno" :{
     "id": 97,
     "name": {
       "english": "Hypno",
@@ -1986,7 +1986,7 @@
       "Speed": 67
     }
   },
-  {
+  "Krabby" :{
     "id": 98,
     "name": {
       "english": "Krabby",
@@ -2006,7 +2006,7 @@
       "Speed": 50
     }
   },
-  {
+  "Kingler" :{
     "id": 99,
     "name": {
       "english": "Kingler",
@@ -2026,7 +2026,7 @@
       "Speed": 75
     }
   },
-  {
+  "Voltorb" :{
     "id": 100,
     "name": {
       "english": "Voltorb",
@@ -2046,7 +2046,7 @@
       "Speed": 100
     }
   },
-  {
+  "Electrode" :{
     "id": 101,
     "name": {
       "english": "Electrode",
@@ -2066,7 +2066,7 @@
       "Speed": 150
     }
   },
-  {
+  "Exeggcute" :{
     "id": 102,
     "name": {
       "english": "Exeggcute",
@@ -2087,7 +2087,7 @@
       "Speed": 40
     }
   },
-  {
+  "Exeggutor" :{
     "id": 103,
     "name": {
       "english": "Exeggutor",
@@ -2108,7 +2108,7 @@
       "Speed": 55
     }
   },
-  {
+  "Cubone" :{
     "id": 104,
     "name": {
       "english": "Cubone",
@@ -2128,7 +2128,7 @@
       "Speed": 35
     }
   },
-  {
+  "Marowak" :{
     "id": 105,
     "name": {
       "english": "Marowak",
@@ -2148,7 +2148,7 @@
       "Speed": 45
     }
   },
-  {
+  "Hitmonlee" :{
     "id": 106,
     "name": {
       "english": "Hitmonlee",
@@ -2168,7 +2168,7 @@
       "Speed": 87
     }
   },
-  {
+  "Hitmonchan" :{
     "id": 107,
     "name": {
       "english": "Hitmonchan",
@@ -2188,7 +2188,7 @@
       "Speed": 76
     }
   },
-  {
+  "Lickitung" :{
     "id": 108,
     "name": {
       "english": "Lickitung",
@@ -2208,7 +2208,7 @@
       "Speed": 30
     }
   },
-  {
+  "Koffing" :{
     "id": 109,
     "name": {
       "english": "Koffing",
@@ -2228,7 +2228,7 @@
       "Speed": 35
     }
   },
-  {
+  "Weezing" :{
     "id": 110,
     "name": {
       "english": "Weezing",
@@ -2248,7 +2248,7 @@
       "Speed": 60
     }
   },
-  {
+  "Rhyhorn" :{
     "id": 111,
     "name": {
       "english": "Rhyhorn",
@@ -2269,7 +2269,7 @@
       "Speed": 25
     }
   },
-  {
+  "Rhydon" :{
     "id": 112,
     "name": {
       "english": "Rhydon",
@@ -2290,7 +2290,7 @@
       "Speed": 40
     }
   },
-  {
+  "Chansey" :{
     "id": 113,
     "name": {
       "english": "Chansey",
@@ -2310,7 +2310,7 @@
       "Speed": 50
     }
   },
-  {
+  "Tangela" :{
     "id": 114,
     "name": {
       "english": "Tangela",
@@ -2330,7 +2330,7 @@
       "Speed": 60
     }
   },
-  {
+  "Kangaskhan" :{
     "id": 115,
     "name": {
       "english": "Kangaskhan",
@@ -2350,7 +2350,7 @@
       "Speed": 90
     }
   },
-  {
+  "Horsea" :{
     "id": 116,
     "name": {
       "english": "Horsea",
@@ -2370,7 +2370,7 @@
       "Speed": 60
     }
   },
-  {
+  "Seadra" :{
     "id": 117,
     "name": {
       "english": "Seadra",
@@ -2390,7 +2390,7 @@
       "Speed": 85
     }
   },
-  {
+  "Goldeen" :{
     "id": 118,
     "name": {
       "english": "Goldeen",
@@ -2410,7 +2410,7 @@
       "Speed": 63
     }
   },
-  {
+  "Seaking" :{
     "id": 119,
     "name": {
       "english": "Seaking",
@@ -2430,7 +2430,7 @@
       "Speed": 68
     }
   },
-  {
+  "Staryu" :{
     "id": 120,
     "name": {
       "english": "Staryu",
@@ -2450,7 +2450,7 @@
       "Speed": 85
     }
   },
-  {
+  "Starmie" :{
     "id": 121,
     "name": {
       "english": "Starmie",
@@ -2471,7 +2471,7 @@
       "Speed": 115
     }
   },
-  {
+  "Mr. Mime" :{
     "id": 122,
     "name": {
       "english": "Mr. Mime",
@@ -2492,7 +2492,7 @@
       "Speed": 90
     }
   },
-  {
+  "Scyther" :{
     "id": 123,
     "name": {
       "english": "Scyther",
@@ -2513,7 +2513,7 @@
       "Speed": 105
     }
   },
-  {
+  "Jynx" :{
     "id": 124,
     "name": {
       "english": "Jynx",
@@ -2534,7 +2534,7 @@
       "Speed": 95
     }
   },
-  {
+  "Electabuzz" :{
     "id": 125,
     "name": {
       "english": "Electabuzz",
@@ -2554,7 +2554,7 @@
       "Speed": 105
     }
   },
-  {
+  "Magmar" :{
     "id": 126,
     "name": {
       "english": "Magmar",
@@ -2574,7 +2574,7 @@
       "Speed": 93
     }
   },
-  {
+  "Pinsir" :{
     "id": 127,
     "name": {
       "english": "Pinsir",
@@ -2594,7 +2594,7 @@
       "Speed": 85
     }
   },
-  {
+  "Tauros" :{
     "id": 128,
     "name": {
       "english": "Tauros",
@@ -2614,7 +2614,7 @@
       "Speed": 110
     }
   },
-  {
+  "Magikarp" :{
     "id": 129,
     "name": {
       "english": "Magikarp",
@@ -2634,7 +2634,7 @@
       "Speed": 80
     }
   },
-  {
+  "Gyarados" :{
     "id": 130,
     "name": {
       "english": "Gyarados",
@@ -2655,7 +2655,7 @@
       "Speed": 81
     }
   },
-  {
+  "Lapras" :{
     "id": 131,
     "name": {
       "english": "Lapras",
@@ -2676,7 +2676,7 @@
       "Speed": 60
     }
   },
-  {
+  "Ditto" :{
     "id": 132,
     "name": {
       "english": "Ditto",
@@ -2696,7 +2696,7 @@
       "Speed": 48
     }
   },
-  {
+  "Eevee" :{
     "id": 133,
     "name": {
       "english": "Eevee",
@@ -2716,7 +2716,7 @@
       "Speed": 55
     }
   },
-  {
+  "Vaporeon" :{
     "id": 134,
     "name": {
       "english": "Vaporeon",
@@ -2736,7 +2736,7 @@
       "Speed": 65
     }
   },
-  {
+  "Jolteon" :{
     "id": 135,
     "name": {
       "english": "Jolteon",
@@ -2756,7 +2756,7 @@
       "Speed": 130
     }
   },
-  {
+  "Flareon" :{
     "id": 136,
     "name": {
       "english": "Flareon",
@@ -2776,7 +2776,7 @@
       "Speed": 65
     }
   },
-  {
+  "Porygon" :{
     "id": 137,
     "name": {
       "english": "Porygon",
@@ -2796,7 +2796,7 @@
       "Speed": 40
     }
   },
-  {
+  "Omanyte" :{
     "id": 138,
     "name": {
       "english": "Omanyte",
@@ -2817,7 +2817,7 @@
       "Speed": 35
     }
   },
-  {
+  "Omastar" :{
     "id": 139,
     "name": {
       "english": "Omastar",
@@ -2838,7 +2838,7 @@
       "Speed": 55
     }
   },
-  {
+ "Kabuto" :{
     "id": 140,
     "name": {
       "english": "Kabuto",
@@ -2859,7 +2859,7 @@
       "Speed": 55
     }
   },
-  {
+  "Kabutops" :{
     "id": 141,
     "name": {
       "english": "Kabutops",
@@ -2880,7 +2880,7 @@
       "Speed": 80
     }
   },
-  {
+  "Aerodactyl" :{
     "id": 142,
     "name": {
       "english": "Aerodactyl",
@@ -2901,7 +2901,7 @@
       "Speed": 130
     }
   },
-  {
+  "Snorlax" :{
     "id": 143,
     "name": {
       "english": "Snorlax",
@@ -2921,7 +2921,7 @@
       "Speed": 30
     }
   },
-  {
+  "Articuno" :{
     "id": 144,
     "name": {
       "english": "Articuno",
@@ -2942,7 +2942,7 @@
       "Speed": 85
     }
   },
-  {
+  "Zapdos" :{
     "id": 145,
     "name": {
       "english": "Zapdos",
@@ -2963,7 +2963,7 @@
       "Speed": 100
     }
   },
-  {
+  "Moltres" :{
     "id": 146,
     "name": {
       "english": "Moltres",
@@ -2984,7 +2984,7 @@
       "Speed": 90
     }
   },
-  {
+  "Dratini" :{
     "id": 147,
     "name": {
       "english": "Dratini",
@@ -3004,7 +3004,7 @@
       "Speed": 50
     }
   },
-  {
+  "Dragonair" :{
     "id": 148,
     "name": {
       "english": "Dragonair",
@@ -3024,7 +3024,7 @@
       "Speed": 70
     }
   },
-  {
+  "Dragonite" :{
     "id": 149,
     "name": {
       "english": "Dragonite",
@@ -3045,7 +3045,7 @@
       "Speed": 80
     }
   },
-  {
+  "Mewtwo" :{
     "id": 150,
     "name": {
       "english": "Mewtwo",
@@ -3065,7 +3065,7 @@
       "Speed": 130
     }
   },
-  {
+  "Mew" :{
     "id": 151,
     "name": {
       "english": "Mew",
@@ -3084,4 +3084,4 @@
       "Sp. Defense": 100,
       "Speed": 100
     }
-  }]
+  }}

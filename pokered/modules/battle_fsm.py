@@ -54,7 +54,6 @@ class BattleFSM:
         return self._state
 
     def get_draw_list(self):
-
         draw_list = [item for item in self._draw_list if item != None and not item.is_dead()]
         if self._active_animation != None:
             draw_list.append(self._active_animation)
@@ -313,7 +312,7 @@ class MovesSurface(Drawable):
     def _add_moves(self):
         pos = [(11, 2), (11, 18), (81, 2), (81, 18)]
         for move in self._pokemon.get_moves():
-            move_name = move[0].upper()
+            move_name = move.move_name.upper()
             self._image.blit(self._font.render(move_name, False, (69, 60, 60)), pos.pop(0))
 
 class PPSurface(Drawable):
@@ -331,9 +330,9 @@ class PPSurface(Drawable):
     
     def _add_pp(self):
         move = self._pokemon.get_moves()[self._cursor_pos]
-        self._image.blit(self._font.render(str(move[1]), False, (69, 60, 60)), (40, 2))
-        self._image.blit(self._font.render(str(move[2]), False, (69, 60, 60)), (53, 2))
-        self._image.blit(self._font.render(move[3].upper(), False, (69, 60, 60)), (24, 19))
+        self._image.blit(self._font.render(str(move.current_pp), False, (69, 60, 60)), (36, 2))
+        self._image.blit(self._font.render(str(move.max_pp), False, (69, 60, 60)), (53, 2))
+        self._image.blit(self._font.render(move.move_type.upper(), False, (69, 60, 60)), (24, 19))
 
     def _update_cursor(self, new_cursor_pos):
         self._cursor_pos = new_cursor_pos
