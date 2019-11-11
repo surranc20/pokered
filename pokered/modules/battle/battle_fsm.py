@@ -24,11 +24,10 @@ class BattleFSM:
 
     TRANSITIONS = {(BattleStates.CHOOSING_POKEMON, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN, (BattleStates.CHOOSING_MOVE, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN, (BattleStates.CHOOSING_FIGHT_OR_RUN, 0) : BattleStates.CHOOSING_MOVE, (BattleStates.CHOOSING_FIGHT_OR_RUN, 1) : BattleStates.TEST, (BattleStates.CHOOSING_FIGHT_OR_RUN, 2) : BattleStates.CHOOSING_POKEMON, (BattleStates.CHOOSING_FIGHT_OR_RUN, 3) : BattleStates.RUNNING,BattleStates.PLAYER_TOSSING_POKEMON : BattleStates.PLAYER_POKEMON_MENU, BattleStates.OPPONENT_TOSSING_POKEMON : BattleStates.OPPONENT_POKEMON_MENU, BattleStates.DISPLAY_OPPONENT_TOSS_TEXT : BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.DISPLAY_PLAYER_TOSS_TEXT : BattleStates.PLAYER_TOSSING_POKEMON}
 
-    def __init__(self, player, opponent, draw_surface, state=BattleStates.NOT_STARTED):
+    def __init__(self, player, opponent, state=BattleStates.NOT_STARTED):
         self._state = state
         self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"), 16)
         self._cursor = Cursor()
-        self._draw_surface = draw_surface
         self._active_player = opponent
         self._active_animation = None
         self._active_string = None

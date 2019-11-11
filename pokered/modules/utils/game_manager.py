@@ -1,12 +1,11 @@
 import pygame
 from .level_manager import LevelManager
 
-
-
 class GameManager(object):
-    def __init__(self, screenSize):
+    def __init__(self, screen_size, player):
+        self._player = player
         self._screen_size = screen_size
-        self._level = LevelManager()
+        self._level = LevelManager(player)
         self._FSM = "running" #This is a temporary hack. Do not know if I will need FSM.
 
     def draw(self, surface):
@@ -19,5 +18,5 @@ class GameManager(object):
     
     def update(self, ticks):
         if self._FSM == "running":
-            self._level.update(ticks, self._screen_size)
+            self._level.update(ticks)
 

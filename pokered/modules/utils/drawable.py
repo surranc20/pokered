@@ -2,9 +2,17 @@ import pygame
 from pygame import image
 import os
 from .frameManager import FRAMES
+from .vector2D import Vector2
 
 class Drawable(object):
+
+   WINDOW_OFFSET = Vector2(0,0)
    
+   @classmethod
+   def updateWindowOffset(cls, followObject, screenSize, worldSize):
+      position = followObject.getPosition()
+      size = followObject.getSize()
+      Drawable.WINDOW_OFFSET = [min(max(0, position[x] - screenSize[x] // 2 + size[x] // 2), worldSize[x] - screenSize[x]) for x in range(2)]
    
    def __init__(self, imageName, position, offset=None):
       self._imageName = imageName
