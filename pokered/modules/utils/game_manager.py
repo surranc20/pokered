@@ -1,6 +1,6 @@
 import pygame
-from .levelManager import LevelManager
-from .FSMs.gameFSM import GameState
+from .level_manager import LevelManager
+
 
 
 class GameManager(object):
