@@ -1,4 +1,4 @@
-from ..battle_menus.poke_info import PokeInfo
+from ..battle.battle_menus.poke_info import PokeInfo
 
 class ChangeHP(PokeInfo):
     def __init__(self, pokemon, damage, enemy=False):

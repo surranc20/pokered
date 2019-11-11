@@ -1,6 +1,6 @@
 from os.path import join
-from ..animated import AnimatedGroup, AnimatedGroupPart
-from ..vector2D import Vector2
+from ...utils.animated import AnimatedGroup, AnimatedGroupPart
+from ...utils.vector2D import Vector2
 
 class PokemonRemaining(AnimatedGroup):
 

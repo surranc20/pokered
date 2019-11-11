@@ -1,8 +1,8 @@
-from os.path import join
 import pygame
-from ..frameManager import FRAMES
-from ..animated import AnimatedGroupPart
-from ..vector2D import Vector2
+from os.path import join
+from ..utils.frameManager import FRAMES
+from ..utils.animated import AnimatedGroupPart
+from ..utils.vector2D import Vector2
 
 
 

@@ -1,7 +1,7 @@
-from os.path import join
 import json
-from .drawable import Drawable
-from .vector2D import Vector2
+from os.path import join
+from .utils.drawable import Drawable
+from .utils.vector2D import Vector2
 
 
 class Pokemon(Drawable):

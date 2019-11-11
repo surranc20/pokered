@@ -1,6 +1,6 @@
-from .mobile import Mobile
-from .cardinality import Cardinality
 import pygame
+from .utils.mobile import Mobile
+from .enumerated.cardinality import Cardinality
 
 class Player(Mobile):
     def __init__(self, position, name, enemy=False):

@@ -1,12 +1,12 @@
 import pygame
 import os
-from modules.vector2D import Vector2
-from modules.drawable import Drawable
+from modules.utils.vector2D import Vector2
+from modules.utils.drawable import Drawable
 from modules.player import Player
-from modules.battle import Battle
+from modules.battle.battle import Battle
 from modules.pokemon import Pokemon
 from modules.move import Move
-from modules.damage_calculator import DamageCalculator
+from modules.battle.damage_calculator import DamageCalculator
 
 # Two different sizes now! Screen size is the amount we show the player,
 #  and world size is the size of the interactable world.
@@ -50,17 +50,11 @@ def main():
     player._pokemon_team.append(poke4)
     player._pokemon_team.append(poke5)
     player._pokemon_team.append(poke6)
-
-
-    calc = DamageCalculator((poke, Move("Thunder")), poke2)
-    print("damage:", calc.get_damage())
-      
-    
    
     # Define a variable to control the main loop
     running = True
     game_clock = pygame.time.Clock()
-    battle = Battle(player, enemy, draw_surface)
+    battle =  Battle(player, enemy, draw_surface)
    
     # Main loop
     while running:
@@ -85,8 +79,6 @@ def main():
             # Update everything
             ticks = game_clock.get_time() / 1000
             player.update(ticks)
-
-            
 
         else:
             # Run Battle Loop, this is temporary and will be handled differently in final product

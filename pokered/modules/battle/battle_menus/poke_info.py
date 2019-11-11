@@ -1,8 +1,8 @@
 import pygame
 from os.path import join
-from ..drawable import Drawable
-from ..vector2D import Vector2
-from ..frameManager import FRAMES
+from ...utils.drawable import Drawable
+from ...utils.vector2D import Vector2
+from ...utils.frameManager import FRAMES
 
 class PokeInfo(Drawable):
 
