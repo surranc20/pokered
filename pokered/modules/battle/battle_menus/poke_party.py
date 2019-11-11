@@ -177,11 +177,11 @@ class PokemonSelectedMenu(Drawable):
         draw_surface.blit(self._txt, self._position)
         draw_surface.blit(self._arrow, self._position)
 
-class ActivePokemon(Drawable):
-    def __init__(self, pokemon, selected=False):
+class PokemonMenuPokemon(Drawable):
+    def __init__(self, pokemon, position, bar_name, selected=False):
         self._pokemon = pokemon
         offset = (1,0) if selected else (0,0)
-        super().__init__("party_active_poke_bar.png", (2, 18), offset=offset)
+        super().__init__(bar_name, position, offset=offset)
         self._bouncing_pokemon = BouncingPokemon(self._pokemon, (0, 21))
         self._blit_level()
         self._blit_hp_bar()
@@ -192,6 +192,58 @@ class ActivePokemon(Drawable):
     
     def set_unselected(self):
         self._image = FRAMES.getFrame(self._imageName, (0,0))
+    
+    def update(self, ticks):
+        self._bouncing_pokemon.update(ticks)
+    
+    def _blit_level(self):
+        self._lvl = pygame.Surface((10, 8))
+        self._lvl.fill((255, 255, 255))
+        self._lvl.set_colorkey((255,255,255))
+        start_pos = Vector2(0, 0)
+        current_pos = start_pos
+        for char in str(self._pokemon.get_lvl()):
+            font_index = int(ord(char)) - 48
+            font_char = FRAMES.getFrame("party_font.png", offset=(font_index, 1))
+            font_char.set_colorkey((0,128,0))
+            self._lvl.blit(font_char, (current_pos.x, current_pos.y))
+            current_pos.x += 5
+    
+    def _blit_hp_bar(self):
+        green = (112, 248, 168)
+        yellow = (248, 224, 56)
+        red = (241, 14, 14)
+
+        current_hp = self._pokemon._stats["Current HP"]
+        max_hp = self._pokemon._stats["HP"]
+        percentage = (current_hp / max_hp)
+        
+        self._hp = pygame.Surface((int(percentage * 48), 3))
+        if percentage > .50: self._hp.fill(green)
+        elif percentage > .15: self._hp.fill(yellow)
+        else: self._hp.fill(red)
+        self._hp_darken = pygame.Surface((48, 1))
+        self._hp_darken.fill((0,0,0))
+        self._hp_darken.set_alpha(50)
+    
+    def _blit_hp_remaining(self):
+        self._hp_remaining = pygame.Surface((35, 8))
+        self._hp_remaining.fill((255, 255, 255))
+        self._hp_remaining.set_colorkey((255, 255, 255))
+        current_hp = self._pokemon._stats["Current HP"]
+        start_pos = Vector2(0,0)
+        current_pos = start_pos
+        for char in str(str(current_hp) + " " + str(self._pokemon._stats["HP"])):
+            font_index = int(ord(char)) - 48
+            font_char = FRAMES.getFrame("party_font.png", offset=(font_index, 1))
+            font_char.set_colorkey((0,128,0))
+            if char == " ": pass 
+            else: self._hp_remaining.blit(font_char, (current_pos.x, current_pos.y))
+            current_pos.x += 5
+
+class ActivePokemon(PokemonMenuPokemon):
+    def __init__(self, pokemon, selected=False):
+        super().__init__(pokemon, (2, 18), "party_active_poke_bar.png", selected=selected)
 
     def draw(self, draw_surface):
         super().draw(draw_surface)
@@ -200,71 +252,11 @@ class ActivePokemon(Drawable):
         draw_surface.blit(self._hp_remaining, (self._position[0] + 49, self._position[1] + 46))
         draw_surface.blit(self._hp, (self._position[0] + 30, self._position[1] + 41))
         draw_surface.blit(self._hp_darken, (self._position[0] + 30, self._position[1] + 41))
-        
-    def update(self, ticks):
-        self._bouncing_pokemon.update(ticks)
     
-    def _blit_level(self):
-        self._lvl = pygame.Surface((10, 8))
-        self._lvl.fill((255, 255, 255))
-        self._lvl.set_colorkey((255,255,255))
-        start_pos = Vector2(0, 0)
-        current_pos = start_pos
-        for char in str(self._pokemon.get_lvl()):
-            font_index = int(ord(char)) - 48
-            font_char = FRAMES.getFrame("party_font.png", offset=(font_index, 1))
-            font_char.set_colorkey((0,128,0))
-            self._lvl.blit(font_char, (current_pos.x, current_pos.y))
-            current_pos.x += 5
-    
-    def _blit_hp_bar(self):
-        green = (112, 248, 168)
-        yellow = (248, 224, 56)
-        red = (241, 14, 14)
-
-        current_hp = self._pokemon._stats["Current HP"]
-        max_hp = self._pokemon._stats["HP"]
-        percentage = (current_hp / max_hp)
-        
-        self._hp = pygame.Surface((int(percentage * 48), 3))
-        if percentage > .50: self._hp.fill(green)
-        elif percentage > .15: self._hp.fill(yellow)
-        else: self._hp.fill(red)
-        self._hp_darken = pygame.Surface((48, 1))
-        self._hp_darken.fill((0,0,0))
-        self._hp_darken.set_alpha(50)
-    
-    def _blit_hp_remaining(self):
-        self._hp_remaining = pygame.Surface((35, 8))
-        self._hp_remaining.fill((255, 255, 255))
-        self._hp_remaining.set_colorkey((255, 255, 255))
-        current_hp = self._pokemon._stats["Current HP"]
-        start_pos = Vector2(0,0)
-        current_pos = start_pos
-        for char in str(str(current_hp) + " " + str(self._pokemon._stats["HP"])):
-            font_index = int(ord(char)) - 48
-            font_char = FRAMES.getFrame("party_font.png", offset=(font_index, 1))
-            font_char.set_colorkey((0,128,0))
-            if char == " ": pass 
-            else: self._hp_remaining.blit(font_char, (current_pos.x, current_pos.y))
-            current_pos.x += 5
-    
-class SecondaryPokemon(Drawable):
-    def __init__(self, pokmeon, position, selected=False):
-        self._pokemon = pokmeon
-        self._position = position
-        offset = (1,0) if selected else (0,0)
-        super().__init__("party_individual_poke_bar.png", self._position, offset=offset)
+class SecondaryPokemon(PokemonMenuPokemon):
+    def __init__(self, pokemon, position, selected=False):
+        super().__init__(pokemon, position, "party_individual_poke_bar.png",selected=selected)
         self._bouncing_pokemon = BouncingPokemon(self._pokemon, (self._position[0] - 5, self._position[1]-8))
-        self._blit_hp_bar()
-        self._blit_hp_remaining()
-        self._blit_level()
-    
-    def set_selected(self):
-        self._image = FRAMES.getFrame(self._imageName, (1,0))
-    
-    def set_unselected(self):
-        self._image = FRAMES.getFrame(self._imageName, (0,0))
 
     def draw(self, draw_surface):
         super().draw(draw_surface)
@@ -273,55 +265,7 @@ class SecondaryPokemon(Drawable):
         draw_surface.blit(self._hp_darken, (self._position[0] + 96, self._position[1] + 9))
         draw_surface.blit(self._hp_remaining, (self._position[0] + 115, self._position[1] + 15))
         draw_surface.blit(self._lvl, (self._position[0] + 48, self._position[1] + 15))
-
-    def update(self, ticks):
-        self._bouncing_pokemon.update(ticks)
-    
-    def _blit_hp_bar(self):
-        green = (112, 248, 168)
-        yellow = (248, 224, 56)
-        red = (241, 14, 14)
-
-        current_hp = self._pokemon._stats["Current HP"]
-        max_hp = self._pokemon._stats["HP"]
-        percentage = (current_hp / max_hp)
         
-        self._hp = pygame.Surface((int(percentage * 48), 3))
-        if percentage > .50: self._hp.fill(green)
-        elif percentage > .15: self._hp.fill(yellow)
-        else: self._hp.fill(red)
-        self._hp_darken = pygame.Surface((48, 1))
-        self._hp_darken.fill((0,0,0))
-        self._hp_darken.set_alpha(50)
-    
-    def _blit_hp_remaining(self):
-        self._hp_remaining = pygame.Surface((35, 8))
-        self._hp_remaining.fill((255, 255, 255))
-        self._hp_remaining.set_colorkey((255, 255, 255))
-        current_hp = self._pokemon._stats["Current HP"]
-        start_pos = Vector2(0,0)
-        current_pos = start_pos
-        for char in str(str(current_hp) + " " + str(self._pokemon._stats["HP"])):
-            font_index = int(ord(char)) - 48
-            font_char = FRAMES.getFrame("party_font.png", offset=(font_index, 1))
-            font_char.set_colorkey((0,128,0))
-            if char == " ": pass 
-            else: self._hp_remaining.blit(font_char, (current_pos.x, current_pos.y))
-            current_pos.x += 5
-    
-    def _blit_level(self):
-        self._lvl = pygame.Surface((10, 8))
-        self._lvl.fill((255, 255, 255))
-        self._lvl.set_colorkey((255,255,255))
-        start_pos = Vector2(0, 0)
-        current_pos = start_pos
-        for char in str(self._pokemon.get_lvl()):
-            font_index = int(ord(char)) - 48
-            font_char = FRAMES.getFrame("party_font.png", offset=(font_index, 1))
-            font_char.set_colorkey((0,128,0))
-            self._lvl.blit(font_char, (current_pos.x, current_pos.y))
-            current_pos.x += 5
-    
 
 class BouncingPokemon(Animated):
     def __init__(self, pokemon, position):
