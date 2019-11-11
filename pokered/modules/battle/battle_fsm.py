@@ -3,19 +3,20 @@ import textwrap
 import copy
 from enum import Enum, auto
 from os.path import join
-from .animated import AnimatedGroup
-from .drawable import Drawable
-from .vector2D import Vector2
-from .animations.toss_pokemon import TossPokemon
-from .animations.change_hp import ChangeHP
+
+from ..utils.animated import AnimatedGroup
+from ..utils.drawable import Drawable
+from ..utils.vector2D import Vector2
+from ..animations.toss_pokemon import TossPokemon
+from ..animations.change_hp import ChangeHP
+from ..utils.frameManager import FRAMES
+from ..utils.soundManager import SoundManager
+from ..enumerated.battle_actions import BattleActions
+from ..enumerated.battle_states import BattleStates
+from ..pokemon import Pokemon
 from .battle_menus.poke_info import PokeInfo
 from .battle_menus.pokemon_remaining import PokemonRemaining
 from .battle_menus.poke_party import PokeParty
-from .pokemon import Pokemon
-from .frameManager import FRAMES
-from .soundManager import SoundManager
-from .battle_actions import BattleActions
-from .battle_states import BattleStates
 
 #TODO: Never display the number of pokemon remaining
 

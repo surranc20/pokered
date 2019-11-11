@@ -1,12 +1,14 @@
 from os.path import join
 import pygame
-from ..drawable import Drawable
-from ..animated import Animated
-from ..vector2D import Vector2
-from ..frameManager import FRAMES
-from ..battle_actions import BattleActions
-from ..battle_states import BattleStates
-from ..soundManager import SoundManager
+from ...utils.drawable import Drawable
+from ...utils.animated import Animated
+from ...utils.vector2D import Vector2
+from ...utils.frameManager import FRAMES
+from ...utils.soundManager import SoundManager
+from ...enumerated.battle_states import BattleStates
+from ...enumerated.battle_actions import BattleActions
+
+
 
 
 class PokeParty(Drawable):

@@ -1,7 +1,7 @@
 from os.path import join
-from ..animated import AnimatedGroupPart
-from ..frameManager import FRAMES
-from ..vector2D import Vector2
+from ..utils.animated import AnimatedGroupPart
+from ..utils.frameManager import FRAMES
+from ..utils.vector2D import Vector2
 
 class EnemyDrop(AnimatedGroupPart):
     def __init__(self, position, anim_sequence_pos):

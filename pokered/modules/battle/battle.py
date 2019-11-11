@@ -1,13 +1,16 @@
-from .vector2D import Vector2
-from .drawable import Drawable
-from .animated import AnimatedGroup
-from .animations.toss_pokemon import TossPokemon
+import pygame
+from os.path import join, exists
+
+from ..utils.vector2D import Vector2
+from ..utils.drawable import Drawable
+from ..utils.animated import AnimatedGroup
+from ..animations.toss_pokemon import TossPokemon
+from ..pokemon import Pokemon
 from .battle_menus.poke_info import PokeInfo
 from .battle_menus.pokemon_remaining import PokemonRemaining
-from .pokemon import Pokemon
 from .battle_fsm import BattleFSM
-from os.path import join, exists
-import pygame
+
+
 
 class Battle:
     def __init__(self, player, opponent, draw_surface):
