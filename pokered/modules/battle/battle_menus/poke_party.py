@@ -1,5 +1,6 @@
-from os.path import join
+import json
 import pygame
+from os.path import join
 from ...utils.drawable import Drawable
 from ...utils.animated import Animated
 from ...utils.vector2D import Vector2
@@ -7,9 +8,6 @@ from ...utils.frameManager import FRAMES
 from ...utils.soundManager import SoundManager
 from ...enumerated.battle_states import BattleStates
 from ...enumerated.battle_actions import BattleActions
-
-
-
 
 class PokeParty(Drawable):
     def __init__(self, player):
@@ -326,26 +324,12 @@ class SecondaryPokemon(Drawable):
     
 
 class BouncingPokemon(Animated):
-    POKEMON_LOOKUP = {"bulbasaur": 0, "charmander":1, "squirtle":2, "caterpie":3, "weedle":4, "golem":5, "slowpoke":6, "magneton":7, "dodrio":8, "grimer":9,
-    "ivysaur":10, "charmeleon":11, "wartortle":12, "metapod":13, "kakuna":14, "ponyta":15, "slowbro":16, "farfetch'd":17, "seel":18, "muk":19,
-    "venusaur":20, "charizard":21, "blastoise":22, "butterfree":23, "beedrill":24, "rapidash":25, "magnemite":26, "doduo":27, "dewgong":28, "shellder":29,
-    "pidgy":30, "rattata":31, "fearow":32, "pikachu":33, "sandslash":34, "cloyster":35, "gengar":36, "hypno":37, "voltorb":38, "exeggutor":39,
-    "pidgeotto":40, "raticate":41, "ekans":42, "raichu":43, "nidoran_g":44, "gastly":45, "onyx":46, "krabby":47, "electrode":48, "cubone":49,
-    "pidgeot":50, "spearow":51, "arbok":52, "sandshrew":53, "nidorina":54, "haunter":55, "drowsee":56, "kingler":57, "exeggcute":58, "marowak":59,
-    "nidoqueen":60, "nidoking":(2,6), "vulpix":(4,6), "wigglytuff":(6,6), "oddish":(8,6), "hitmonlee":(10,6), "koffing":(12,6), "rhydon":(14,6), "kangaskhan":(16,6), "goldeen":(18,6),
-    "nidoran_b":70, "clefairy":71, "ninetails":72, "zubat":73, "gloom":74, "hitmonchan":75, "weezing":76, "chansey":77, "horsea":78, "seaking":79,
-    "nidorino":80, "clefable":81, "jigglypuff":82, "golbat":83, "vileplum":84, "lickitung":85, "rhyhorn":86, "tangela":87, "seadra":88, "staryu":89,
-    "paras":90, "venomoth":91, "meowth":92, "golduck":93, "growlithe":94, "starmie":95, "jynx":96, "pinser":97, "gyrados":98, "eevee":99,
-    "parasect":100, "diglett":101, "persian":102, "mankey":103, "arcanine":104, "mr. mime":105, "electabuzz":106, "taurus":107, "lapras":108, "vaporeon":109,
-    "venonat":110, "dugtrio":111, "pysduck":112, "primeape":113, "poliwag":114, "scyther":115, "magmar":116, "magikarp":117, "ditto":118, "jolteon":119,
-    "poliwhirl":120, "kadabra":121, "machoke":122, "weepinbell":123, "tentacruel":124, "flareon":125, "omastar":126, "aerodactyl":127, "zapdos":128, "dragonair":129,
-    "poliwrath":130, "alakazam":131, "machamp":132, "victreebel":133, "geodude":134, "porygon":135, "kabuto":136, "snorlax":137, "moltres":138, "dragonite":139,
-    "abra":140, "machop":141, "bellsprout":142, "tentacool":143, "graveler":144, "omanyte":145, "kabutops":146, "articuno":147, "dratini":148, "mewtwo":149,
-    "mew":150}
-    
     def __init__(self, pokemon, position):
         self._pokemon = pokemon
-        _lookup = self.POKEMON_LOOKUP[self._pokemon.get_name()]
+
+        with open(join("jsons", "pokemon_lookup_s.json"), "r") as pokemon_lookup_json:
+            pokemon_lookup = json.load(pokemon_lookup_json)
+            _lookup = pokemon_lookup[self._pokemon.get_name()]
         _offset = (0, _lookup)
         super().__init__(join("pokemon", "pokemon_small.png"), position, offset=_offset)
         self._nFrames = 2
@@ -363,7 +347,6 @@ class CancelButton(Drawable):
     def set_unselected(self):
         self._image = FRAMES.getFrame(self._imageName, (0,0))
     
-
 
 class PartyTextBar(Drawable):
     def __init__(self):

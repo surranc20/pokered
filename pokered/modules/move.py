@@ -1,8 +1,9 @@
+from os.path import join
 import json
 
 class Move:
     def __init__(self, move_name):
-        with open("moves.json", "r") as moves_json:
+        with open(join("jsons", "moves.json"), "r") as moves_json:
             moves = json.load(moves_json)
             move = moves[move_name]
 
