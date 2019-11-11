@@ -183,7 +183,7 @@ class PokemonMenuPokemon(Drawable):
         offset = (1,0) if selected else (0,0)
         super().__init__(bar_name, position, offset=offset)
         self._bouncing_pokemon = BouncingPokemon(self._pokemon, (0, 21))
-        self._blit_level()
+        self._blit_level_and_gender()
         self._blit_hp_bar()
         self._blit_hp_remaining()
     
@@ -196,8 +196,8 @@ class PokemonMenuPokemon(Drawable):
     def update(self, ticks):
         self._bouncing_pokemon.update(ticks)
     
-    def _blit_level(self):
-        self._lvl = pygame.Surface((10, 8))
+    def _blit_level_and_gender(self):
+        self._lvl = pygame.Surface((40, 8))
         self._lvl.fill((255, 255, 255))
         self._lvl.set_colorkey((255,255,255))
         start_pos = Vector2(0, 0)
@@ -208,6 +208,11 @@ class PokemonMenuPokemon(Drawable):
             font_char.set_colorkey((0,128,0))
             self._lvl.blit(font_char, (current_pos.x, current_pos.y))
             current_pos.x += 5
+
+        current_pos.x += 15
+        font_index = 0 if self._pokemon.get_gender() == "male" else 1
+        font_char = FRAMES.getFrame("gender.png", offset=(font_index,0))
+        self._lvl.blit(font_char, (current_pos.x, current_pos.y))
     
     def _blit_hp_bar(self):
         green = (112, 248, 168)
@@ -265,7 +270,7 @@ class SecondaryPokemon(PokemonMenuPokemon):
         draw_surface.blit(self._hp_darken, (self._position[0] + 96, self._position[1] + 9))
         draw_surface.blit(self._hp_remaining, (self._position[0] + 115, self._position[1] + 15))
         draw_surface.blit(self._lvl, (self._position[0] + 48, self._position[1] + 15))
-        
+
 
 class BouncingPokemon(Animated):
     def __init__(self, pokemon, position):
