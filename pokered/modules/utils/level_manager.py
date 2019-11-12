@@ -1,23 +1,21 @@
-from .vector2D import Vector2
-from .drawable import Drawable
-from ..player import Player
-from ..pokemon import Pokemon
-from ..battle.battle import Battle
+import json
+from os.path import join
+from ..level import Level
+
 
 class LevelManager(object):
-    def __init__(self, player, screen_size =(240, 160)):
+    def __init__(self, player, level_name, screen_size =(240, 160)):
         self._player = player
-        self._level_size = (200, 200)
+        self._level_name = level_name
         self._screen_size = screen_size
-        enemy = Player(Vector2(0,0), "CHAMPION GARY", enemy=True)
-        enemy._pokemon_team.append(Pokemon("charizard", enemy=True))
-        enemy._pokemon_team.append(Pokemon("pikachu", enemy=True))
-        enemy._pokemon_team.append(Pokemon("charizard", enemy=True))
-        self._active_battle = Battle(player, enemy)
+        self._active_battle = None
+        self._level = Level(level_name, player, screen_size)
+    
 
     def draw(self, draw_surface):
         if self._active_battle == None:
-            pass
+            self._level.draw(draw_surface)
+
         else:
             self._active_battle.draw(draw_surface)
       
@@ -29,7 +27,6 @@ class LevelManager(object):
       
     def update(self, ticks):
         if self._active_battle == None:
-            self._player.update(ticks)
-            Drawable.updateWindowOffset(self._player, self._screen_size, self._level_size)
+            self._level.update(ticks)
         else:
             self._active_battle.update(ticks)

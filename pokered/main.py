@@ -11,7 +11,6 @@ from modules.utils.game_manager import GameManager
 
 # Two different sizes now! Screen size is the amount we show the player,
 #  and world size is the size of the interactable world.
-WORLD_SIZE = (208, 203)
 SCREEN_SIZE = (240, 160)
 SCALE = 3
 UPSCALED = [x * SCALE for x in SCREEN_SIZE]
@@ -26,8 +25,8 @@ def main():
     draw_surface = pygame.Surface(SCREEN_SIZE)
    
     # Create Player and Enemy for Test Battle
-    player = Player(Vector2(WORLD_SIZE[0]//2 - 8, WORLD_SIZE[1]//2 - 11), "Chris")
-    enemy = Player(Vector2(WORLD_SIZE[0]//2 - 8, WORLD_SIZE[1]//2 - 11), "CHAMPION GARY", enemy=True)
+    player = Player(Vector2(32, 26), "Chris")
+    enemy = Player(Vector2(30,30), "CHAMPION GARY", enemy=True)
     enemy._pokemon_team.append(Pokemon("charizard", enemy=True))
     enemy._pokemon_team.append(Pokemon("pikachu", enemy=True))
     enemy._pokemon_team.append(Pokemon("charizard", enemy=True))
