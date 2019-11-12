@@ -89,14 +89,17 @@ class FrameManager(object):
       
       def _loadImage(self, fileName, sheet=False):
          # Load the full image
-         fullImage = image.load(join(FrameManager._FM._IMAGE_FOLDER, fileName))
+         try:
+            fullImage = image.load(join(FrameManager._FM._IMAGE_FOLDER, fileName))
+         except:
+            fullImage = image.load(join("levels", fileName))
          
          # Look up some information about the image to be loaded
          transparent = fileName in FrameManager._FM._TRANSPARENCY
          colorKey = fileName in FrameManager._FM._COLOR_KEY
          
          # Detect if a transparency is needed
-         if transparent:
+         if transparent or "level_foreground" in fileName:
             fullImage = fullImage.convert_alpha()
          else:
             fullImage = fullImage.convert()

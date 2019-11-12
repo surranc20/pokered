@@ -6,13 +6,20 @@ class Player(Mobile):
     def __init__(self, position, name, enemy=False):
         super().__init__("trainer.png", position, Cardinality.NORTH)
         self._nFrames = 4
-        self._framesPerSecond = 4
+        self._framesPerSecond = 6
         self._running = False
         self._moving = False
         self._pokemon_team = []
         self._active_pokemon = None
         self._is_enemy = enemy
         self._name = name
+        self._key_down_timer = 0
+        self._wait_till_next_update = 0
+        self._walk_event = None
+    
+    def handle_event(self, event):
+        if (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and event.key in [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_b]:
+            self.move(event)
 
     def move(self, event):
         """Updates the players moving, flip, and orientation values based on the event"""
@@ -46,6 +53,7 @@ class Player(Mobile):
         # If wasd have been lifted then the player is no longer moving
         if event.type == pygame.KEYUP and event.key in [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d]:
             self._moving = False
+            self._key_down_timer = 0
         
         if event.type == pygame.KEYUP and event.key == pygame.K_b:
             self.stop_running()
@@ -57,10 +65,35 @@ class Player(Mobile):
 
     def update(self, ticks):
         """Updates the player class"""
+        
         if self._moving:
             self.startAnimation()
+            self._key_down_timer += ticks
+            if self._walk_event == None:
+                if self._current_image_row != self._row:
+                    self.get_current_frame()
+                if self._key_down_timer > .1:
+                    self._walk_event = [0, self._orientation]    
+
+        if self._walk_event != None:
             super().update(ticks)
-        else:
+            self._wait_till_next_update += ticks
+            self._walk_event[0] += 1
+            self._orientation == self._walk_event[1]
+
+            if self._walk_event[1] == Cardinality.WEST:
+                self._position.x -= 1
+            elif self._walk_event[1] == Cardinality.SOUTH:
+                self._position.y += 1
+            elif self._walk_event[1] == Cardinality.NORTH:
+                self._position.y -= 1
+            elif self._walk_event[1] == Cardinality.EAST:
+                self._position.x += 1
+            if self._walk_event[0] == 16: self._walk_event = None
+                    
+        if not self._moving and self._walk_event == None:
+            self._key_down_timer = 0
+            self._walk_event = None
             self._frame = 0
             self.stopAnimation()
     
