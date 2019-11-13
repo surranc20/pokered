@@ -31,7 +31,7 @@ class Drawable(object):
 
       
    def getPosition(self):
-      return (self._position.x, self._position.y)
+      return self._position
 
    def setPosition(self, newPosition):
       self._position = newPosition

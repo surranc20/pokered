@@ -3,17 +3,22 @@ from .trainer import Trainer
 from .utils.mobile import Mobile
 from .utils.soundManager import SoundManager
 from .enumerated.cardinality import Cardinality
+from .enumerated.battle_actions import BattleActions
 
 class Player(Trainer):
     def __init__(self, position, name, enemy=False):
         super().__init__(position, name, Cardinality.NORTH, enemy=False)
         self._nFrames = 4
         self._last_wall_bump = 0
+        self._current_tile = 0
         
     
-    def handle_event(self, event):
+    def handle_event(self, event, nearby_tiles):
         if (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and event.key in [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_b]:
             self.move(event)
+        elif event.type == pygame.KEYDOWN and event.key == BattleActions.SELECT.value:
+            if nearby_tiles[self._orientation]._obj != None:
+                return nearby_tiles[self._orientation]._obj.talk_event(self)
 
     def move(self, event):
         """Updates the players moving, flip, and orientation values based on the event"""
@@ -59,7 +64,7 @@ class Player(Trainer):
 
     def update(self, ticks, nearby_tiles, current_tile):
         """Updates the player class"""
-        #print(nearby_tiles)
+        self._current_tile = current_tile
         if self._moving:
             self.startAnimation()
             self._key_down_timer += ticks

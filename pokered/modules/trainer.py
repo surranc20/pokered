@@ -1,5 +1,6 @@
 import pygame
 from os.path import join
+from .battle.battle import Battle
 from .utils.mobile import Mobile
 from .enumerated.cardinality import Cardinality
 
@@ -8,7 +9,7 @@ class Trainer(Mobile):
         if not enemy:
             super().__init__("trainer.png", position, facing)
         else:
-            super().__init__(name + ".png", position,  Cardinality.NORTH)
+            super().__init__(join("trainers", name + ".png"), position,  Cardinality.NORTH)
 
         self._nFrames = 1
         self._framesPerSecond = 6
@@ -17,7 +18,7 @@ class Trainer(Mobile):
         self._pokemon_team = []
         self._active_pokemon = None
         self._is_enemy = enemy
-        self._name = name
+        self._name = name.upper()
         self._key_down_timer = 0
         self._wait_till_next_update = 0
         self._walk_event = None
@@ -46,3 +47,6 @@ class Trainer(Mobile):
     
     def update(self, ticks, nearby_tiles, current_tile):
         pass
+
+    def talk_event(self, player):
+        return Battle(player, self)

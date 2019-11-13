@@ -1,6 +1,10 @@
 import json
 from os.path import join
 from ..level import Level
+from ..player import Player
+from ..pokemon import Pokemon
+from ..battle.battle import Battle
+from .vector2D import Vector2
 
 
 class LevelManager(object):
@@ -8,7 +12,11 @@ class LevelManager(object):
         self._player = player
         self._level_name = level_name
         self._screen_size = screen_size
-        self._active_battle = None
+        enemy = Player(Vector2(30,30), "CHAMPION GARY", enemy=True)
+        enemy._pokemon_team.append(Pokemon("charizard", enemy=True))
+        enemy._pokemon_team.append(Pokemon("pikachu", enemy=True))
+        enemy._pokemon_team.append(Pokemon("charizard", enemy=True))
+        self._active_battle = None #Battle(player, enemy)
         self._level = Level(level_name, player, screen_size)
     
 
@@ -21,11 +29,12 @@ class LevelManager(object):
       
     def handle_event(self, event):
         if self._active_battle == None:
-            self._player.handle_event(event)
+            self._active_battle = self._player.handle_event(event, self._level.get_nearby_tiles(self._player._current_tile._pos))
         else:
             self._active_battle.handle_event(event)
       
     def update(self, ticks):
+        print(self._active_battle)
         if self._active_battle == None:
             self._level.update(ticks)
         else:
