@@ -27,6 +27,7 @@ class Drawable(object):
          self._image = FRAMES.getFrame(self._imageName, offset)
       self._position = position
       self._is_dead = False
+      self._x_off = 0
 
       
    def getPosition(self):
@@ -50,6 +51,7 @@ class Drawable(object):
    
    def center_with_border(self, screen_size):
       x_off = (screen_size[0] - self.getSize()[0]) / 2
+      self._x_off = x_off
       y_off = (screen_size[1] - self.getSize()[1]) / 2
       print(x_off, y_off)
       if x_off > 0 and y_off > 0:
