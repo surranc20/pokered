@@ -35,6 +35,8 @@ class SoundManager(object):
       
       _FOLDER = {
          "firered_0005.wav"     : _SFX_FOLDER,
+         "firered_0007.wav"     : _SFX_FOLDER,
+         "gym_music.wav"        : _MUSIC_FOLDER
       }
       
       
@@ -48,18 +50,20 @@ class SoundManager(object):
          self._music = {}
          self._musicStatus = "stop" # or "play" or "pause"
       
-      def playSound(self, fileName, loop=0):
+      def playSound(self, fileName, loop=0, sound=None):
          # Plays the requested sound effect, default only once
          if fileName not in self._sounds.keys():
             self._load(fileName)
+         if sound != None:
+            self._sounds[fileName].set_volume(sound)
                
          return self._sounds[fileName].play(loop)
       
-      def playMusic(self, fileName, loop=0):
+      def playMusic(self, fileName, loop=0, sound=1):
          if self._musicStatus != "stop":
             self.stopMusic()
-            
          pygame.mixer.music.load(os.path.join(SoundManager._SM._MUSIC_FOLDER, fileName))
+         pygame.mixer.music.set_volume(sound)
          pygame.mixer.music.play()
          
          self._musicStatus = "play"

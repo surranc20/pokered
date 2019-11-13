@@ -1,12 +1,14 @@
 import pygame
 from .trainer import Trainer
 from .utils.mobile import Mobile
+from .utils.soundManager import SoundManager
 from .enumerated.cardinality import Cardinality
 
 class Player(Trainer):
     def __init__(self, position, name, enemy=False):
         super().__init__(position, name, Cardinality.NORTH, enemy=False)
         self._nFrames = 4
+        self._last_wall_bump = 0
         
     
     def handle_event(self, event):
@@ -61,14 +63,18 @@ class Player(Trainer):
         if self._moving:
             self.startAnimation()
             self._key_down_timer += ticks
+            self._last_wall_bump += ticks
             if self._walk_event == None:
                 if self._current_image_row != self._row:
                     self.get_current_frame()
                 if nearby_tiles[self._orientation].is_clear():
                     if self._key_down_timer > .1:
                         self._walk_event = [0, self._orientation]    
-                else: pass
-                    #play sound
+                else: 
+                    if self._last_wall_bump > .7:
+                        SoundManager.getInstance().playSound("firered_0007.wav", sound=1)
+                        self._last_wall_bump = self._last_wall_bump - .7
+                    
 
         if self._walk_event != None:
             Mobile.update(self, ticks)
@@ -92,6 +98,7 @@ class Player(Trainer):
             self._key_down_timer = 0
             self._walk_event = None
             self._frame = 0
+            self._last_wall_bump = 0
             self.stopAnimation()
     
     def start_running(self):
