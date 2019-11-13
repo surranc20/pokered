@@ -43,6 +43,7 @@ class FrameManager(object):
          join("battle", "pokemon_remaining.png") : (104, 12),
          join("battle", "cursor.png") : (8, 12),
          join("pokemon", "pokemon_small.png") : (32,32),
+         join("trainers", "lorelei.png") : (16,22),
          "pokemon_fire_red_battle_font.png" : (5, 9),
          "party_txt_font.png" : (5, 9),
          "party_font.png" : (5, 8)
@@ -57,7 +58,7 @@ class FrameManager(object):
       _TRANSPARENCY = [join("battle" ,"battle_menus.png")]
       
       # A list of images that require to be loaded with a color key
-      _COLOR_KEY = ["gender.png", "menu.png", "trainer.png", "party_text_box.png", "party_cancel_bar.png", join("pokemon", "pokemon_small.png"), join("battle", "trainer_toss_anim.png"), join("battle", "pokeball_anim.png"), join("battle", "pokeball_open_anim.png"), join("pokemon", "pokemon_big.png"), join("battle", "health_bars.png"), join("battle", "gary_battle.png"), "pokemon_fire_red_battle_font.png", join("battle", "pokemon_remaining_balls.png"), join("battle", "pokemon_remaining.png"), join("battle", "cursor.png"), "party_active_poke_bar.png", "party_individual_poke_bar.png"]
+      _COLOR_KEY = [join("trainers", "lorelei.png"), "gender.png", "menu.png", "trainer.png", "party_text_box.png", "party_cancel_bar.png", join("pokemon", "pokemon_small.png"), join("battle", "trainer_toss_anim.png"), join("battle", "pokeball_anim.png"), join("battle", "pokeball_open_anim.png"), join("pokemon", "pokemon_big.png"), join("battle", "health_bars.png"), join("battle", "gary_battle.png"), "pokemon_fire_red_battle_font.png", join("battle", "pokemon_remaining_balls.png"), join("battle", "pokemon_remaining.png"), join("battle", "cursor.png"), "party_active_poke_bar.png", "party_individual_poke_bar.png"]
       
       
       
@@ -91,7 +92,9 @@ class FrameManager(object):
          # Load the full image
          try:
             fullImage = image.load(join(FrameManager._FM._IMAGE_FOLDER, fileName))
-         except:
+         except Exception as e:
+            print(e)
+            print()
             fullImage = image.load(join("levels", fileName))
          
          # Look up some information about the image to be loaded

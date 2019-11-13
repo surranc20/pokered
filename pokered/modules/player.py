@@ -1,21 +1,13 @@
 import pygame
+from .trainer import Trainer
 from .utils.mobile import Mobile
 from .enumerated.cardinality import Cardinality
 
-class Player(Mobile):
+class Player(Trainer):
     def __init__(self, position, name, enemy=False):
-        super().__init__("trainer.png", position, Cardinality.NORTH)
+        super().__init__(position, name, Cardinality.NORTH, enemy=False)
         self._nFrames = 4
-        self._framesPerSecond = 6
-        self._running = False
-        self._moving = False
-        self._pokemon_team = []
-        self._active_pokemon = None
-        self._is_enemy = enemy
-        self._name = name
-        self._key_down_timer = 0
-        self._wait_till_next_update = 0
-        self._walk_event = None
+        
     
     def handle_event(self, event):
         if (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and event.key in [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_b]:
@@ -61,25 +53,27 @@ class Player(Mobile):
         # ABS is used because EAST and WEST should both point to row 2 but need to have distint values
         # Because of this WEST = -2 and to get to the correct row we simply take the absolute value 
         self._row = abs(self._orientation.value)
-        print(self._moving, self._orientation)
-
-    def update(self, ticks):
-        """Updates the player class"""
         
+
+    def update(self, ticks, nearby_tiles, current_tile):
+        """Updates the player class"""
+        #print(nearby_tiles)
         if self._moving:
             self.startAnimation()
             self._key_down_timer += ticks
             if self._walk_event == None:
                 if self._current_image_row != self._row:
                     self.get_current_frame()
-                if self._key_down_timer > .1:
-                    self._walk_event = [0, self._orientation]    
+                if nearby_tiles[self._orientation].is_clear():
+                    if self._key_down_timer > .1:
+                        self._walk_event = [0, self._orientation]    
+                else: pass
+                    #play sound
 
         if self._walk_event != None:
-            super().update(ticks)
+            Mobile.update(self, ticks)
             self._wait_till_next_update += ticks
             self._walk_event[0] += 1
-            self._orientation == self._walk_event[1]
 
             if self._walk_event[1] == Cardinality.WEST:
                 self._position.x -= 1
@@ -89,7 +83,10 @@ class Player(Mobile):
                 self._position.y -= 1
             elif self._walk_event[1] == Cardinality.EAST:
                 self._position.x += 1
-            if self._walk_event[0] == 16: self._walk_event = None
+            if self._walk_event[0] == 16: 
+                nearby_tiles[self._walk_event[1]].add_obj(self)
+                current_tile.remove_obj()
+                self._walk_event = None
                     
         if not self._moving and self._walk_event == None:
             self._key_down_timer = 0
@@ -107,25 +104,4 @@ class Player(Mobile):
         self._runnign = False
         self._framesPerSecond = 4
     
-    def get_pokemon_team(self):
-        return self._pokemon_team
     
-    def is_enemy(self):
-        return self._is_enemy
-
-    def get_active_pokemon(self):
-        return self._active_pokemon
-    
-    def set_active_pokemon(self, index):
-        self._active_pokemon = self.get_pokemon_team()[index]
-    
-    def get_pokemon_team(self):
-        return self._pokemon_team
-
-    def get_pokemon_by_index(self, index):
-        print(self.get_pokemon_team()[index])
-        return self.get_pokemon_team()[index]
-    
-    def get_name(self):
-        return self._name
-        
