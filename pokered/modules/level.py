@@ -2,6 +2,7 @@ import json
 import pygame
 from os.path import join
 from .trainer import Trainer
+from .pokemon import Pokemon
 from .utils.drawable import Drawable
 from .utils.vector2D import Vector2
 from .utils.soundManager import SoundManager
@@ -42,7 +43,10 @@ class Level():
         self._player.setPosition(self.correct_border_and_height_pos(self._level_meta[1]))
         self._tiles[self._level_meta[1][1]][self._level_meta[1][0]].add_obj(self._player)
         for trainer_args in self._level_meta[2]:
-            train = Trainer(self.correct_border_and_height_pos(trainer_args[0]), join("trainers", trainer_args[1]), trainer_args[2], enemy=True)
+            train = Trainer(self.correct_border_and_height_pos(trainer_args[0]), trainer_args[1], trainer_args[2], enemy=True)
+            for pokemon in trainer_args[3]:
+                print(pokemon)
+                train._pokemon_team.append(Pokemon(pokemon, enemy=True))
             print("pos", train._position)
             self._tiles[trainer_args[0][1]][trainer_args[0][0]].add_obj(train)
 

@@ -15,6 +15,7 @@ from .battle_fsm import BattleFSM
 class Battle:
     def __init__(self, player, opponent):
         """Create and show a battle with the player and an npc"""
+        Drawable.WINDOW_OFFSET = Vector2(0,0)
         self._player = player
         self._opponent = opponent
         self._battle_fsm = BattleFSM(player, opponent)
