@@ -1,8 +1,10 @@
 import json
+import pygame
 from os.path import join
 from .trainer import Trainer
 from .utils.drawable import Drawable
 from .utils.vector2D import Vector2
+from .utils.soundManager import SoundManager
 from .enumerated.cardinality import Cardinality
 
 class Level():
@@ -20,6 +22,7 @@ class Level():
         self._foreground.center_with_border(screen_size)
         self._background.center_with_border(screen_size)
         self.populate_trainers()
+        SoundManager.getInstance().playMusic("gym_music.mp3", -1, .5)
 
         
     
