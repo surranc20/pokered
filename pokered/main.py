@@ -37,9 +37,9 @@ def main():
     poke5 = Pokemon("pidgeot")
     poke6 = Pokemon("mew")
     poke.add_move(Move("Thunder"))
-    poke.add_move(Move("Thunder"))
-    poke.add_move(Move("Thunder"))
-    poke.add_move(Move("Thunder"))
+    poke.add_move(Move("Thunderbolt"))
+    poke.add_move(Move("Thunder Wave"))
+    poke.add_move(Move("Thundershock"))
 
     player._pokemon_team.append(poke)
     player._pokemon_team.append(poke2)

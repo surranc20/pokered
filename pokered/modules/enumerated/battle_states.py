@@ -22,4 +22,7 @@ class BattleStates(Enum):
     DISPLAY_OPPONENT_TOSS_TEXT = ("text", 15)
     DISPLAY_PLAYER_TOSS_TEXT = ("text", 16)
     RUNNING = ("text wait", 17)
+    UPDATE_ENEMY_STATUS = ("auto", 19)
     TEST = ("auto", 18)
+    OPPONENT_CHOOSING_MOVE = ("compute", 20)
+    UPDATE_PLAYER_STATUS = ("auto", 21)

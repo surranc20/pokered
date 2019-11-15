@@ -42,5 +42,144 @@
         "PP": 30,
         "Crit":       0.0625,
         "Effects": "10% chance to paralyze the target."
+    },
+    "Surf" : {
+        "Move type": "Water",
+        "Category":   "Special",
+        "Move power": 95,
+        "Accuracy": 100,
+        "PP": 15,
+        "Crit":       0.0625,
+        "Effects": ""
+    },
+    "Ice Beam" : {
+        "Move type": "Ice",
+        "Category":   "Special",
+        "Move power": 95,
+        "Accuracy": 100,
+        "PP": 10,
+        "Crit":       0.0625,
+        "Effects": "10% chance to freeze target."
+    }, 
+    "Hail" : {
+        "Move type": "Ice",
+        "Category":   "Weather",
+        "Move power": "--",
+        "Accuracy": "--",
+        "PP": 10,
+        "Crit":       "--",
+        "Effects": "Summons a hail storm that hurts all types besides ice."
+    }, 
+    "Safeguard" : {
+        "Move type": "Normal",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": "--",
+        "PP": 25,
+        "Crit":       "--",
+        "Effects": "User's party is protected from all status abnormalities."
+    },
+    "Spikes" : {
+        "Move type": "Ground",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": "--",
+        "PP": 20,
+        "Crit":       "--",
+        "Effects": "Lays spikes on the battlefield that damage pokemon that are switched in."
+    }, 
+    "Dive" : {
+        "Move type": "Water",
+        "Category":   "Physical",
+        "Move power": 60,
+        "Accuracy": 100,
+        "PP": 10,
+        "Crit":       0.0625,
+        "Effects": "Dives underwater the first turn, then surfaces to attack the second. Pokemon cannot be hit while underwater."
+    }, 
+    "Protect" : {
+        "Move type": "Normal",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": "--",
+        "PP": 10,
+        "Crit":       "--",
+        "Effects": "Negates all attacks on user when used. Successive uses degrade accuracy."
+    }, 
+    "Amnesia" : {
+        "Move type": "Psychic",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": "--",
+        "PP": 20,
+        "Crit":       "--",
+        "Effects": "Pokemon's Special Defence is raised."
+    },
+    "Yawn" : {
+        "Move type": "Normal",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 100,
+        "PP": 10,
+        "Crit":       0,
+        "Effects": "At the end of the next turn the target will fall asleep."
+    }, 
+    "Double Slap" : {
+        "Move type": "Normal",
+        "Category":   "Physical",
+        "Move power": 15,
+        "Accuracy": 85,
+        "PP": 10,
+        "Crit":       0.0625,
+        "Effects": "Attacks 2 to 5 times."
+    },
+    "Ice Punch" : {
+        "Move type": "Ice",
+        "Category":   "Physical",
+        "Move power": 75,
+        "Accuracy": 100,
+        "PP": 15,
+        "Crit":       0.0625,
+        "Effects": "30% chance to freeze target."
+    },
+    "Sweet Kiss" : {
+        "Move type": "Normal",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 75,
+        "PP": 10,
+        "Crit":       0,
+        "Effects": "If it hits, the target is confused."
+    }, 
+    "Attract" : {
+        "Move type": "Normal",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 100,
+        "PP": 10,
+        "Crit":       0,
+        "Effects": "Makes the opposite gender less likely to attack."
+    },
+    "Body Slam" : {
+        "Move type": "Normal",
+        "Category":   "Physical",
+        "Move power": 85,
+        "Accuracy": 100,
+        "PP": 15,
+        "Crit":       0.0625,
+        "Effects": "30% chance to parlyze the target."
+    },
+    "Confuse Ray" : {
+        "Move type": "Ghost",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 100,
+        "PP": 10,
+        "Crit":       0,
+        "Effects": "Confuses the foe."
     }
+
+    
+
+
 }

@@ -45,9 +45,7 @@ class Level():
         for trainer_args in self._level_meta[2]:
             train = Trainer(self.correct_border_and_height_pos(trainer_args[0]), trainer_args[1], trainer_args[2], enemy=True)
             for pokemon in trainer_args[3]:
-                print(pokemon)
-                train._pokemon_team.append(Pokemon(pokemon, enemy=True))
-            print("pos", train._position)
+                train._pokemon_team.append(Pokemon(pokemon[0], enemy=True, move_set=pokemon[1]))
             self._tiles[trainer_args[0][1]][trainer_args[0][0]].add_obj(train)
 
 

@@ -1,6 +1,7 @@
 import pygame
 import textwrap
 import copy
+import random
 from enum import Enum, auto
 from os.path import join
 
@@ -14,15 +15,29 @@ from ..utils.soundManager import SoundManager
 from ..enumerated.battle_actions import BattleActions
 from ..enumerated.battle_states import BattleStates
 from ..pokemon import Pokemon
+from ..move import Move
 from .battle_menus.poke_info import PokeInfo
 from .battle_menus.pokemon_remaining import PokemonRemaining
 from .battle_menus.poke_party import PokeParty
+from .damage_calculator import DamageCalculator
 
 #TODO: Never display the number of pokemon remaining
 
 class BattleFSM:
 
-    TRANSITIONS = {(BattleStates.CHOOSING_POKEMON, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN, (BattleStates.CHOOSING_MOVE, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN, (BattleStates.CHOOSING_FIGHT_OR_RUN, 0) : BattleStates.CHOOSING_MOVE, (BattleStates.CHOOSING_FIGHT_OR_RUN, 1) : BattleStates.TEST, (BattleStates.CHOOSING_FIGHT_OR_RUN, 2) : BattleStates.CHOOSING_POKEMON, (BattleStates.CHOOSING_FIGHT_OR_RUN, 3) : BattleStates.RUNNING,BattleStates.PLAYER_TOSSING_POKEMON : BattleStates.PLAYER_POKEMON_MENU, BattleStates.OPPONENT_TOSSING_POKEMON : BattleStates.OPPONENT_POKEMON_MENU, BattleStates.DISPLAY_OPPONENT_TOSS_TEXT : BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.DISPLAY_PLAYER_TOSS_TEXT : BattleStates.PLAYER_TOSSING_POKEMON}
+    TRANSITIONS = {(BattleStates.CHOOSING_POKEMON, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN, 
+    (BattleStates.CHOOSING_MOVE, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN, (BattleStates.CHOOSING_FIGHT_OR_RUN, 0) : BattleStates.CHOOSING_MOVE, 
+    (BattleStates.CHOOSING_FIGHT_OR_RUN, 1) : BattleStates.TEST, (BattleStates.CHOOSING_FIGHT_OR_RUN, 2) : BattleStates.CHOOSING_POKEMON, 
+    (BattleStates.CHOOSING_FIGHT_OR_RUN, 3) : BattleStates.RUNNING,BattleStates.PLAYER_TOSSING_POKEMON : BattleStates.PLAYER_POKEMON_MENU, 
+    BattleStates.OPPONENT_TOSSING_POKEMON : BattleStates.OPPONENT_POKEMON_MENU, BattleStates.DISPLAY_OPPONENT_TOSS_TEXT : BattleStates.OPPONENT_TOSSING_POKEMON,
+    BattleStates.DISPLAY_PLAYER_TOSS_TEXT : BattleStates.PLAYER_TOSSING_POKEMON,
+    (BattleStates.CHOOSING_MOVE, 0) : BattleStates.UPDATE_ENEMY_STATUS,
+    (BattleStates.CHOOSING_MOVE, 1) : BattleStates.UPDATE_ENEMY_STATUS,
+    (BattleStates.CHOOSING_MOVE, 2) : BattleStates.UPDATE_ENEMY_STATUS, 
+    (BattleStates.CHOOSING_MOVE, 3) : BattleStates.UPDATE_ENEMY_STATUS,
+    BattleStates.UPDATE_ENEMY_STATUS : BattleStates.OPPONENT_CHOOSING_MOVE, 
+    BattleStates.UPDATE_PLAYER_STATUS : BattleStates.CHOOSING_FIGHT_OR_RUN
+    }
 
     def __init__(self, player, opponent, state=BattleStates.NOT_STARTED):
         self._state = state
@@ -37,6 +52,7 @@ class BattleFSM:
         self._active_opponent_pokemon = None
         self._player_poke_info = None
         self._opponent_poke_info = None
+        self._move_used = None
         self._background = Drawable(join("battle", "battle_background.png"), Vector2(0,0), offset= (0,0))
         self._battle_text_background = Drawable(join("battle", "battle_menus.png"), Vector2(0,112), offset=(0, 1))
         self._move_select = Drawable(join("battle", "battle_menus.png"), Vector2(0, 113), offset=(0, 0))
@@ -44,7 +60,7 @@ class BattleFSM:
 
 
         self._draw_list = [self._background, self._battle_text_background, self._active_player_pokemon, self._active_opponent_pokemon, self._player_poke_info, self._opponent_poke_info]
-        self._update_list = []
+        self._update_list = [self._player_poke_info, self._opponent_poke_info]
     
     def manage_action(self, action):
         if action in [value[0] for value in self._state.value]:
@@ -61,7 +77,7 @@ class BattleFSM:
         return draw_list
     
     def get_update_list(self):
-        update_list =  [item for item in self._update_list if not item.is_dead()]
+        update_list =  [item for item in self._update_list if item != None and not item.is_dead()]
         if self._active_animation != None:
             print(self._active_animation)
             update_list.append(self._active_animation)
@@ -69,6 +85,7 @@ class BattleFSM:
         return update_list
 
     def update(self, ticks):
+        print(self._state)
         if self._opponent.get_active_pokemon() == None and self._state != BattleStates.OPPONENT_TOSSING_POKEMON:
             self._state = BattleStates.OPPONENTS_CHOOSING_POKEMON
 
@@ -87,7 +104,15 @@ class BattleFSM:
             
         elif self._state.value[0] == "auto":
             if self._active_animation == None:
-                print(self._active_animation)
+                if self._state == BattleStates.UPDATE_ENEMY_STATUS:
+                    dmg = DamageCalculator((self._player.get_active_pokemon(), self._move_used), self._opponent.get_active_pokemon()).get_damage()
+                    self._active_animation = ChangeHP(self._opponent.get_active_pokemon(), dmg)
+
+
+                if self._state == BattleStates.UPDATE_PLAYER_STATUS:
+                    dmg = DamageCalculator((self._opponent.get_active_pokemon(), self._move_used), self._player.get_active_pokemon()).get_damage()
+                    self._active_animation = ChangeHP(self._player.get_active_pokemon(), dmg)
+
                 if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
                     trainer_toss = TossPokemon(self._opponent.get_active_pokemon().get_name(), self._opponent, lead_off=True, enemy=True)
                     self._active_animation = trainer_toss
@@ -102,9 +127,17 @@ class BattleFSM:
 
             else:
                 if self._active_animation.is_dead():
-                    print("anim died", self._state)
-                    self._active_animation = None
-                    self.handle_nebulous_transition()
+                    if self._state == BattleStates.UPDATE_ENEMY_STATUS:
+                        self._active_animation = None
+                        self._handle_state_change(self.TRANSITIONS[self._state])
+
+                    if self._state == BattleStates.UPDATE_PLAYER_STATUS:
+                        self._active_animation = None
+                        self._handle_state_change(self.TRANSITIONS[self._state])
+                    else:
+                        print("anim died", self._state)
+                        self._active_animation = None
+                        self.handle_nebulous_transition()
                     
         elif self._state.value[0] == "compute":
             self.handle_compute_event()
@@ -122,11 +155,15 @@ class BattleFSM:
         if self._state == BattleStates.OPPONENTS_CHOOSING_POKEMON:
             self._opponent.set_active_pokemon(0)
             self._handle_state_change(BattleStates.DISPLAY_OPPONENT_TOSS_TEXT)
-    
+        elif self._state == BattleStates.OPPONENT_CHOOSING_MOVE:
+            self._move_used = self._opponent.get_active_pokemon().get_moves()[0]
+            self._handle_state_change(BattleStates.UPDATE_PLAYER_STATUS)
     def handle_nebulous_transition(self):
         if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
             self._draw_list[3] = self._opponent.get_active_pokemon()
-            self._draw_list[5] = PokeInfo(self._opponent.get_active_pokemon(), enemy=True)
+            op_poke_info = PokeInfo(self._opponent.get_active_pokemon(), enemy=True)
+            self._draw_list[5] = op_poke_info
+            self._update_list[1] = op_poke_info
             
             if self._player.get_active_pokemon() != None:
                 self._handle_state_change(BattleStates.CHOOSING_FIGHT_OR_RUN)
@@ -139,6 +176,7 @@ class BattleFSM:
             self._draw_list[2] = self._player.get_active_pokemon()
             self._player_poke_info = PokeInfo(self._player.get_active_pokemon())
             self._draw_list[4] = self._player_poke_info
+            self._update_list[0] = self._player_poke_info
             self._handle_state_change(BattleStates.CHOOSING_FIGHT_OR_RUN)
         
         elif self._state == BattleStates.TEST:
@@ -155,6 +193,7 @@ class BattleFSM:
                         self._handle_state_change(response[0])
                 else:
                     self._handle_state_change(self.TRANSITIONS[(self._state), self._cursor.get_value()])
+                    self._move_used = self._player.get_active_pokemon().get_moves()[self._cursor.get_value()]
                     SoundManager.getInstance().playSound("firered_0005.wav")
 
 
@@ -185,11 +224,13 @@ class BattleFSM:
             self._draw_list.pop(self._draw_list.index(self._move_select))
             self._draw_list.pop(self._draw_list.index(self._pp_surface))
             self._draw_list.pop(self._draw_list.index(self._moves_surface))
+            self._cursor.deactivate()
         elif self._state == BattleStates.TEST:
             self._player_poke_info = PokeInfo(self._player.get_active_pokemon())
         elif self._state == BattleStates.CHOOSING_POKEMON:
             self._draw_list.pop()
             self._update_list.pop()
+        
             
         if new_state == BattleStates.CHOOSING_FIGHT_OR_RUN:
             self._active_string = str("What will " + self._player.get_active_pokemon().get_name().upper() + " do?")
@@ -229,6 +270,7 @@ class BattleFSM:
             self._draw_list[2] = None
             self._draw_list[4] = None
             self._cursor.deactivate()
+        
 
         self._state = new_state
     
@@ -306,7 +348,7 @@ class MovesSurface(Drawable):
         self._image.fill((255,255,255,0))
         self._image.set_colorkey((255, 255, 255))
         self._pokemon = pokemon
-        self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"), 14)
+        self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"), 13)
         self._add_moves()
     
     def _add_moves(self):
@@ -330,7 +372,7 @@ class PPSurface(Drawable):
     
     def _add_pp(self):
         move = self._pokemon.get_moves()[self._cursor_pos]
-        self._image.blit(self._font.render(str(move.current_pp), False, (69, 60, 60)), (36, 2))
+        self._image.blit(self._font.render(str(move.current_pp), False, (69, 60, 60)), (34, 2))
         self._image.blit(self._font.render(str(move.max_pp), False, (69, 60, 60)), (53, 2))
         self._image.blit(self._font.render(move.move_type.upper(), False, (69, 60, 60)), (24, 19))
 

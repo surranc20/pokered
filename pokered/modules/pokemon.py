@@ -2,12 +2,13 @@ import json
 from os.path import join
 from .utils.drawable import Drawable
 from .utils.vector2D import Vector2
+from .move import Move
 
 class Pokemon(Drawable):
     PLAYER_POKE_POS = Vector2(36, 48)
     ENEMY_POKE_POS = Vector2(148, 6) 
 
-    def __init__(self, pokemon_name, enemy=False, gender="male"):
+    def __init__(self, pokemon_name, enemy=False, gender="male", move_set=None):
         with open(join("jsons", "pokemon_lookup.json"), "r") as pokemon_lookup_json:
             pokemon_lookup = json.load(pokemon_lookup_json)
             _lookup = tuple(pokemon_lookup[pokemon_name])
@@ -20,14 +21,15 @@ class Pokemon(Drawable):
         self._held_item = None
         self._ability = None
         self._status = []
+        self._enemy = enemy
         self._stats = {
             "LVL" : 99,
-            "HP": 45,
-            "Current HP" : 45,
+            "HP": 168,
+            "Current HP" : 168,
             "Attack": 49,
             "Defense": 49,
             "Sp. Attack": 65,
-            "Sp. Defense": 65,
+            "Sp. Defense": 117,
             "Speed": 45
         }
 
@@ -37,8 +39,15 @@ class Pokemon(Drawable):
 
         self._type = pokemon_data["type"]
 
+        if move_set != None:
+            self.add_move_list(move_set)
+
         super().__init__(join("pokemon", "pokemon_big.png"), _pos, offset= _offset)
     
+    def add_move_list(self, lyst):
+        for move in lyst:
+            self._moves.append(Move(move))
+
     def get_nick_name(self):
         return self._nick_name
     

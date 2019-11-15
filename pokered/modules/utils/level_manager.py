@@ -34,7 +34,6 @@ class LevelManager(object):
             self._active_battle.handle_event(event)
       
     def update(self, ticks):
-        print(self._active_battle)
         if self._active_battle == None:
             self._level.update(ticks)
         else:

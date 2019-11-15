@@ -1,10 +1,12 @@
 import csv
 import random
 import pandas as pd
+from os.path import join
 
 class DamageCalculator:
     def __init__(self, poke_1, poke_2, weather=None):
         self._poke_1 = poke_1[0]
+        print(self._poke_1)
         self._move = poke_1[1]
         self._poke_2 = poke_2
         self._weather = weather
@@ -21,7 +23,7 @@ class DamageCalculator:
         return round(self.get_target_modifier() * self.get_weather_modifier() * self.get_critical_modifier() * self.get_random_modifier() * self.get_stab_modifier() * self.get_type_modifier() * self.get_burn_modifier() * self.get_other_modifier(), 5)
 
     def get_type_modifier(self):
-        df = pd.read_csv("type_chart.csv")
+        df = pd.read_csv(join("csv", "type_chart.csv"))
         df = df.set_index("Attacking", drop = True)
         if len(self._poke_2.get_type()) == 2:
             mod1 = float(df.loc[self._move.move_type, self._poke_2.get_type()[0]])
