@@ -123,5 +123,9 @@ class PokeInfo(Drawable):
             draw_surface.blit(self._hp_darken, (181, 91))
             draw_surface.blit(self._lvl, (217, 79))
             draw_surface.blit(self._hp_remaining, (195, 97))
+    
+    def update(self, ticks):
+        self.__init__(self._pokemon, self._enemy)
+
             
 
