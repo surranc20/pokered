@@ -2,7 +2,14 @@
     [13,13],
     [6,11],
     [
-        [[6,5],"lorelei", 1, ["dewgong", "cloyster", "slowbro", "jynx", "lapras"]]
+        [[6,5],"lorelei", 1, 
+        [
+            ["dewgong", ["Surf", "Ice Beam", "Hail", "Safeguard"]],
+            ["cloyster", ["Spikes", "Dive", "Hail", "Protect"]],
+            ["slowbro", ["Ice Beam", "Surf", "Amnesia", "Yawn"]],
+            ["jynx", ["Double Slap", "Ice Punch", "Sweet Kiss", "Attract"]],
+            ["lapras", ["Body Slam", "Confuse Ray", "Surf", "Ice Beam"] ]]
+        ]
     ],
     [
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
