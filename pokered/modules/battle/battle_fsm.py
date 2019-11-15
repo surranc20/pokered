@@ -89,11 +89,11 @@ class BattleFSM:
             if self._active_animation == None:
                 print(self._active_animation)
                 if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
-                    trainer_toss = TossPokemon(self._opponent.get_active_pokemon().get_name(), lead_off=True, enemy=True)
+                    trainer_toss = TossPokemon(self._opponent.get_active_pokemon().get_name(), self._opponent, lead_off=True, enemy=True)
                     self._active_animation = trainer_toss
                 
                 if self._state == BattleStates.PLAYER_TOSSING_POKEMON:
-                    trainer_toss = TossPokemon(self._player.get_active_pokemon().get_name(), lead_off=True, enemy=False)
+                    trainer_toss = TossPokemon(self._player.get_active_pokemon().get_name(), self._player, lead_off=True, enemy=False)
                     self._active_animation = trainer_toss
                 
                 if self._state == BattleStates.TEST:
