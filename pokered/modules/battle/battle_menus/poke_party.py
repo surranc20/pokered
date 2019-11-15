@@ -254,7 +254,7 @@ class ActivePokemon(PokemonMenuPokemon):
         super().draw(draw_surface)
         self._bouncing_pokemon.draw(draw_surface)
         draw_surface.blit(self._lvl, (self._position[0] + 46, self._position[1] + 30))
-        draw_surface.blit(self._hp_remaining, (self._position[0] + 49, self._position[1] + 46))
+        draw_surface.blit(self._hp_remaining, (self._position[0] + 44, self._position[1] + 46))
         draw_surface.blit(self._hp, (self._position[0] + 30, self._position[1] + 41))
         draw_surface.blit(self._hp_darken, (self._position[0] + 30, self._position[1] + 41))
     
@@ -268,7 +268,7 @@ class SecondaryPokemon(PokemonMenuPokemon):
         self._bouncing_pokemon.draw(draw_surface)
         draw_surface.blit(self._hp, (self._position[0] + 96, self._position[1] + 9))
         draw_surface.blit(self._hp_darken, (self._position[0] + 96, self._position[1] + 9))
-        draw_surface.blit(self._hp_remaining, (self._position[0] + 115, self._position[1] + 15))
+        draw_surface.blit(self._hp_remaining, (self._position[0] + 110, self._position[1] + 15))
         draw_surface.blit(self._lvl, (self._position[0] + 48, self._position[1] + 15))
 
 
