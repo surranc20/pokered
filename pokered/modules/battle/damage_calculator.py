@@ -31,10 +31,14 @@ class DamageCalculator:
             if mod1 and mod2 == 2: return 4
             elif mod1 and mod2 == 0.5: return 0.25
             elif (mod1 == 0.5 and mod2 == 1.5) or (mod1 == 1.5 and mod2 == 0.5): return 1
+            elif mod1 == 1 and mod2 == 1:
+                return 1
             elif mod1 == 0 or mod2 == 0: return 0
             elif mod1 != 1: return mod1
             elif mod2 != 1: return mod2
-            else: raise Exception
+            else:
+                print(mod1, mod2) 
+                raise Exception
         else: 
             return float(df.loc[self._move.move_type, self._poke_2.get_type()[0]])
 
