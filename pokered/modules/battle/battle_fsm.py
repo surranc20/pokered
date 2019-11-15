@@ -36,7 +36,8 @@ class BattleFSM:
     (BattleStates.CHOOSING_MOVE, 2) : BattleStates.UPDATE_ENEMY_STATUS, 
     (BattleStates.CHOOSING_MOVE, 3) : BattleStates.UPDATE_ENEMY_STATUS,
     BattleStates.UPDATE_ENEMY_STATUS : BattleStates.OPPONENT_CHOOSING_MOVE, 
-    BattleStates.UPDATE_PLAYER_STATUS : BattleStates.CHOOSING_FIGHT_OR_RUN
+    BattleStates.UPDATE_PLAYER_STATUS : BattleStates.CHOOSING_FIGHT_OR_RUN,
+    BattleStates.OPPONENT_POKEMON_DIED : BattleStates.OPPONENTS_CHOOSING_POKEMON
     }
 
     def __init__(self, player, opponent, state=BattleStates.NOT_STARTED):
@@ -127,16 +128,17 @@ class BattleFSM:
 
             else:
                 if self._active_animation.is_dead():
+                    self._active_animation = None
                     if self._state == BattleStates.UPDATE_ENEMY_STATUS:
-                        self._active_animation = None
                         self._handle_state_change(self.TRANSITIONS[self._state])
 
                     if self._state == BattleStates.UPDATE_PLAYER_STATUS:
-                        self._active_animation = None
+                        self._handle_state_change(self.TRANSITIONS[self._state])
+                    
+                    if self._state == BattleStates.OPPONENT_POKEMON_DIED:
                         self._handle_state_change(self.TRANSITIONS[self._state])
                     else:
                         print("anim died", self._state)
-                        self._active_animation = None
                         self.handle_nebulous_transition()
                     
         elif self._state.value[0] == "compute":
@@ -154,6 +156,8 @@ class BattleFSM:
     def handle_compute_event(self):
         if self._state == BattleStates.OPPONENTS_CHOOSING_POKEMON:
             self._opponent.set_active_pokemon(0)
+            while self._opponent.get_active_pokemon()._stats["Current HP"] == 0:
+                self._opponent.set_active_pokemon(random.randint(1,4))
             self._handle_state_change(BattleStates.DISPLAY_OPPONENT_TOSS_TEXT)
         elif self._state == BattleStates.OPPONENT_CHOOSING_MOVE:
             self._move_used = self._opponent.get_active_pokemon().get_moves()[0]
@@ -230,7 +234,15 @@ class BattleFSM:
         elif self._state == BattleStates.CHOOSING_POKEMON:
             self._draw_list.pop()
             self._update_list.pop()
-        
+        elif self._state == BattleStates.UPDATE_ENEMY_STATUS:
+            if self._opponent.get_active_pokemon()._stats["Current HP"] == 0:
+                self._state = BattleStates.OPPONENT_POKEMON_DIED
+                return
+        elif self._state == BattleStates.UPDATE_PLAYER_STATUS:
+            if self._player.get_active_pokemon()._stats["Current HP"] == 0:
+                self._state = BattleStates.CHOOSING_POKEMON
+                self._handle_state_change(BattleStates.CHOOSING_POKEMON)
+                return        
             
         if new_state == BattleStates.CHOOSING_FIGHT_OR_RUN:
             self._active_string = str("What will " + self._player.get_active_pokemon().get_name().upper() + " do?")

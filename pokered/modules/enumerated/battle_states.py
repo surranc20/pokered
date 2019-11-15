@@ -26,3 +26,4 @@ class BattleStates(Enum):
     TEST = ("auto", 18)
     OPPONENT_CHOOSING_MOVE = ("compute", 20)
     UPDATE_PLAYER_STATUS = ("auto", 21)
+    OPPONENT_POKEMON_DIED = ("auto", 22)
