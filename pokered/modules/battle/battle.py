@@ -19,11 +19,6 @@ class Battle:
         self._player = player
         self._opponent = opponent
         self._battle_fsm = BattleFSM(player, opponent)
-        self._battle_background = Drawable(join("battle", "battle_background.png"), Vector2(0,0), offset= (0,0))
-        self._battle_menus = Drawable(join("battle", "battle_menus.png"), Vector2(0,113), offset=(0, 1))
-        self._toss_anim = TossPokemon("articuno", lead_off=True, enemy=False)
-        self._enemy_toss_anim = TossPokemon("pikachu", lead_off=True, enemy=True)
-        self._pokemon_remaining = PokemonRemaining(player)
         pygame.mixer.music.load(join("music", "gym_battle_music.mp3"))
         pygame.mixer.music.play(-1)
     
