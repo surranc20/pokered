@@ -40,6 +40,10 @@ def main():
     poke.add_move(Move("Thunderbolt"))
     poke.add_move(Move("Thunder Wave"))
     poke.add_move(Move("Thundershock"))
+    poke6.add_move(Move("Thunder"))
+    poke6.add_move(Move("Thunderbolt"))
+    poke6.add_move(Move("Thunder Wave"))
+    poke6.add_move(Move("Thundershock"))
 
     player._pokemon_team.append(poke)
     player._pokemon_team.append(poke2)
