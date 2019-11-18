@@ -34,6 +34,12 @@ class Battle:
         self._battle_fsm.update(ticks)
         for obj in self._battle_fsm.get_update_list():
             new_anim = obj.update(ticks)
+    
+    def is_over(self):
+        if self._battle_fsm.is_over():
+            pygame.mixer.music.pause()
+        return self._battle_fsm.is_over()
+
             
                 
         

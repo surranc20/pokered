@@ -91,7 +91,7 @@ class PokeParty(Drawable):
                     self._selected_pokemon = False
                     self._pokemon_selected_menu = None
                     self._text_bar.blit_string("Choose a POKeMON.")
-                elif response == BattleStates.DISPLAY_PLAYER_TOSS_TEXT:
+                elif response == BattleStates.PLAYER_TOSSING_POKEMON:
                     return (response, 0)
                 elif response == "PKMN is already in battle!":
                     self._text_bar.blit_string(response)
@@ -135,7 +135,7 @@ class PokemonSelectedMenu(Drawable):
                         self._player._pokemon_team[self._selected_pos], self._player._pokemon_team[0]
                     self._player.set_active_pokemon(0)
                     print(self._player._pokemon_team)
-                    return BattleStates.DISPLAY_PLAYER_TOSS_TEXT
+                    return BattleStates.PLAYER_TOSSING_POKEMON
                 else:
                     return "PKMN is already in battle!"
 

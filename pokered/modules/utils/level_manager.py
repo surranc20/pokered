@@ -38,3 +38,6 @@ class LevelManager(object):
             self._level.update(ticks)
         else:
             self._active_battle.update(ticks)
+            if self._active_battle.is_over():
+                self._active_battle = None
+                self._level.play_music()

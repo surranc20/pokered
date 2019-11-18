@@ -39,6 +39,9 @@ class Level():
             print(row)
         return tiles
     
+    def play_music(self):
+        SoundManager.getInstance().playMusic("gym_music.mp3", -1, .5)
+
     def populate_trainers(self):
         self._player.setPosition(self.correct_border_and_height_pos(self._level_meta[1]))
         self._tiles[self._level_meta[1][1]][self._level_meta[1][0]].add_obj(self._player)
