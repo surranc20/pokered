@@ -14,6 +14,7 @@
         "Move power": 95,
         "Accuracy": 100,
         "PP": 15,
+        "Crit":       0.0625,
         "Effects": "10% chance to paralyze the target."
     },
     "Thunder Wave" : {

@@ -5,7 +5,7 @@
         [[6,5],"lorelei", 1, 
         [
             ["dewgong", ["Surf", "Ice Beam", "Hail", "Safeguard"]],
-            ["cloyster", ["Spikes", "Dive", "Hail", "Protect"]],
+            ["cloyster", ["Dive", "Spikes", "Hail", "Protect"]],
             ["slowbro", ["Ice Beam", "Surf", "Amnesia", "Yawn"]],
             ["jynx", ["Double Slap", "Ice Punch", "Sweet Kiss", "Attract"]],
             ["lapras", ["Body Slam", "Confuse Ray", "Surf", "Ice Beam"] ]]
