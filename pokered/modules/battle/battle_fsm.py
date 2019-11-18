@@ -25,50 +25,46 @@ from .damage_calculator import DamageCalculator
 
 class BattleFSM:
 
-    TRANSITIONS = {(BattleStates.CHOOSING_POKEMON, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN, 
-    (BattleStates.CHOOSING_MOVE, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN, (BattleStates.CHOOSING_FIGHT_OR_RUN, 0) : BattleStates.CHOOSING_MOVE, 
-    (BattleStates.CHOOSING_FIGHT_OR_RUN, 1) : BattleStates.TEST, (BattleStates.CHOOSING_FIGHT_OR_RUN, 2) : BattleStates.CHOOSING_POKEMON, 
-    (BattleStates.CHOOSING_FIGHT_OR_RUN, 3) : BattleStates.RUNNING,BattleStates.PLAYER_TOSSING_POKEMON : BattleStates.PLAYER_POKEMON_MENU, 
-    BattleStates.OPPONENT_TOSSING_POKEMON : BattleStates.OPPONENT_POKEMON_MENU, BattleStates.DISPLAY_OPPONENT_TOSS_TEXT : BattleStates.OPPONENT_TOSSING_POKEMON,
-    BattleStates.DISPLAY_PLAYER_TOSS_TEXT : BattleStates.PLAYER_TOSSING_POKEMON,
-    (BattleStates.CHOOSING_MOVE, 0) : BattleStates.UPDATE_ENEMY_STATUS,
-    (BattleStates.CHOOSING_MOVE, 1) : BattleStates.UPDATE_ENEMY_STATUS,
-    (BattleStates.CHOOSING_MOVE, 2) : BattleStates.UPDATE_ENEMY_STATUS, 
-    (BattleStates.CHOOSING_MOVE, 3) : BattleStates.UPDATE_ENEMY_STATUS,
-    BattleStates.UPDATE_ENEMY_STATUS : BattleStates.OPPONENT_CHOOSING_MOVE, 
-    BattleStates.UPDATE_PLAYER_STATUS : BattleStates.CHOOSING_FIGHT_OR_RUN,
-    BattleStates.OPPONENT_POKEMON_DIED : BattleStates.OPPONENTS_CHOOSING_POKEMON
+    TRANSITIONS = {
+        (BattleStates.CHOOSING_FIGHT_OR_RUN, 0) : BattleStates.CHOOSING_MOVE,
+        (BattleStates.CHOOSING_FIGHT_OR_RUN, 1) : BattleStates.TEST,
+        (BattleStates.CHOOSING_FIGHT_OR_RUN, 2) : BattleStates.CHOOSING_POKEMON,
+        (BattleStates.CHOOSING_FIGHT_OR_RUN, 3) : BattleStates.RUNNING,
+        BattleStates.CHOOSING_MOVE : BattleStates.CHOOSE_OPPONENT_ACTION,
+        BattleStates.RUNNING : BattleStates.CHOOSING_FIGHT_OR_RUN,
+        (BattleStates.CHOOSING_POKEMON, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN,
+        (BattleStates.CHOOSING_MOVE, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN,
+        BattleStates.DISPLAY_EFFECT : BattleStates.CHOOSING_FIGHT_OR_RUN
     }
 
     def __init__(self, player, opponent, state=BattleStates.NOT_STARTED):
         self._state = state
+        self._state_queue = []
         self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"), 16)
         self._cursor = Cursor()
-        self._active_player = opponent
         self._active_animation = None
         self._active_string = None
+        self._text_cursor = TextCursor((0,0))
         self._opponent = opponent
         self._player = player
         self._active_player_pokemon = None
         self._active_opponent_pokemon = None
         self._player_poke_info = None
         self._opponent_poke_info = None
-        self._move_used = None
+        self._player_move_queued = None
+        self._enemy_move_queued = None
+        self._turn_order = []
+        self._initial_stage_over = False
         self._background = Drawable(join("battle", "battle_background.png"), Vector2(0,0), offset= (0,0))
         self._battle_text_background = Drawable(join("battle", "battle_menus.png"), Vector2(0,112), offset=(0, 1))
         self._move_select = Drawable(join("battle", "battle_menus.png"), Vector2(0, 113), offset=(0, 0))
         self._fight_run = Drawable(join("battle", "battle_menus.png"), Vector2(120, 113), offset=(0, 2))
-
-
-        self._draw_list = [self._background, self._battle_text_background, self._active_player_pokemon, self._active_opponent_pokemon, self._player_poke_info, self._opponent_poke_info]
-        self._update_list = [self._player_poke_info, self._opponent_poke_info]
-    
-    def manage_action(self, action):
-        if action in [value[0] for value in self._state.value]:
-            pass
-
-    def get_state(self):
-        return self._state
+        self._draw_list = [self._background, self._battle_text_background, self._active_player_pokemon, self._active_opponent_pokemon, self._player_poke_info, self._opponent_poke_info, self._text_cursor]
+        self._update_list = [self._player_poke_info, self._opponent_poke_info, self._text_cursor]
+        self._is_over = False
+   
+    def is_over(self):
+        return self._is_over
 
     def get_draw_list(self):
         draw_list = [item for item in self._draw_list if item != None and not item.is_dead()]
@@ -84,184 +80,246 @@ class BattleFSM:
             update_list.append(self._active_animation)
     
         return update_list
-
+    
     def update(self, ticks):
         print(self._state)
-        if self._opponent.get_active_pokemon() == None and self._state != BattleStates.OPPONENT_TOSSING_POKEMON:
-            self._state = BattleStates.OPPONENTS_CHOOSING_POKEMON
 
+        if self._state == BattleStates.NOT_STARTED:
+            self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.PLAYER_TOSSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
+            self._active_string = self._opponent.get_name().upper() + " would like to battle!"
+            self._state = self._state_queue.pop(0)
+            self._player.set_active_pokemon(0)
+            self._opponent.set_active_pokemon(0)
 
-        if self._state.value[0] == "wait":
-            if self._state == BattleStates.CHOOSING_MOVE:
-                pass
-                
-        elif self._state.value[0] == "text":
-            self._wrap_text(20)
-            self._state = self.TRANSITIONS[self._state]
+            self._draw_list.append(TossPokemon(self._player.get_active_pokemon().get_name(), self._player, lead_off=True, enemy=False))
+            self._draw_list.append(TossPokemon(self._opponent.get_active_pokemon().get_name(), self._opponent, lead_off=True, enemy=True))
+
+        if self._state == BattleStates.BATTLE_OVER:
+            self._is_over = True
+
+        if self._state.value[0] == "text wait":
+            if self._active_string != None and self._active_string != "":
+                self._text_cursor.set_pos(self._wrap_text(25))
+                self._text_cursor.activate()
+                self._active_string = None
+            elif self._active_string == "":
+                self._active_string = None
+
+                if len(self._state_queue) > 0:
+                    self._handle_state_change(self._state_queue.pop(0))
+                else:
+                    print("We in here")
+                    self._handle_state_change(self.TRANSITIONS[self._state])
+
         
-        elif self._state.value[0] == "text wait":
-            self._active_string = "There is no running from a trainer battle!"
-            self._wrap_text(25)
+        elif self._state.value[0] == "compute":
+            if self._state == BattleStates.CHOOSE_OPPONENT_ACTION:
+                self._handle_state_change(BattleStates.OPPONENT_CHOOSING_MOVE)
+
+            elif self._state == BattleStates.OPPONENT_CHOOSING_MOVE:
+                self._enemy_move_queued = self._opponent.get_active_pokemon().get_moves()[0]
+                self._handle_state_change(BattleStates.DECIDING_BATTLE_ORDER)
             
+            elif self._state == BattleStates.VICTORY:
+                self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.BATTLE_OVER]
+                self._active_string = "Player defeated " + self._opponent.get_name().upper() + "!"
+                self._handle_state_change(self._state_queue.pop(0))
+
+            elif self._state == BattleStates.DECIDING_BATTLE_ORDER:
+                if self._player_move_queued == None and self._enemy_move_queued == None:
+                    self._turn_order = []
+                elif self._player_move_queued == None and self._enemy_move_queued != None:
+                    self._turn_order.append(self._opponent)
+                elif self._player_move_queued != None and self._enemy_move_queued == None:
+                    self._turn_order.append(self._player)
+                else:
+                    if self._player.get_active_pokemon()._stats["Speed"] >= self._opponent.get_active_pokemon()._stats["Speed"]:
+                        self._turn_order.append(self._player)
+                        self._turn_order.append(self._opponent)
+                    else:
+                        self._turn_order.append(self._opponent)
+                        self._turn_order.append(self._player)
+                self._handle_state_change(BattleStates.EXECUTE_TURN)
+            
+            elif self._state == BattleStates.EXECUTE_TURN:
+                for player in self._turn_order:
+                    self._state_queue.append(BattleStates.PLAYER_MOVE_TEXT if player == self._player else BattleStates.OPPONENT_MOVE_TEXT)
+                    self._state_queue.append(BattleStates.MOVE_ANIMATION)
+                    self._state_queue.append(BattleStates.UPDATE_ENEMY_STATUS if player == self._player else BattleStates.UPDATE_PLAYER_STATUS)
+                    self._state_queue.append(BattleStates.DISPLAY_EFFECT)
+                    self._state_queue.append(BattleStates.CHECK_HEALTH)
+                
+
+                if self._state_queue == []:
+                    self._handle_state_change(BattleStates.CHOOSING_FIGHT_OR_RUN)
+                else:
+                    self._handle_state_change(self._state_queue.pop(0))
+
+            elif self._state == BattleStates.CHECK_HEALTH:
+                if self._player.get_active_pokemon()._stats["Current HP"] <= 0:
+                    self._handle_state_change(BattleStates.PLAYER_POKEMON_DIED)
+                elif self._opponent.get_active_pokemon()._stats["Current HP"] <= 0:
+                    self._handle_state_change(BattleStates.OPPONENT_POKEMON_DIED)
+                else:
+                    if self._state_queue == []:
+                        self._handle_state_change(BattleStates.CHOOSING_FIGHT_OR_RUN)
+                    else:
+                        self._handle_state_change(self._state_queue.pop(0))
+            
+            elif self._state == BattleStates.OPPONENT_POKEMON_DIED:
+                if self._opponent.all_dead():
+                    self._handle_state_change(BattleStates.VICTORY)
+                else:
+                    self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.OPPONENT_CHOOSING_POKEMON, BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
+                    self._active_string = "Foe " + self._opponent.get_active_pokemon().get_name().capitalize() + " fainted!"
+                    self._handle_state_change(self._state_queue.pop(0))
+
+            elif self._state == BattleStates.PLAYER_POKEMON_DIED:
+                self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.CHOOSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
+                self._active_string = self._player.get_active_pokemon().get_name().capitalize() + " fainted!"
+                self._handle_state_change(self._state_queue.pop(0))
+
+            elif self._state == BattleStates.OPPONENT_CHOOSING_POKEMON:
+                while self._opponent.get_active_pokemon()._stats["Current HP"] <= 0:
+                    self._opponent.set_active_pokemon(random.randint(0, 4))
+                self._handle_state_change(self._state_queue.pop(0))
+        
         elif self._state.value[0] == "auto":
             if self._active_animation == None:
-                if self._state == BattleStates.UPDATE_ENEMY_STATUS:
-                    dmg = DamageCalculator((self._player.get_active_pokemon(), self._move_used), self._opponent.get_active_pokemon()).get_damage()
-                    self._active_animation = ChangeHP(self._opponent.get_active_pokemon(), dmg)
-
-
-                if self._state == BattleStates.UPDATE_PLAYER_STATUS:
-                    dmg = DamageCalculator((self._opponent.get_active_pokemon(), self._move_used), self._player.get_active_pokemon()).get_damage()
-                    self._active_animation = ChangeHP(self._player.get_active_pokemon(), dmg)
-
                 if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
-                    trainer_toss = TossPokemon(self._opponent.get_active_pokemon().get_name(), self._opponent, lead_off=True, enemy=True)
+                    self._active_string = self._opponent.get_name().upper() + " sent out " + self._opponent.get_active_pokemon().get_name().upper() + "!"
+                    self._wrap_text(20)
+                    if self._initial_stage_over:
+                        self._draw_list[3] = None
+                        self._draw_list[5] = None
+                        trainer_toss = TossPokemon(self._opponent.get_active_pokemon().get_name(), self._player, lead_off=False, enemy=True)
+                    else:
+                        trainer_toss = self._draw_list.pop()
                     self._active_animation = trainer_toss
-                
+
                 if self._state == BattleStates.PLAYER_TOSSING_POKEMON:
-                    trainer_toss = TossPokemon(self._player.get_active_pokemon().get_name(), self._player, lead_off=True, enemy=False)
+                    self._active_string = "Go! " + self._player.get_active_pokemon().get_nick_name().upper() + "!"
+                    self._wrap_text(20)
+                    if self._initial_stage_over:
+                        self._draw_list[2] = None
+                        self._draw_list[4] = None
+                        trainer_toss = TossPokemon(self._player.get_active_pokemon().get_name(), self._player, lead_off=False, enemy=False)
+                    else:
+                        trainer_toss = self._draw_list.pop()
+                        self._initial_stage_over = True
                     self._active_animation = trainer_toss
+
+                if self._state == BattleStates.MOVE_ANIMATION:
+                    self._handle_state_change(self._state_queue.pop(0))
                 
-                if self._state == BattleStates.TEST:
-                    hp_anim = ChangeHP(self._player.get_active_pokemon(), 20)
-                    self._active_animation = hp_anim
+                if self._state == BattleStates.UPDATE_PLAYER_STATUS:
+                    calc = DamageCalculator((self._opponent.get_active_pokemon(), self._enemy_move_queued), self._player.get_active_pokemon())
+                    dmg = calc.get_damage()
+                    self._active_animation = ChangeHP(self._player.get_active_pokemon(), dmg)
+                    self._active_string = calc.get_effectiveness()
+                
+                if self._state == BattleStates.UPDATE_ENEMY_STATUS:
+                    calc = DamageCalculator((self._player.get_active_pokemon(), self._player_move_queued), self._opponent.get_active_pokemon())
+                    dmg = calc.get_damage()
+                    self._active_animation = ChangeHP(self._opponent.get_active_pokemon(), dmg)
+                    self._active_string = calc.get_effectiveness()
+                
 
             else:
                 if self._active_animation.is_dead():
                     self._active_animation = None
-                    if self._state == BattleStates.UPDATE_ENEMY_STATUS:
-                        self._handle_state_change(self.TRANSITIONS[self._state])
+                    if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
+                        self._draw_list[3] = self._opponent.get_active_pokemon()
+                        op_poke_info = PokeInfo(self._opponent.get_active_pokemon(), enemy=True)
+                        self._draw_list[5] = op_poke_info
+                        self._update_list[1] = op_poke_info
 
-                    if self._state == BattleStates.UPDATE_PLAYER_STATUS:
-                        self._handle_state_change(self.TRANSITIONS[self._state])
-                    
-                    if self._state == BattleStates.OPPONENT_POKEMON_DIED:
-                        self._handle_state_change(self.TRANSITIONS[self._state])
+                    if self._state == BattleStates.PLAYER_TOSSING_POKEMON:
+                        self._draw_list[2] = self._player.get_active_pokemon()
+                        self._player_poke_info = PokeInfo(self._player.get_active_pokemon())
+                        self._draw_list[4] = self._player_poke_info
+                        self._update_list[0] = self._player_poke_info
+                        
+                    if len(self._state_queue) > 0:
+                        self._handle_state_change(self._state_queue.pop(0))
                     else:
-                        print("anim died", self._state)
-                        self.handle_nebulous_transition()
-                    
-        elif self._state.value[0] == "compute":
-            self.handle_compute_event()
-
-    def is_dead(self):
-        return self._state == BattleStates.FINISHED
+                        self._handle_state_change(BattleStates.CHOOSE_OPPONENT_ACTION)
 
     def handle_action(self, action):
-        if self._state.value[0] == "wait":
-            self.handle_action_during_wait_event(action)
-        elif self._state.value[0] == "text wait":
-            self.handle_action_during_text_wait_event(action)
+        if self._state.value[0] == "text wait":
+            self._handle_action_during_text_wait(action)
+        elif self._state.value[0] == "wait":
+            self._handle_action_during_wait(action)
     
-    def handle_compute_event(self):
-        if self._state == BattleStates.OPPONENTS_CHOOSING_POKEMON:
-            self._opponent.set_active_pokemon(0)
-            while self._opponent.get_active_pokemon()._stats["Current HP"] == 0:
-                self._opponent.set_active_pokemon(random.randint(1,4))
-            self._handle_state_change(BattleStates.DISPLAY_OPPONENT_TOSS_TEXT)
-        elif self._state == BattleStates.OPPONENT_CHOOSING_MOVE:
-            self._move_used = self._opponent.get_active_pokemon().get_moves()[0]
-            self._handle_state_change(BattleStates.UPDATE_PLAYER_STATUS)
-    def handle_nebulous_transition(self):
-        if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
-            self._draw_list[3] = self._opponent.get_active_pokemon()
-            op_poke_info = PokeInfo(self._opponent.get_active_pokemon(), enemy=True)
-            self._draw_list[5] = op_poke_info
-            self._update_list[1] = op_poke_info
-            
-            if self._player.get_active_pokemon() != None:
-                self._handle_state_change(BattleStates.CHOOSING_FIGHT_OR_RUN)
-
-            elif self._player.get_active_pokemon() == None:
-                self._player.set_active_pokemon(0)
-                self._handle_state_change(BattleStates.DISPLAY_PLAYER_TOSS_TEXT)
-        
-        elif self._state == BattleStates.PLAYER_TOSSING_POKEMON:
-            self._draw_list[2] = self._player.get_active_pokemon()
-            self._player_poke_info = PokeInfo(self._player.get_active_pokemon())
-            self._draw_list[4] = self._player_poke_info
-            self._update_list[0] = self._player_poke_info
-            self._handle_state_change(BattleStates.CHOOSING_FIGHT_OR_RUN)
-        
-        elif self._state == BattleStates.TEST:
-            print("WEEEE HRRRERE")
-            self._player.get_active_pokemon()._stats["Current HP"] = 25
-            self._handle_state_change(BattleStates.CHOOSING_FIGHT_OR_RUN)
-           
-    def handle_action_during_wait_event(self, action):
+    def _handle_action_during_wait(self, action):
         if action.type == pygame.KEYDOWN:
+            if action.key in [BattleActions.UP.value, BattleActions.DOWN.value, BattleActions.LEFT.value, BattleActions.RIGHT.value]:
+                if self._state == BattleStates.CHOOSING_POKEMON:
+                    self._poke_party.change_cursor_pos(action)
+                else:
+                    self._cursor.change_cursor_pos(action)
+                    if self._state == BattleStates.CHOOSING_MOVE:
+                        self._pp_surface._update_cursor(self._cursor.get_value())
+
             if action.key == BattleActions.SELECT.value:
                 if self._state == BattleStates.CHOOSING_POKEMON:
                     response = self._poke_party.handle_select_event(action)
                     if response != None:
-                        self._handle_state_change(response[0])
+                        if self._state_queue != []:
+                            self._state_queue.insert(0, response[0])
+                            self._handle_state_change(self._state_queue.pop(0))
+                        else:
+                            self._handle_state_change(response[0])
+
                 else:
-                    self._handle_state_change(self.TRANSITIONS[(self._state), self._cursor.get_value()])
-                    self._move_used = self._player.get_active_pokemon().get_moves()[self._cursor.get_value()]
                     SoundManager.getInstance().playSound("firered_0005.wav")
-
-
-
-            elif action.key == BattleActions.BACK.value and (self._state, BattleActions.BACK) in self.TRANSITIONS.keys():
-                self._handle_state_change(self.TRANSITIONS[(self._state, BattleActions.BACK)])
-                SoundManager.getInstance().playSound("firered_0005.wav")
-            
-            elif action.type == pygame.KEYDOWN and action.key in [BattleActions.UP.value, BattleActions.DOWN.value, BattleActions.LEFT.value, BattleActions.RIGHT.value]:
-                if self._state != BattleStates.CHOOSING_POKEMON:
-                    self._cursor.change_cursor_pos(action)
                     if self._state == BattleStates.CHOOSING_MOVE:
-                        self._pp_surface._update_cursor(self._cursor.get_value())
-                else:
-                    self._draw_list[-1].change_cursor_pos(action)
-    
-    def handle_action_during_text_wait_event(self, action):
+                        self._player_move_queued = self._player.get_active_pokemon().get_moves()[self._cursor.get_value()]
+                        self._handle_state_change(self.TRANSITIONS[self._state])
+                    else:
+                        self._handle_state_change(self.TRANSITIONS[(self._state), self._cursor.get_value()])
+            
+            if action.key == BattleActions.BACK.value:
+                self._handle_state_change(self.TRANSITIONS[(self._state), BattleActions.BACK])
+                SoundManager.getInstance().playSound("firered_0005.wav")
+
+    def _handle_action_during_text_wait(self, action):
         if action.type == pygame.KEYDOWN and action.key == BattleActions.SELECT.value:
             SoundManager.getInstance().playSound("firered_0005.wav")
-            self._handle_state_change(BattleStates.CHOOSING_FIGHT_OR_RUN)
+            if len(self._state_queue) > 0:
+                self._handle_state_change(self._state_queue.pop(0))
+            else:
+                self._handle_state_change(self.TRANSITIONS[self._state])
     
     def _handle_state_change(self, new_state):
-        # Clean up draw list and update list if neccessary
+        if self._state.value[0] == "text wait":
+            self._text_cursor.deactivate()
+
         if self._state == BattleStates.CHOOSING_FIGHT_OR_RUN:
             self._draw_list.pop(self._draw_list.index(self._fight_run))
             self._draw_list.pop(self._draw_list.index(self._cursor))
-        elif self._state == BattleStates.CHOOSING_MOVE:
+        
+        if self._state == BattleStates.CHOOSING_MOVE:
             self._draw_list.pop(self._draw_list.index(self._move_select))
             self._draw_list.pop(self._draw_list.index(self._pp_surface))
             self._draw_list.pop(self._draw_list.index(self._moves_surface))
             self._cursor.deactivate()
-        elif self._state == BattleStates.TEST:
-            self._player_poke_info = PokeInfo(self._player.get_active_pokemon())
-        elif self._state == BattleStates.CHOOSING_POKEMON:
+        
+        if self._state == BattleStates.CHOOSING_POKEMON:
             self._draw_list.pop()
             self._update_list.pop()
-        elif self._state == BattleStates.UPDATE_ENEMY_STATUS:
-            if self._opponent.get_active_pokemon()._stats["Current HP"] == 0:
-                self._state = BattleStates.OPPONENT_POKEMON_DIED
-                return
-        elif self._state == BattleStates.UPDATE_PLAYER_STATUS:
-            if self._player.get_active_pokemon()._stats["Current HP"] == 0:
-                self._state = BattleStates.CHOOSING_POKEMON
-                self._handle_state_change(BattleStates.CHOOSING_POKEMON)
-                return        
-            
+        
         if new_state == BattleStates.CHOOSING_FIGHT_OR_RUN:
+            self._turn_order = []
+            self._player_move_queued = None
+            self._enemy_move_queued = None
             self._active_string = str("What will " + self._player.get_active_pokemon().get_name().upper() + " do?")
             self._wrap_text(12)
             self._draw_list.append(self._fight_run)
+            self._draw_list.append(self._cursor)
             self._cursor.activate()
             self._cursor.set_positions(new_state)
             self._cursor.reset()
-            self._draw_list.append(self._cursor)
-        
-        elif new_state == BattleStates.RUNNING:
-            try:
-                self._draw_list.pop(self._draw_list.index(self._cursor))
-            except ValueError: pass
-        
-        elif new_state == BattleStates.CHOOSING_POKEMON:
-            self._poke_party = PokeParty(self._player)
-            self._draw_list.append(self._poke_party)
-            self._update_list.append(self._poke_party)
         
         elif new_state == BattleStates.CHOOSING_MOVE:
             self._cursor.set_positions(new_state)
@@ -273,26 +331,34 @@ class BattleFSM:
             self._draw_list.append(self._pp_surface)
             self._draw_list.append(self._cursor)
         
+        elif new_state == BattleStates.RUNNING:
+            self._active_string = "There is no running from a trainer battle!"
         
-        elif new_state == BattleStates.DISPLAY_OPPONENT_TOSS_TEXT:
-            self._active_string = str(self._opponent.get_name() + " sent out " + self._opponent.get_active_pokemon().get_name().upper() + "!")
+        elif new_state == BattleStates.CHOOSING_POKEMON:
+            self._poke_party = PokeParty(self._player)
+            self._draw_list.append(self._poke_party)
+            self._update_list.append(self._poke_party)
         
-        elif new_state == BattleStates.DISPLAY_PLAYER_TOSS_TEXT:
-            self._active_string = str("Go! " + self._player.get_active_pokemon().get_name().upper() +"!")
-            self._draw_list[2] = None
-            self._draw_list[4] = None
-            self._cursor.deactivate()
-        
+        elif new_state == BattleStates.OPPONENT_MOVE_TEXT:
+            self._active_string = self._active_string = self._opponent.get_active_pokemon().get_name().upper() + " used " +  self._enemy_move_queued.move_name + "!"
+
+
+        elif new_state == BattleStates.PLAYER_MOVE_TEXT:
+            self._active_string = self._active_string = self._player.get_active_pokemon().get_name().upper() + " used " +  self._player_move_queued.move_name + "!"
+
 
         self._state = new_state
-    
+
+
     def _wrap_text(self, width):
         self._battle_text_background.reload()
         string_lyst = textwrap.wrap(self._active_string, width=width)
         height = 10
         for string in string_lyst:
-            self._battle_text_background._image.blit(self._font.render(string, False, (200, 200, 200)), (10, height))
+            rendered = self._font.render(string, False, (200, 200, 200))
+            self._battle_text_background._image.blit(rendered, (10, height))
             height += 15
+        return (rendered.get_width(), height)
     
 class Cursor(Drawable):
     """Small Cursor class that keeps track of the in battle cursor"""
@@ -352,6 +418,43 @@ class Cursor(Drawable):
                 self._cursor += 1
         self._position = self._active_pos_dict[self._cursor]
         
+
+class TextCursor(Drawable):
+    def __init__(self, pos):
+        super().__init__("text_cursor.png", pos)
+        self._is_active = False
+        self._current_delta = 1
+        self._timer = 0
+    
+    def activate(self):
+        self._is_active = True
+    
+    def deactivate(self):
+        self._is_active = False
+    
+    def set_pos(self, pos):
+        pos = (pos[0] + 10, pos[1] + 100)
+        self._position = pos
+        self._anchored_pos = pos
+    
+    def draw(self, draw_surface):
+        if self._is_active:
+            super().draw(draw_surface)
+
+    def update(self, ticks):
+        if self._position == self._anchored_pos:
+            self._current_delta = 1
+        elif self._position[1] - self._anchored_pos[1] >= 2:
+            self._current_delta = -1
+
+        self._timer += ticks
+        if self._timer > .2:
+            self._position = (self._position[0], self._position[1] + self._current_delta)
+            self._timer -= .2
+        
+
+
+
 class MovesSurface(Drawable):
     """This class displays the moves when the player is selecting their move"""
     def __init__(self, pokemon):

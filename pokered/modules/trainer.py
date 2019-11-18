@@ -23,6 +23,12 @@ class Trainer(Mobile):
         self._wait_till_next_update = 0
         self._walk_event = None
     
+    def all_dead(self):
+        for pokemon in self._pokemon_team:
+            if pokemon._stats["Current HP"] > 0:
+                return False
+        return True
+    
     def get_pokemon_team(self):
         return self._pokemon_team
     

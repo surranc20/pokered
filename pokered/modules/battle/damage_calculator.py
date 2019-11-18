@@ -6,10 +6,15 @@ from os.path import join
 class DamageCalculator:
     def __init__(self, poke_1, poke_2, weather=None):
         self._poke_1 = poke_1[0]
-        print(self._poke_1)
         self._move = poke_1[1]
         self._poke_2 = poke_2
         self._weather = weather
+        self._effectiveness = None
+    
+    def get_effectiveness(self):
+        if self._effectiveness != None:
+            return self._effectiveness
+        else: return ""
     
     def get_damage(self):
         modifier = self.get_total_modifier()
@@ -17,6 +22,7 @@ class DamageCalculator:
         level = self._poke_1.get_lvl()
         attack = self._poke_1._stats["Attack"] if self._move.category == "Physical" else self._poke_1._stats["Sp. Attack"]
         defense = self._poke_2._stats["Defense"] if self._move.category == "Physical" else self._poke_2._stats["Sp. Defense"]
+    
         return int(((((2 * level / 5 + 2) * power * attack / defense) / 50) + 2) * modifier)
 
     def get_total_modifier(self):
@@ -28,18 +34,36 @@ class DamageCalculator:
         if len(self._poke_2.get_type()) == 2:
             mod1 = float(df.loc[self._move.move_type, self._poke_2.get_type()[0]])
             mod2 = float(df.loc[self._move.move_type, self._poke_2.get_type()[1]])
-            if mod1 and mod2 == 2: return 4
-            elif mod1 and mod2 == 0.5: return 0.25
+            if mod1 and mod2 == 2: 
+                self._effectiveness = "It's super effective..."
+                return 4
+            elif mod1 and mod2 == 0.5: 
+                self._effectiveness = "It's not very effective..."
+                return 0.25
             elif (mod1 == 0.5 and mod2 == 1.5) or (mod1 == 1.5 and mod2 == 0.5): return 1
             elif mod1 == 1 and mod2 == 1:
                 return 1
-            elif mod1 == 0 or mod2 == 0: return 0
-            elif mod1 != 1: return mod1
-            elif mod2 != 1: return mod2
+            elif mod1 == 0 or mod2 == 0: 
+                self._effectiveness = "It has no effect!"
+                return 0
+            elif mod1 != 1:
+                if mod1 > 1:
+                    self._effectiveness = "It's super effective..."
+                else: self._effectiveness = "It's not very effective..." 
+                return mod1
+            elif mod2 != 1: 
+                if mod2 > 1:
+                    self._effectiveness = "It's super effective..."
+                else: self._effectiveness = "It's not very effective..." 
+                return mod2
             else:
                 print(mod1, mod2) 
                 raise Exception
         else: 
+            if float(df.loc[self._move.move_type, self._poke_2.get_type()[0]]) > 1:
+                self._effectiveness = "It's super effective..."
+            elif float(df.loc[self._move.move_type, self._poke_2.get_type()[0]]) < 1:
+                self._effectiveness = "It's not very effective..."
             return float(df.loc[self._move.move_type, self._poke_2.get_type()[0]])
 
         
