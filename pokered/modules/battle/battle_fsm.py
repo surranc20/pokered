@@ -10,6 +10,7 @@ from ..utils.drawable import Drawable
 from ..utils.vector2D import Vector2
 from ..animations.toss_pokemon import TossPokemon
 from ..animations.change_hp import ChangeHP
+from ..animations.poke_death import PokeDeath
 from ..utils.frameManager import FRAMES
 from ..utils.soundManager import SoundManager
 from ..enumerated.battle_actions import BattleActions
@@ -170,12 +171,12 @@ class BattleFSM:
                 if self._opponent.all_dead():
                     self._handle_state_change(BattleStates.VICTORY)
                 else:
-                    self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.OPPONENT_CHOOSING_POKEMON, BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
+                    self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.OPPONENT_FEINT, BattleStates.OPPONENT_CHOOSING_POKEMON, BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
                     self._active_string = "Foe " + self._opponent.get_active_pokemon().get_name().capitalize() + " fainted!"
                     self._handle_state_change(self._state_queue.pop(0))
 
             elif self._state == BattleStates.PLAYER_POKEMON_DIED:
-                self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.CHOOSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
+                self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.PLAYER_FEINT, BattleStates.CHOOSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
                 self._active_string = self._player.get_active_pokemon().get_name().capitalize() + " fainted!"
                 self._handle_state_change(self._state_queue.pop(0))
 
@@ -223,6 +224,12 @@ class BattleFSM:
                     dmg = calc.get_damage()
                     self._active_animation = ChangeHP(self._opponent.get_active_pokemon(), dmg)
                     self._active_string = calc.get_effectiveness()
+                
+                if self._state == BattleStates.OPPONENT_FEINT:
+                    self._active_animation = PokeDeath(self._opponent.get_active_pokemon())
+                
+                if self._state == BattleStates.PLAYER_FEINT:
+                    self._active_animation = PokeDeath(self._player.get_active_pokemon())
                 
 
             else:
