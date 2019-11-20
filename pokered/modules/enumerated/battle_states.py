@@ -35,3 +35,5 @@ class BattleStates(Enum):
     PLAYER_POKEMON_DIED = ("compute", 32)
     VICTORY = ("compute", 33)
     BATTLE_OVER = ("finished", 34)
+    OPPONENT_FEINT = ("auto", 35)
+    PLAYER_FEINT = ("auto", 36)
