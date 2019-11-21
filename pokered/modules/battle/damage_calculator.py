@@ -46,7 +46,9 @@ class DamageCalculator:
             elif mod1 and mod2 == 0.5: 
                 self._effectiveness_string, self._effectiveness = "It's not very effective...", "not"
                 return 0.25
-            elif (mod1 == 0.5 and mod2 == 1.5) or (mod1 == 1.5 and mod2 == 0.5): return 1
+            elif (mod1 == 0.5 and mod2 == 1.5) or (mod1 == 1.5 and mod2 == 0.5): 
+                self._effectiveness = "normal "
+                return 1
             elif mod1 == 1 and mod2 == 1:
                 self._effectiveness = "normal "
                 return 1

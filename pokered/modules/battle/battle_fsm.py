@@ -57,6 +57,7 @@ class BattleFSM:
         self._enemy_move_queued = None
         self._turn_order = []
         self._initial_stage_over = False
+        self._text_wait_timer = 0
         self._background = Drawable(join("battle", "battle_background.png"), Vector2(0,0), offset= (0,0))
         self._battle_text_background = Drawable(join("battle", "battle_menus.png"), Vector2(0,112), offset=(0, 1))
         self._move_select = Drawable(join("battle", "battle_menus.png"), Vector2(0, 113), offset=(0, 0))
@@ -99,18 +100,20 @@ class BattleFSM:
             self._is_over = True
 
         if self._state.value[0] == "text wait":
+            self._text_wait_timer += ticks
             if self._active_string != None and self._active_string != "":
                 self._text_cursor.set_pos(self._wrap_text(25))
                 self._text_cursor.activate()
                 self._active_string = None
             elif self._active_string == "":
-                self._active_string = None
-
-                if len(self._state_queue) > 0:
-                    self._handle_state_change(self._state_queue.pop(0))
-                else:
-                    print("We in here")
-                    self._handle_state_change(self.TRANSITIONS[self._state])
+                if self._text_wait_timer > 1:
+                    self._text_wait_timer = 0
+                    if len(self._state_queue) > 0:
+                        self._active_string = None
+                        self._handle_state_change(self._state_queue.pop(0))
+                    else:
+                        self._active_string = None
+                        self._handle_state_change(self.TRANSITIONS[self._state])
 
         
         elif self._state.value[0] == "compute":
