@@ -2,7 +2,7 @@
     "ivysaur":[0,1], "charmeleon":[2,1], "wartortle":[4,1], "metapod":[6,1], "kakuna":[8,1], "ponyta":[10,1], "slowbro":[12,1], "farfetch'd":[14,1], "seel":[16,1], "muk":[18,1],
     "venusaur":[0,2], "charizard":[2,2], "blastoise":[4,2], "butterfree":[6,2], "beedrill":[8,2], "rapidash":[10,2], "magnemite":[12,2], "doduo": [14,2], "dewgong":[16,2], "shellder":[18,2],
     "pidgy":[0,3], "rattata":[2,3], "fearow":[4,3], "pikachu":[6,3], "sandslash":[8,3], "cloyster":[10,3], "gengar":[12,3], "hypno":[14,3], "voltorb":[16,3], "exeggutor":[18,3],
-    "pidgeotto":[0,4], "raticate":[2,4], "ekans":[4,4], "raichu":[6,4], "nidoran_g":[8,4], "gastly":[10,4], "onyx":[12,4], "krabby":[14,4], "electrode":[16,4], "cubone":[18,4],
+    "pidgeotto":[0,4], "raticate":[2,4], "ekans":[4,4], "raichu":[6,4], "nidoran_g":[8,4], "gastly":[10,4], "onix":[12,4], "krabby":[14,4], "electrode":[16,4], "cubone":[18,4],
     "pidgeot":[0,5], "spearow":[2,5], "arbok":[4,5], "sandshrew":[6,5], "nidorina":[8,5], "haunter":[10,5], "drowsee":[12,5], "kingler":[14,5], "exeggcute":[16,5], "marowak":[18,5],
     "nidoqueen":[0,6], "nidoking":[2,6], "vulpix":[4,6], "wigglytuff":[6,6], "oddish":[8,6], "hitmonlee":[10,6], "koffing":[12,6], "rhydon":[14,6], "kangaskhan":[16,6], "goldeen":[18,6],
     "nidoran_b":[0,7], "clefairy":[2,7], "ninetails":[4,7], "zubat":[6,7], "gloom":[8,7], "hitmonchan":[10,7], "weezing":[12,7], "chansey":[14,7], "horsea":[16,7], "seaking":[18,7],

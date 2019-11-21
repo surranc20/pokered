@@ -16,7 +16,7 @@ class LevelManager(object):
         enemy._pokemon_team.append(Pokemon("charizard", enemy=True))
         enemy._pokemon_team.append(Pokemon("pikachu", enemy=True))
         enemy._pokemon_team.append(Pokemon("charizard", enemy=True))
-        self._active_battle = None #Battle(player, enemy)
+        self._active_battle = None 
         self._level = Level(level_name, player, screen_size)
     
 
