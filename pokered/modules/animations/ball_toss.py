@@ -1,6 +1,7 @@
 from os.path import join
 from ..utils.animated import AnimatedGroupPart
 from ..utils.frameManager import FRAMES
+from ..utils.soundManager import SoundManager
 from ..utils.vector2D import Vector2
 from .poke_emerge import PokeEmerge
 
@@ -11,6 +12,7 @@ class BallToss(AnimatedGroupPart):
         an AnimatedGropuPart as well as an optional enemy argument. Enemy specifies who is throwing the
         pokeball. This is necessary because the animation changes based on who is throwing the pokeball."""
         self._enemy = enemy
+        self._first_update = True
         if not self._enemy: 
             super().__init__(join("battle", "pokeball_anim.png"), position, anim_sequence_pos)
             self._nFrames = 4
@@ -46,6 +48,10 @@ class BallToss(AnimatedGroupPart):
         and stopping of the animation if the enemy is tossing the ball. Returns the index
         of the next AnimatedGroupPart when done. For BallToss this will always be PokeEmerge."""
         super().update(ticks)
+        if self._first_update:
+            if not self._enemy:
+                SoundManager.getInstance().playSound("firered_0036.wav")
+            self._first_update = False
         if self._enemy:
             if len(self._parabola) < 12:
                 self.startAnimation()

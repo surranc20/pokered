@@ -1,5 +1,6 @@
 import pygame
 from ..utils.animated import Animated
+from ..utils.soundManager import SoundManager
 
 class PokeDeath(Animated):
     def __init__(self, poke):
@@ -7,6 +8,7 @@ class PokeDeath(Animated):
         self._framesPerSecond = 80
         self._poke = poke
         self._count = 0
+        SoundManager.getInstance().playSound("firered_0010.wav")
     
     def update(self, ticks):
         self._animationTimer += ticks
