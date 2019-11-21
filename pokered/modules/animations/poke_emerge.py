@@ -1,7 +1,9 @@
 import pygame
 import json
+import random
 from os.path import join
 from ..utils.frameManager import FRAMES
+from ..utils.soundManager import SoundManager
 from ..utils.animated import AnimatedGroupPart
 from ..utils.vector2D import Vector2
 
@@ -29,6 +31,7 @@ class PokeEmerge(AnimatedGroupPart):
         _offset = _lookup if enemy else (_lookup[0] + 1, _lookup[1])
         super().__init__(join("pokemon", "pokemon_big.png"), position, anim_sequence_pos, offset=_offset)
 
+        self._pokemon_name = pokemon_name
         self._enemy = enemy
         self._frame = 1
         self._orig_image = self._image.copy()
@@ -80,6 +83,11 @@ class PokeEmerge(AnimatedGroupPart):
         if next_scale_size >= 64: 
             self._update_position(self._orig_image)
             self.kill()
+            if self._pokemon_name.capitalize() == "Pikachu":
+                rando = str(random.randint(1,97))
+                print(rando)
+                SoundManager.getInstance().playSound(join("cries", self._pokemon_name.capitalize(), "025 - Pikachu (" + rando + ").wav"))
+            else: SoundManager.getInstance().playSound(join("cries", self._pokemon_name.capitalize() + ".wav"))
             return self._orig_image
 
         # Scale pokemon and then update its position
