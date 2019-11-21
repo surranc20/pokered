@@ -362,7 +362,7 @@ class BattleFSM:
 
         elif new_state == BattleStates.MOVE_MISSED:
             self._active_string = "Its move missed!"
-            
+
         self._state = new_state
 
 
