@@ -144,11 +144,18 @@ class BattleFSM:
             
             elif self._state == BattleStates.EXECUTE_TURN:
                 for player in self._turn_order:
-                    self._state_queue.append(BattleStates.PLAYER_MOVE_TEXT if player == self._player else BattleStates.OPPONENT_MOVE_TEXT)
-                    self._state_queue.append(BattleStates.MOVE_ANIMATION)
-                    self._state_queue.append(BattleStates.UPDATE_ENEMY_STATUS if player == self._player else BattleStates.UPDATE_PLAYER_STATUS)
-                    self._state_queue.append(BattleStates.DISPLAY_EFFECT)
-                    self._state_queue.append(BattleStates.CHECK_HEALTH)
+                    accuracy = self._player_move_queued.accuracy if player == self._player else self._enemy_move_queued.accuracy
+                    if random.randint(0, 100) > accuracy:
+                        self._state_queue.append(BattleStates.PLAYER_MOVE_TEXT if player == self._player else BattleStates.OPPONENT_MOVE_TEXT)
+                        self._state_queue.append(BattleStates.MOVE_MISSED)
+                        
+
+                    else:
+                        self._state_queue.append(BattleStates.PLAYER_MOVE_TEXT if player == self._player else BattleStates.OPPONENT_MOVE_TEXT)
+                        self._state_queue.append(BattleStates.MOVE_ANIMATION)
+                        self._state_queue.append(BattleStates.UPDATE_ENEMY_STATUS if player == self._player else BattleStates.UPDATE_PLAYER_STATUS)
+                        self._state_queue.append(BattleStates.DISPLAY_EFFECT)
+                        self._state_queue.append(BattleStates.CHECK_HEALTH)
                 
 
                 if self._state_queue == []:
@@ -353,7 +360,9 @@ class BattleFSM:
         elif new_state == BattleStates.PLAYER_MOVE_TEXT:
             self._active_string = self._active_string = self._player.get_active_pokemon().get_name().upper() + " used " +  self._player_move_queued.move_name + "!"
 
-
+        elif new_state == BattleStates.MOVE_MISSED:
+            self._active_string = "Its move missed!"
+            
         self._state = new_state
 
 

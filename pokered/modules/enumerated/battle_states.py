@@ -37,3 +37,4 @@ class BattleStates(Enum):
     BATTLE_OVER = ("finished", 34)
     OPPONENT_FEINT = ("auto", 35)
     PLAYER_FEINT = ("auto", 36)
+    MOVE_MISSED = ("text wait", 37)
