@@ -84,7 +84,6 @@ class BattleFSM:
         return update_list
     
     def update(self, ticks):
-        print(self._state)
 
         if self._state == BattleStates.NOT_STARTED:
             self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.PLAYER_TOSSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]

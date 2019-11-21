@@ -56,7 +56,7 @@ class SoundManager(object):
             self._load(fileName)
          if sound != None:
             self._sounds[fileName].set_volume(sound)
-               
+                  
          return self._sounds[fileName].play(loop)
       
       def playMusic(self, fileName, loop=0, sound=1):
@@ -150,9 +150,7 @@ class SoundManager(object):
          
      
       def _load(self, fileName):
-         self._sounds[fileName] = pygame.mixer.Sound(os.path.join(SoundManager._SM._FOLDER.get(fileName,
-                                                                                               SoundManager._SM._MUSIC_FOLDER),
-                                                                  fileName))
-               
+         self._sounds[fileName] = pygame.mixer.Sound(os.path.join(SoundManager._SM._FOLDER.get(fileName, SoundManager._SM._SFX_FOLDER),fileName))
+         
             
          
