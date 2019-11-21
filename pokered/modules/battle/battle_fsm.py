@@ -223,13 +223,14 @@ class BattleFSM:
                 if self._state == BattleStates.UPDATE_PLAYER_STATUS:
                     calc = DamageCalculator((self._opponent.get_active_pokemon(), self._enemy_move_queued), self._player.get_active_pokemon())
                     dmg = calc.get_damage()
-                    self._active_animation = ChangeHP(self._player.get_active_pokemon(), dmg)
+
+                    self._active_animation = ChangeHP(self._player.get_active_pokemon(), dmg, calc.get_effectiveness_sound())
                     self._active_string = calc.get_effectiveness()
                 
                 if self._state == BattleStates.UPDATE_ENEMY_STATUS:
                     calc = DamageCalculator((self._player.get_active_pokemon(), self._player_move_queued), self._opponent.get_active_pokemon())
                     dmg = calc.get_damage()
-                    self._active_animation = ChangeHP(self._opponent.get_active_pokemon(), dmg)
+                    self._active_animation = ChangeHP(self._opponent.get_active_pokemon(), dmg, calc.get_effectiveness_sound())
                     self._active_string = calc.get_effectiveness()
                 
                 if self._state == BattleStates.OPPONENT_FEINT:
