@@ -35,7 +35,8 @@ class BattleFSM:
         BattleStates.RUNNING : BattleStates.CHOOSING_FIGHT_OR_RUN,
         (BattleStates.CHOOSING_POKEMON, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN,
         (BattleStates.CHOOSING_MOVE, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN,
-        BattleStates.DISPLAY_EFFECT : BattleStates.CHOOSING_FIGHT_OR_RUN
+        BattleStates.DISPLAY_EFFECT : BattleStates.CHOOSING_FIGHT_OR_RUN, 
+        BattleStates.MOVE_MISSED : BattleStates.CHOOSING_FIGHT_OR_RUN
     }
 
     def __init__(self, player, opponent, state=BattleStates.NOT_STARTED):
