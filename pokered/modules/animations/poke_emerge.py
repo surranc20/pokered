@@ -40,6 +40,7 @@ class PokeEmerge(AnimatedGroupPart):
         self._nFrames = 2
         self._animate = True
         self._framesPerSecond = 30
+        self._first_update = True
 
         # Initial image for PokeEmerge needs to be the smallest version of the pokemon
         self._image = self.scale_pokemon()
@@ -52,6 +53,10 @@ class PokeEmerge(AnimatedGroupPart):
     def update(self, ticks):
         """Overrides the update of AnimatedGroupPart. Decides whether the pokemon should be
         scaled up to the next size based on the animation timer"""
+        if self._first_update:
+            SoundManager.getInstance().playSound("firered_000F.wav")
+            self._first_update = False
+
         if self._animate:
             self._animationTimer += ticks
 
