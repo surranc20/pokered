@@ -1,4 +1,5 @@
 import pygame
+import math
 from os.path import join
 from ...utils.drawable import Drawable
 from ...utils.vector2D import Vector2
@@ -79,7 +80,7 @@ class PokeInfo(Drawable):
         max_hp = self._pokemon._stats["HP"]
         percentage = (current_hp / max_hp)
         
-        self._hp = pygame.Surface((int(percentage * 48), 3))
+        self._hp = pygame.Surface((math.ceil(percentage * 48), 3))
         if percentage > .50: self._hp.fill(green)
         elif percentage > .15: self._hp.fill(yellow)
         else: self._hp.fill(red)
@@ -88,7 +89,7 @@ class PokeInfo(Drawable):
         self._hp_darken.set_alpha(50)
     
     def blit_hp_remaining(self):
-        self._hp_remaining = pygame.Surface((30, 8))
+        self._hp_remaining = pygame.Surface((35, 8))
         self._hp_remaining.fill((255, 255, 255))
         self._hp_remaining.set_colorkey((255, 255, 255))
         if self._current_hp != None: current_hp = self._current_hp
@@ -122,7 +123,7 @@ class PokeInfo(Drawable):
             draw_surface.blit(self._hp, (181, 91))
             draw_surface.blit(self._hp_darken, (181, 91))
             draw_surface.blit(self._lvl, (217, 79))
-            draw_surface.blit(self._hp_remaining, (195, 97))
+            draw_surface.blit(self._hp_remaining, (193, 97))
     
     def update(self, ticks):
         self.__init__(self._pokemon, self._enemy)

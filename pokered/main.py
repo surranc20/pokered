@@ -26,10 +26,6 @@ def main():
    
     # Create Player and Enemy for Test Battle
     player = Player(Vector2(32, 26), "Chris")
-    enemy = Player(Vector2(30,30), "CHAMPION GARY", enemy=True)
-    enemy._pokemon_team.append(Pokemon("charizard", enemy=True))
-    enemy._pokemon_team.append(Pokemon("pikachu", enemy=True))
-    enemy._pokemon_team.append(Pokemon("charizard", enemy=True))
     poke = Pokemon("pikachu")
     poke2 = Pokemon("bulbasaur")
     poke3 = Pokemon("mankey")
