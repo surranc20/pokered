@@ -358,10 +358,12 @@ class BattleFSM:
             self._update_list.append(self._poke_party)
         
         elif new_state == BattleStates.OPPONENT_MOVE_TEXT:
+            self._enemy_move_queued.current_pp -=1
             self._active_string = self._active_string = self._opponent.get_active_pokemon().get_name().upper() + " used " +  self._enemy_move_queued.move_name + "!"
 
 
         elif new_state == BattleStates.PLAYER_MOVE_TEXT:
+            self._player_move_queued.current_pp -= 1
             self._active_string = self._active_string = self._player.get_active_pokemon().get_name().upper() + " used " +  self._player_move_queued.move_name + "!"
 
         elif new_state == BattleStates.MOVE_MISSED:
