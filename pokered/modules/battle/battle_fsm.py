@@ -323,7 +323,10 @@ class BattleFSM:
                 else:
                     SoundManager.getInstance().playSound("firered_0005.wav")
                     if self._state == BattleStates.CHOOSING_MOVE:
-                        self._player_move_queued = self._player.get_active_pokemon().get_moves()[self._cursor.get_value()]
+                        move_index = self._cursor.get_value()
+                        if move_index == 1: move_index = 2
+                        elif move_index == 2: move_index = 1
+                        self._player_move_queued = self._player.get_active_pokemon().get_moves()[move_index]
                         self._handle_state_change(self.TRANSITIONS[self._state])
                     else:
                         self._handle_state_change(self.TRANSITIONS[(self._state), self._cursor.get_value()])
