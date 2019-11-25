@@ -101,18 +101,19 @@ class Thunder():
                 if len(sprite) == 3:
                     pygame.transform.flip(sprite_frame, True, False)
                 
-                self._move_surface.blit(sprite_frame, (sprite[1][0] - 5, sprite[1][1]))
+                if self._enemey:
+                    self._move_surface.blit(sprite_frame, (sprite[1][0] - 120, max(sprite[1][1], 0) + 40))
+                else:
+                    self._move_surface.blit(sprite_frame, (sprite[1][0] - 5, sprite[1][1]))
             if self._frame_num < len(self.FRAME_LIST) - 1:
                 self._frame_num += 1
             else:
                 self._is_dead = True
                 self._scrolling_background = FRAMES.reload(join("moves", "thunder_background.png"), (0,0))
-                print(self._scrolling_background)
                 return 
 
         background_surface = Drawable("", (0,0))
         background_surface._image = pygame.Surface((240, 112))
-        print(self._scrolling_background)
         background_surface._image.blit(self._scrolling_background, (0,0))
         return background_surface
     
