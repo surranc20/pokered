@@ -38,12 +38,17 @@ class Pokemon(Drawable):
             pokemon_data = pokemon[pokemon_name.capitalize()]
 
         self._type = pokemon_data["type"]
+        self._draw = True
 
         if move_set != None:
             self.add_move_list(move_set)
 
         super().__init__(join("pokemon", "pokemon_big.png"), _pos, offset= _offset)
     
+    def draw(self, draw_surface):
+        if self._draw:
+            super().draw(draw_surface)
+
     def add_move_list(self, lyst):
         for move in lyst:
             self._moves.append(Move(move))

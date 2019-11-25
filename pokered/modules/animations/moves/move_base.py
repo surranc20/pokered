@@ -30,7 +30,10 @@ class MoveBase():
             for sprite in frame:
                 sprite_frame = FRAMES.getFrame(self._move_file_name,(sprite[0], 0))
                 if len(sprite) == 3:
-                    sprite_frame = pygame.transform.flip(sprite_frame, True, False)
+                    if sprite[2] == "h":
+                        sprite_frame = pygame.transform.flip(sprite_frame, True, False)
+                    if sprite[2] == "v":
+                        sprite_frame = pygame.transform.flip(sprite_frame, False, True)
                 if self._enemy:
                     self._move_surface.blit(sprite_frame, (sprite[1][0] - 120, max(sprite[1][1], 0) + 40))
                 else:
@@ -38,7 +41,7 @@ class MoveBase():
             if self._frame_num < len(self.FRAME_LIST) - 1:
                 self._frame_num += 1
             else:
-                self._is_dead = True
+                 self._is_dead = True
                  
 
         
