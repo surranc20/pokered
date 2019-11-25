@@ -2,6 +2,7 @@ import pygame
 import textwrap
 import copy
 import random
+import sys
 from enum import Enum, auto
 from os.path import join
 
@@ -11,7 +12,7 @@ from ..utils.vector2D import Vector2
 from ..animations.toss_pokemon import TossPokemon
 from ..animations.change_hp import ChangeHP
 from ..animations.poke_death import PokeDeath
-from ..animations.moves.thunder import Thunder
+from ..animations.moves import *
 from ..animations.moves.generic.hit import Hit
 from ..utils.frameManager import FRAMES
 from ..utils.soundManager import SoundManager
@@ -167,7 +168,7 @@ class BattleFSM:
 
                     else:
                         self._state_queue.append(BattleStates.PLAYER_MOVE_TEXT if player == self._player else BattleStates.OPPONENT_MOVE_TEXT)
-                        self._state_queue.append(BattleStates.MOVE_ANIMATION)
+                        self._state_queue.append(BattleStates.PLAYER_MOVE_ANIMATION if player == self._player else BattleStates.ENEMY_MOVE_ANIMATION)
                         self._state_queue.append(BattleStates.UPDATE_ENEMY_STATUS if player == self._player else BattleStates.UPDATE_PLAYER_STATUS)
                         self._state_queue.append(BattleStates.DISPLAY_EFFECT)
                         self._state_queue.append(BattleStates.CHECK_HEALTH)
@@ -232,9 +233,15 @@ class BattleFSM:
                         self._initial_stage_over = True
                     self._active_animation = trainer_toss
 
-                if self._state == BattleStates.MOVE_ANIMATION:
-                    self._active_animation = Thunder()
+                if self._state == BattleStates.PLAYER_MOVE_ANIMATION:
+                    print(self._player_move_queued.move_name)
+                    self._active_animation = getattr(sys.modules[__name__], self._player_move_queued.move_name)()
+                    print("active          ", self._active_animation)
                     #self._handle_state_change(self._state_queue.pop(0))
+                
+                if self._state == BattleStates.ENEMY_MOVE_ANIMATION:
+                    print(self._player_move_queued.move_name)
+                    self._active_animation = Thunder(True)
                 
                 if self._state == BattleStates.UPDATE_PLAYER_STATUS:
                     calc = DamageCalculator((self._opponent.get_active_pokemon(), self._enemy_move_queued), self._player.get_active_pokemon())

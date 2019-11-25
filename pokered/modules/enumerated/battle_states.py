@@ -27,7 +27,7 @@ class BattleStates(Enum):
     CHOOSE_OPPONENT_ACTION = ("compute", 24)
     DECIDING_BATTLE_ORDER = ("compute", 25)
     EXECUTE_TURN = ("compute", 26)
-    MOVE_ANIMATION = ("auto", 27)
+    PLAYER_MOVE_ANIMATION = ("auto", 27)
     DISPLAY_EFFECT = ("text wait", 28)
     OPPONENT_MOVE_TEXT = ("text wait", 29)
     PLAYER_MOVE_TEXT = ("text wait", 30)
@@ -38,3 +38,4 @@ class BattleStates(Enum):
     OPPONENT_FEINT = ("auto", 35)
     PLAYER_FEINT = ("auto", 36)
     MOVE_MISSED = ("text wait", 37)
+    ENEMY_MOVE_ANIMATION = ("auto", 38)
