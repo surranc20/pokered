@@ -11,6 +11,7 @@ from ..utils.vector2D import Vector2
 from ..animations.toss_pokemon import TossPokemon
 from ..animations.change_hp import ChangeHP
 from ..animations.poke_death import PokeDeath
+from ..animations.moves.thunder import Thunder
 from ..utils.frameManager import FRAMES
 from ..utils.soundManager import SoundManager
 from ..enumerated.battle_actions import BattleActions
@@ -58,6 +59,7 @@ class BattleFSM:
         self._turn_order = []
         self._initial_stage_over = False
         self._text_wait_timer = 0
+        self._scrolling_background_surf = None
         self._background = Drawable(join("battle", "battle_background.png"), Vector2(0,0), offset= (0,0))
         self._battle_text_background = Drawable(join("battle", "battle_menus.png"), Vector2(0,112), offset=(0, 1))
         self._move_select = Drawable(join("battle", "battle_menus.png"), Vector2(0, 113), offset=(0, 0))
@@ -72,6 +74,8 @@ class BattleFSM:
     def get_draw_list(self):
         draw_list = [item for item in self._draw_list if item != None and not item.is_dead()]
         if self._active_animation != None:
+            if self._scrolling_background_surf != None:
+                draw_list.insert(1, self._scrolling_background_surf)
             draw_list.append(self._active_animation)
 
         return draw_list
@@ -221,7 +225,8 @@ class BattleFSM:
                     self._active_animation = trainer_toss
 
                 if self._state == BattleStates.MOVE_ANIMATION:
-                    self._handle_state_change(self._state_queue.pop(0))
+                    self._active_animation = Thunder()
+                    #self._handle_state_change(self._state_queue.pop(0))
                 
                 if self._state == BattleStates.UPDATE_PLAYER_STATUS:
                     calc = DamageCalculator((self._opponent.get_active_pokemon(), self._enemy_move_queued), self._player.get_active_pokemon())
@@ -351,6 +356,7 @@ class BattleFSM:
         
         elif new_state == BattleStates.RUNNING:
             self._active_string = "There is no running from a trainer battle!"
+            
         
         elif new_state == BattleStates.CHOOSING_POKEMON:
             self._poke_party = PokeParty(self._player)
