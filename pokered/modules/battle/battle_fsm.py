@@ -225,7 +225,7 @@ class BattleFSM:
                     self._active_animation = trainer_toss
 
                 if self._state == BattleStates.MOVE_ANIMATION:
-                    self._active_animation = Thunder()
+                    self._active_animation = Thunder(enemy=True)
                     #self._handle_state_change(self._state_queue.pop(0))
                 
                 if self._state == BattleStates.UPDATE_PLAYER_STATUS:
