@@ -9,6 +9,7 @@ Provides on-demand loading of sounds for a pygame program.
 
 import pygame
 import os
+from os.path import join
 
 
 class SoundManager(object):
@@ -36,6 +37,7 @@ class SoundManager(object):
       _FOLDER = {
          "firered_0005.wav"     : _SFX_FOLDER,
          "firered_0007.wav"     : _SFX_FOLDER,
+         "thunder.mp3"           : _SFX_FOLDER,
          "gym_music.wav"        : _MUSIC_FOLDER
       }
       
