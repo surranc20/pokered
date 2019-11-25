@@ -5,7 +5,7 @@ from ..utils.vector2D import Vector2
 from ..utils.drawable import Drawable
 from ..utils.animated import AnimatedGroup
 from ..animations.toss_pokemon import TossPokemon
-from ..animations.moves.thunder import Thunder
+from ..animations.moves.scrolling_move import ScrollingMove
 from ..pokemon import Pokemon
 from .battle_menus.poke_info import PokeInfo
 from .battle_menus.pokemon_remaining import PokemonRemaining
@@ -34,7 +34,7 @@ class Battle:
     def update(self, ticks):
         self._battle_fsm.update(ticks)
         for obj in self._battle_fsm.get_update_list():
-            if type(obj) == Thunder:
+            if issubclass(type(obj), ScrollingMove):
                 background = obj.update(ticks)
                 self._battle_fsm._scrolling_background_surf = background
                 
