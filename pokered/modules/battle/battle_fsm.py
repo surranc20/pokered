@@ -12,6 +12,7 @@ from ..animations.toss_pokemon import TossPokemon
 from ..animations.change_hp import ChangeHP
 from ..animations.poke_death import PokeDeath
 from ..animations.moves.thunder import Thunder
+from ..animations.moves.generic.hit import Hit
 from ..utils.frameManager import FRAMES
 from ..utils.soundManager import SoundManager
 from ..enumerated.battle_actions import BattleActions
@@ -76,7 +77,10 @@ class BattleFSM:
         if self._active_animation != None:
             if self._scrolling_background_surf != None:
                 draw_list.insert(1, self._scrolling_background_surf)
-            draw_list.append(self._active_animation)
+            if type(self._active_animation) == list:
+                for anim in self._active_animation:
+                    draw_list.append(anim)
+            else: draw_list.append(self._active_animation)
 
         return draw_list
     
@@ -84,7 +88,11 @@ class BattleFSM:
         update_list =  [item for item in self._update_list if item != None and not item.is_dead()]
         if self._active_animation != None:
             print(self._active_animation)
-            update_list.append(self._active_animation)
+            if type(self._active_animation) == list:
+                for anim in self._active_animation:
+                    update_list.append(anim)
+            else:
+                update_list.append(self._active_animation)
     
         return update_list
     
@@ -232,13 +240,13 @@ class BattleFSM:
                     calc = DamageCalculator((self._opponent.get_active_pokemon(), self._enemy_move_queued), self._player.get_active_pokemon())
                     dmg = calc.get_damage()
 
-                    self._active_animation = ChangeHP(self._player.get_active_pokemon(), dmg, calc.get_effectiveness_sound())
+                    self._active_animation = [ChangeHP(self._player.get_active_pokemon(), dmg, calc.get_effectiveness_sound()), Hit(self._player.get_active_pokemon())]
                     self._active_string = calc.get_effectiveness()
                 
                 if self._state == BattleStates.UPDATE_ENEMY_STATUS:
                     calc = DamageCalculator((self._player.get_active_pokemon(), self._player_move_queued), self._opponent.get_active_pokemon())
                     dmg = calc.get_damage()
-                    self._active_animation = ChangeHP(self._opponent.get_active_pokemon(), dmg, calc.get_effectiveness_sound())
+                    self._active_animation = [ChangeHP(self._opponent.get_active_pokemon(), dmg, calc.get_effectiveness_sound()), Hit(self._opponent.get_active_pokemon())]
                     self._active_string = calc.get_effectiveness()
                 
                 if self._state == BattleStates.OPPONENT_FEINT:
@@ -249,7 +257,18 @@ class BattleFSM:
                 
 
             else:
-                if self._active_animation.is_dead():
+                if type(self._active_animation) == list:
+                    all_done = True
+                    for anim in self._active_animation:
+                        if not anim.is_dead(): all_done = False
+                    if all_done:
+                        self._active_animation = None
+                        if len(self._state_queue) > 0:
+                            self._handle_state_change(self._state_queue.pop(0))
+                        else:
+                            self._handle_state_change(BattleStates.CHOOSE_OPPONENT_ACTION)
+
+                elif self._active_animation.is_dead():
                     self._active_animation = None
                     if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
                         self._draw_list[3] = self._opponent.get_active_pokemon()
