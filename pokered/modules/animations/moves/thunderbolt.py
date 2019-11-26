@@ -1,5 +1,5 @@
 from os.path import join
-from.move_base import MoveBase
+from .move_base import MoveBase
 from ...utils.soundManager import SoundManager
 
 

@@ -235,7 +235,7 @@ class BattleFSM:
 
                 if self._state == BattleStates.PLAYER_MOVE_ANIMATION:
                     print(self._player_move_queued.move_name)
-                    self._active_animation = getattr(sys.modules[__name__], self._player_move_queued.move_name)()
+                    self._active_animation = getattr(sys.modules[__name__], self._player_move_queued.move_name.replace(" ", ""))()
                     print("active          ", self._active_animation)
                     #self._handle_state_change(self._state_queue.pop(0))
                 
