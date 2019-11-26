@@ -241,7 +241,7 @@ class BattleFSM:
                 
                 if self._state == BattleStates.ENEMY_MOVE_ANIMATION:
                     print(self._player_move_queued.move_name)
-                    self._active_animation = Thunder(True)
+                    self._active_animation = Surf(True)
                 
                 if self._state == BattleStates.UPDATE_PLAYER_STATUS:
                     calc = DamageCalculator((self._opponent.get_active_pokemon(), self._enemy_move_queued), self._player.get_active_pokemon())
