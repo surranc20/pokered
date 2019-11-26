@@ -32,8 +32,12 @@ class MoveBase():
                 if len(sprite) == 3:
                     if sprite[2] == "h":
                         sprite_frame = pygame.transform.flip(sprite_frame, True, False)
-                    if sprite[2] == "v":
+                    elif sprite[2] == "v":
                         sprite_frame = pygame.transform.flip(sprite_frame, False, True)
+                    elif sprite[2] == "hv":
+                        sprite_frame = pygame.transform.flip(sprite_frame, True, True)
+                    elif sprite[2] == "r":
+                        sprite_frame = pygame.transform.rotate(sprite_frame, 90)
                 if self._enemy:
                     self._move_surface.blit(sprite_frame, (sprite[1][0] - 120, max(sprite[1][1], 0) + 40))
                 else:
