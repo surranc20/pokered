@@ -9,6 +9,7 @@ class MoveBase():
         self._enemy = enemy
         self._is_dead = False
         self._move_surface = pygame.Surface((240, 112))
+        self._move_surface.set_colorkey((0,0,0))
         self._frame_num = 0
         self._fps = 30
         self._animation_timer = 0
