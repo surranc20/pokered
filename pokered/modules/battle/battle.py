@@ -4,6 +4,7 @@ from os.path import join, exists
 from ..utils.vector2D import Vector2
 from ..utils.drawable import Drawable
 from ..utils.animated import AnimatedGroup
+from ..utils.soundManager import SoundManager
 from ..animations.toss_pokemon import TossPokemon
 from ..animations.moves.scrolling_move import ScrollingMove
 from ..pokemon import Pokemon
@@ -20,8 +21,9 @@ class Battle:
         self._player = player
         self._opponent = opponent
         self._battle_fsm = BattleFSM(player, opponent)
-        pygame.mixer.music.load(join("music", "gym_battle_music.mp3"))
-        pygame.mixer.music.play(-1)
+
+        SoundManager.getInstance().playMusic("gym_battle_music.mp3", -1, .4)
+
     
     def handle_event(self, event):
         self._battle_fsm.handle_action(event)
