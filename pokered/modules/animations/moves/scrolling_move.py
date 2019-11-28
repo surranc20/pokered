@@ -5,8 +5,10 @@ from ...utils.frameManager import FRAMES
 from ...utils.drawable import Drawable
 
 class ScrollingMove(MoveBase):
-    def __init__(self, enemy=False):
-        super().__init__(enemy= enemy)
+    def __init__(self, attacker, defender, enemy=False):
+        self._attacker = attacker
+        self._defender = defender
+        super().__init__(attacker, defender, enemy=enemy)
         self._scroll_count = 0
 
 

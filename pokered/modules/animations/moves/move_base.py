@@ -5,7 +5,9 @@ from ...utils.drawable import Drawable
 
 
 class MoveBase():
-    def __init__(self, enemy=False):
+    def __init__(self, attacker, defender, enemy=False):
+        self._attacker = attacker
+        self._defender = defender
         self._enemy = enemy
         self._is_dead = False
         self._move_surface = pygame.Surface((240, 112))
