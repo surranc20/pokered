@@ -4,7 +4,14 @@ from ...utils.soundManager import SoundManager
 
 class DoubleSlap(MoveBase):
     FRAME_LIST = [
-
+        [(0, (170, 20))],
+        [(0, (170, 20))],
+        [(0, (170, 20))],
+        [(0, (170, 20))],
+        [],
+        [],
+        [],
+        []
     ]
 
     def __init__(self, attacker, defender, enemy=False):
