@@ -14,14 +14,14 @@ class BodySlam(MoveBase):
         []
     ]
 
-    def __init__(self, defender, attacker, enemy=False):
+    def __init__(self, attacker, defender, enemy=False):
         super().__init__(attacker, defender, enemy=enemy)
         self._move_file_name = join("moves", "body_slam.png")
         self._drop = VerticalDropAndRecovery(attacker, 4)
-        self._lunge = HorizontalLunge(attacker, 10)
-        self._reverse_lunge = HorizontalLunge(attacker, -10)
-        self._enemy_lunge = HorizontalLunge(defender, 14)
-        self._enemy_recover = HorizontalLunge(defender, -14)
+        self._lunge = HorizontalLunge(attacker, 10 if not enemy else -10)
+        self._reverse_lunge = HorizontalLunge(attacker, -10 if not enemy else 10)
+        self._enemy_lunge = HorizontalLunge(defender, 14 if not enemy else -14)
+        self._enemy_recover = HorizontalLunge(defender, -14 if not enemy else 14)
         self._oscillation_made = False
         self._displayed_png = False
         self._fps = 30
