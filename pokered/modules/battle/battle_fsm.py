@@ -235,13 +235,13 @@ class BattleFSM:
 
                 if self._state == BattleStates.PLAYER_MOVE_ANIMATION:
                     print(self._player_move_queued.move_name)
-                    self._active_animation = getattr(sys.modules[__name__], self._player_move_queued.move_name.replace(" ", ""))()
+                    self._active_animation = getattr(sys.modules[__name__], self._player_move_queued.move_name.replace(" ", ""))(self._player.get_active_pokemon(), self._opponent.get_active_pokemon())
                     print("active          ", self._active_animation)
                     #self._handle_state_change(self._state_queue.pop(0))
                 
                 if self._state == BattleStates.ENEMY_MOVE_ANIMATION:
                     print(self._player_move_queued.move_name)
-                    self._active_animation = IceBeam(self._player.get_active_pokemon(), True)
+                    self._active_animation = BodySlam(self._opponent.get_active_pokemon(), self._player.get_active_pokemon(), False)
                 
                 if self._state == BattleStates.UPDATE_PLAYER_STATUS:
                     calc = DamageCalculator((self._opponent.get_active_pokemon(), self._enemy_move_queued), self._player.get_active_pokemon())

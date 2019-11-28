@@ -6,8 +6,8 @@ from ...utils.drawable import Drawable
 
 class Surf(MoveBase):
     
-    def __init__(self, enemy=False):
-        super().__init__(enemy=enemy)
+    def __init__(self, attacker, defender, enemy=False):
+        super().__init__(attacker, defender, enemy=enemy)
         self._surf = Drawable(join("moves", "surf.png"), (0 if not self._enemy else 130 ,48 if not self._enemy else 0), (0, 1 if not self._enemy else 0))
         if self._enemy:
             self._surf._image.set_colorkey(self._surf._image.get_at((111,63)))

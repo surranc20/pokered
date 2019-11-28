@@ -46,8 +46,8 @@ class Thunderbolt(MoveBase):
         []
         
     ]
-    def __init__(self, enemy=False):
-        super().__init__(enemy=enemy)
+    def __init__(self, attacker, defender, enemy=False):
+        super().__init__(attacker, defender, enemy=enemy)
         self._move_file_name = join("moves", "thunderbolt.png")
         self._fps = 20
         self._round_two = True

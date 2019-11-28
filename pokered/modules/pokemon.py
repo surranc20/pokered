@@ -43,7 +43,7 @@ class Pokemon(Drawable):
         if move_set != None:
             self.add_move_list(move_set)
 
-        super().__init__(join("pokemon", "pokemon_big.png"), _pos, offset= _offset)
+        super().__init__(join("pokemon", "pokemon_big.png"), Vector2(_pos.x, _pos.y), offset= _offset)
     
     def draw(self, draw_surface):
         if self._draw:
