@@ -4,7 +4,7 @@ class VerticalDropAndRecovery():
     def __init__(self, pokemon, drop_dist):
         self._pokemon = pokemon
         self._fps = 5
-        self._timer = 1.001 / self._fps
+        self._timer = 1.001 / self._fps # start like this so there is no delay on first frame
         self._drop_dist = drop_dist
         self._is_dead = False
         self._anchored_po = Vector2(pokemon._position.x, pokemon._position.y)
