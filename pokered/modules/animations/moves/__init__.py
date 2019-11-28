@@ -5,3 +5,4 @@ from .surf import Surf
 from .ice_beam import IceBeam
 from .body_slam import BodySlam
 from .double_slap import DoubleSlap
+from .ice_punch import IcePunch

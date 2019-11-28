@@ -23,10 +23,11 @@ class HorizontalJiggle():
     
     def update(self, ticks):
         if not self.is_dead():
-            self._total_timer -= ticks
-            if self._total_timer != None and self._total_timer < 0:
-                self.reset()
-                return True
+            if self._total_timer != None:
+                self._total_timer -= ticks
+                if self._total_timer < 0:
+                    self.reset()
+                    return True
 
             if self._pokemon._position[0] == self._anchored_pos.x:
                 self._current_delta = 2
