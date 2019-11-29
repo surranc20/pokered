@@ -6,6 +6,7 @@
         "Move power": 20,
         "PP":         20,
         "Crit":       0.0625,
+        "Effect Accuracy" : 100,
         "Effects":    "Pokemon heals half the dealt damage"
     },
     "Thunderbolt" : {
@@ -15,6 +16,7 @@
         "Accuracy": 100,
         "PP": 15,
         "Crit":       0.0625,
+        "Effect Accuracy" : 10,
         "Effects": "10% chance to paralyze the target."
     },
     "Thunder Wave" : {
@@ -24,6 +26,7 @@
         "Accuracy": 100,
         "PP": 20,
         "Crit":       0.0625,
+        "Effect Accuracy" : 100,
         "Effects": "The target is paralyzed."
     },
     "Thunder" : {
@@ -33,6 +36,7 @@
         "Accuracy": 70,
         "PP": 10,
         "Crit":       0.0625,
+        "Effect Accuracy" : 100,
         "Effects": "30% chance to paralyze target. Move has 100% accuracy when rain dance is in effect. Move has 40% accuracy when sunny day is in effect. Move does double damage to pokemon using fly."
     },
     "Thundershock" : {
@@ -42,6 +46,7 @@
         "Accuracy": 100,
         "PP": 30,
         "Crit":       0.0625,
+        "Effect Accuracy": 10,
         "Effects": "10% chance to paralyze the target."
     },
     "Surf" : {
@@ -51,6 +56,7 @@
         "Accuracy": 100,
         "PP": 15,
         "Crit":       0.0625,
+        "Effect Accuracy": 0,
         "Effects": ""
     },
     "Ice Beam" : {
@@ -60,6 +66,7 @@
         "Accuracy": 100,
         "PP": 10,
         "Crit":       0.0625,
+        "Effect Accuracy": 10,
         "Effects": "10% chance to freeze target."
     }, 
     "Hail" : {
@@ -69,6 +76,7 @@
         "Accuracy": "--",
         "PP": 10,
         "Crit":       "--",
+        "Effect Accuracy": 0,
         "Effects": "Summons a hail storm that hurts all types besides ice."
     }, 
     "Safeguard" : {
@@ -78,6 +86,7 @@
         "Accuracy": "--",
         "PP": 25,
         "Crit":       "--",
+        "Effect Accuracy": 100,
         "Effects": "User's party is protected from all status abnormalities."
     },
     "Spikes" : {
@@ -87,6 +96,7 @@
         "Accuracy": "--",
         "PP": 20,
         "Crit":       "--",
+        "Effect Accuracy": 100,
         "Effects": "Lays spikes on the battlefield that damage pokemon that are switched in."
     }, 
     "Dive" : {
@@ -96,6 +106,7 @@
         "Accuracy": 100,
         "PP": 10,
         "Crit":       0.0625,
+        "Effect Accuracy": 100,
         "Effects": "Dives underwater the first turn, then surfaces to attack the second. Pokemon cannot be hit while underwater."
     }, 
     "Protect" : {
@@ -105,6 +116,7 @@
         "Accuracy": "--",
         "PP": 10,
         "Crit":       "--",
+        "Effect Accuracy": 100,
         "Effects": "Negates all attacks on user when used. Successive uses degrade accuracy."
     }, 
     "Amnesia" : {
@@ -114,6 +126,7 @@
         "Accuracy": "--",
         "PP": 20,
         "Crit":       "--",
+        "Effect Accuracy": 100,
         "Effects": "Pokemon's Special Defence is raised."
     },
     "Yawn" : {
@@ -123,6 +136,7 @@
         "Accuracy": 100,
         "PP": 10,
         "Crit":       0,
+        "Effect Accuracy": 100,
         "Effects": "At the end of the next turn the target will fall asleep."
     }, 
     "Double Slap" : {
@@ -132,6 +146,7 @@
         "Accuracy": 85,
         "PP": 10,
         "Crit":       0.0625,
+        "Effect Accuracy": 0,
         "Effects": "Attacks 2 to 5 times."
     },
     "Ice Punch" : {
@@ -141,6 +156,7 @@
         "Accuracy": 100,
         "PP": 15,
         "Crit":       0.0625,
+        "Effect Accuracy": 30,
         "Effects": "30% chance to freeze target."
     },
     "Sweet Kiss" : {
@@ -150,6 +166,7 @@
         "Accuracy": 75,
         "PP": 10,
         "Crit":       0,
+        "Effect Accuracy": 100,
         "Effects": "If it hits, the target is confused."
     }, 
     "Attract" : {
@@ -159,6 +176,7 @@
         "Accuracy": 100,
         "PP": 10,
         "Crit":       0,
+        "Effect Accuracy": 100,
         "Effects": "Makes the opposite gender less likely to attack."
     },
     "Body Slam" : {
@@ -168,6 +186,7 @@
         "Accuracy": 100,
         "PP": 15,
         "Crit":       0.0625,
+        "Effect Accuracy": 30,
         "Effects": "30% chance to parlyze the target."
     },
     "Confuse Ray" : {
@@ -177,6 +196,7 @@
         "Accuracy": 100,
         "PP": 10,
         "Crit":       0,
+        "Effect Accuracy": 100, 
         "Effects": "Confuses the foe."
     }, 
     "Earthquake" : {
@@ -186,6 +206,7 @@
         "Accuracy": 100,
         "PP": 10,
         "Crit":       0.0625,
+        "Effect Accuracy": 0,
         "Effects": "Hits all pokemon in play besides the user"
     },
     "Rock Tomb" : {
@@ -195,6 +216,7 @@
         "Accuracy": 80,
         "PP": 10,
         "Crit":       0.0625,
+        "Effect Accuracy": 100,
         "Effects": "Lowers speed of foe."
     }, 
     "Iron Tail" : {
@@ -204,6 +226,7 @@
         "Accuracy": 75,
         "PP": 15,
         "Crit":       0.0625,
+        "Effect Accuracy": 30,
         "Effects": "30% chance to lower the target's defence."
     }, 
     "Roar" : {
@@ -213,6 +236,7 @@
         "Accuracy": 100,
         "PP": 20,
         "Crit":       "--",
+        "Effect Accuracy": 100,
         "Effects": "Makes trainer pokemon switch out."
     }, 
     "Sky Uppercut" : {
@@ -222,6 +246,7 @@
         "Accuracy": 90,
         "PP": 15,
         "Crit":       0.0625,
+        "Effect Accuracy": 100,
         "Effects": "Hit's pokemon using fly."
     },
     "Mach Punch" : {
@@ -231,6 +256,7 @@
         "Accuracy": 100,
         "PP": 5,
         "Crit":       0.0625,
+        "Effect Accuracy": 100,
         "Effects": "User attacks first."
     },
     "Counter" : {
@@ -240,6 +266,7 @@
         "Accuracy": 100,
         "PP": 20,
         "Crit":       "--",
+        "Effect Accuracy": 100,
         "Effects": "Returns to the foe double the damage of attack done that turn. Foe's attack must be a non-special attack"
     },
     "Mega Kick" : {
@@ -248,7 +275,8 @@
         "Move power": 120,
         "Accuracy": 75,
         "PP": 5,
-        "Crit":       "--",
+        "Crit": 0.0625,
+        "Effect Accuracy": 0,
         "Effects": "Deals damage with no other effect."
     }, 
     "Mega Punch" : {
@@ -257,7 +285,8 @@
         "Move power": 80,
         "Accuracy": 85,
         "PP": 20,
-        "Crit":       "--",
+        "Crit":  0.0625,
+        "Effect Accuracy": 0,
         "Effects": "Deals damage with no other effect." 
     },
     "Foresight" : {
@@ -267,6 +296,7 @@
         "Accuracy": "--",
         "PP": 40,
         "Crit":       "--",
+        "Effect Accuracy": 100, 
         "Effects": "Resets opponent's Evasiveness, Normal-type and Fighting-type attacks can now hit Ghosts, and Ghost-type attacks hit Normal."
     },
     "Brick Break" : {
@@ -285,6 +315,7 @@
         "Accuracy": 100,
         "PP": 20,
         "Crit":       0.0625,
+        "Effect Accuracy": 100,
         "Effects": "Facade deals damage, and hits with double power (140) if the user is burned, poisoned or paralyzed."
     }, 
     "Double-Edge" : {
@@ -294,6 +325,7 @@
         "Accuracy": 100,
         "PP": 15,
         "Crit":       0.0625,
+        "Effect Accuracy": 100,
         "Effects": "Double-Edge deals damage, but the user receives 1⁄3 of the damage it inflicted in recoil. In other words, if the attack does 90 HP damage to the opponent, the user will lose 30 HP."
     }, 
     "Sand Tomb" : {
@@ -303,6 +335,7 @@
         "Accuracy": 85,
         "PP": 15,
         "Crit":       0.0625,
+        "Effect Accuracy": 100,
         "Effects": "Sand Tomb inflicts damage on the first turn then traps the opponent, causing them to lose 1⁄8 of their maximum HP after each turn, for 4-5 turns."
     },
     "Bulk Up" : {
@@ -312,6 +345,7 @@
         "Accuracy": "--",
         "PP": 20,
         "Crit":       "--",
+        "Effect Accuracy": 100,
         "Effects": "Bulk Up raises the user's Attack and Defense by one stage each."
     },
     "Cross Chop" : {
@@ -321,6 +355,7 @@
         "Accuracy": 80,
         "PP": 5,
         "Crit":       0.125,
+        "Effect Accuracy": 0,
         "Effects": "Cross Chop deals damage and has an increased critical hit ratio (1⁄8 instead of 1⁄16)."
     },
     "Scary Face" : {
@@ -330,12 +365,7 @@
         "Accuracy": 100,
         "PP": 10,
         "Crit":       "--",
+        "Effect Accuracy": 100,
         "Effects": "Scary Face lowers the target's Speed by two stages."
     }
-
-
-
-    
-
-
 }
