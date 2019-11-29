@@ -35,7 +35,7 @@ def main():
     poke.add_move(Move("Thunder"))
     poke.add_move(Move("Thunderbolt"))
     poke.add_move(Move("Thunder Wave"))
-    poke.add_move(Move("Thundershock"))
+    poke.add_move(Move("Double Slap"))
     poke6.add_move(Move("Thunder"))
     poke6.add_move(Move("Thunderbolt"))
     poke6.add_move(Move("Thunder Wave"))

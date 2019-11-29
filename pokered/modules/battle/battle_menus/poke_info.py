@@ -27,6 +27,7 @@ class PokeInfo(Drawable):
         self._blit_name_and_gender()
         self.blit_hp_bar()
         self.blit_lvl()
+        self.blit_status()
         if not self._enemy: self.blit_hp_remaining()
         
 
@@ -103,6 +104,15 @@ class PokeInfo(Drawable):
             font_char.set_colorkey((255,255,255))
             self._hp_remaining.blit(font_char, (current_pos.x, current_pos.y))
             current_pos.x += 5
+    
+    def blit_status(self):
+        self._status = pygame.Surface((22, 8))
+        self._status.fill((255,255,255))
+        self._status.set_colorkey((255,255,255))
+        for status in self._pokemon._status:
+            if status in ["paralyze"]:
+                status_char = FRAMES.getFrame("status.png", offset=(1, 0))
+                self._status.blit(status_char, (0,0))
         
 
 
@@ -118,12 +128,14 @@ class PokeInfo(Drawable):
             draw_surface.blit(self._hp, (49, 30))
             draw_surface.blit(self._hp_darken, (49, 30))
             draw_surface.blit(self._lvl, (84, 18))
+            draw_surface.blit(self._status, (12, 27))
 
         else: 
             draw_surface.blit(self._hp, (181, 91))
             draw_surface.blit(self._hp_darken, (181, 91))
             draw_surface.blit(self._lvl, (217, 79))
             draw_surface.blit(self._hp_remaining, (193, 97))
+            draw_surface.blit(self._status, (145, 95))
     
     def update(self, ticks):
         self.__init__(self._pokemon, self._enemy)
