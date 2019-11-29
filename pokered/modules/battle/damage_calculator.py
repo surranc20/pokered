@@ -11,6 +11,16 @@ class DamageCalculator:
         self._weather = weather
         self._effectiveness_string = None
         self._effectiveness = None
+
+    def get_effect(self):
+        prob = random.randint(0, 100)
+        if prob > self._move.effect_accuracy:
+            return None
+        else:
+            if self._move.effects in ["paralyze"]:
+                return self._move.effects
+            else: return None
+
     
     def get_effectiveness(self):
         if self._effectiveness_string != None:
@@ -23,6 +33,8 @@ class DamageCalculator:
         else: return ""
 
     def get_damage(self):
+        if self._move.category == "Status":
+            return 0
         modifier = self.get_total_modifier()
         power = self._move.move_power
         level = self._poke_1.get_lvl()

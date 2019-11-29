@@ -1,4 +1,5 @@
 import json
+import random
 from os.path import join
 from .utils.drawable import Drawable
 from .utils.vector2D import Vector2
@@ -21,7 +22,7 @@ class Pokemon(Drawable):
         self._held_item = None
         self._ability = None
         self._status = []
-        self._enemy = enemy
+        self._enemy = enemy     
         self._stats = {
             "LVL" : 99,
             "HP": 168,
@@ -52,6 +53,9 @@ class Pokemon(Drawable):
     def add_move_list(self, lyst):
         for move in lyst:
             self._moves.append(Move(move))
+    
+    def add_status(self, status):
+        self._status.append(status)
 
     def get_nick_name(self):
         return self._nick_name
@@ -77,6 +81,14 @@ class Pokemon(Drawable):
     def add_move(self, move):
         if len(self._moves) < 4:
             self._moves.append(move)
+    
+    def can_move(self):
+        if "paralyze" in self._status:
+            prob = random.randint(0, 100)
+            print(prob)
+            if prob < 25:
+                return "paralyze"
+        return True
     
     def get_lvl(self):
         return self._stats["LVL"]

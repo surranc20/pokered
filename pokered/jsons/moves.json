@@ -27,7 +27,7 @@
         "PP": 20,
         "Crit":       0.0625,
         "Effect Accuracy" : 100,
-        "Effects": "The target is paralyzed."
+        "Effects": "paralyze"
     },
     "Thunder" : {
         "Move type": "Electric",
@@ -367,5 +367,8 @@
         "Crit":       "--",
         "Effect Accuracy": 100,
         "Effects": "Scary Face lowers the target's Speed by two stages."
+    },
+    "Multi" : {
+        "Double Slap" : {"2": 37.5, "3": 37.5, "4": 12.5, "5": 12.5}
     }
 }
