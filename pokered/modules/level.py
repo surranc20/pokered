@@ -13,6 +13,7 @@ class Level():
     def __init__(self, level_name, player, screen_size):
         self._player = player
         self._screen_size = screen_size
+        self._level_name = level_name
         self._foreground = Drawable(join(level_name, "level_foreground.png"),(0,0))
         self._background = Drawable(join(level_name, "level_background.png"), (0,0))
         with open(join("levels", level_name,"meta.json"), "r") as level_json:
@@ -24,8 +25,9 @@ class Level():
         self._background.center_with_border(screen_size)
         self.populate_trainers()
         SoundManager.getInstance().playMusic("gym_music.mp3", -1, .5)
+        with open(join("levels", level_name, "entry_script.json"), "r") as script:
+            self._current_script = [json.load(script), 0]
 
-        
     
     def _tile(self):
         tile_dims = (self._level_size[0] // self.TILE_SIZE, self._level_size[1] // self.TILE_SIZE)
@@ -35,16 +37,17 @@ class Level():
             for x in range(tile_dims[0]):
                 row.append(Tile((x,y), self._colide_list[y][x], None))
             tiles.append(row)
-        for row in tiles:
-            print(row)
+        
         return tiles
     
     def play_music(self):
         SoundManager.getInstance().playMusic("gym_music.mp3", -1, .5)
 
+
     def populate_trainers(self):
         self._player.setPosition(self.correct_border_and_height_pos(self._level_meta[1]))
         self._tiles[self._level_meta[1][1]][self._level_meta[1][0]].add_obj(self._player)
+        self._player._current_tile = self._tiles[self._level_meta[1][1]][self._level_meta[1][0]]
         for trainer_args in self._level_meta[2]:
             train = Trainer(self.correct_border_and_height_pos(trainer_args[0]), trainer_args[1], trainer_args[2], enemy=True)
             for pokemon in trainer_args[3]:
@@ -60,10 +63,28 @@ class Level():
         self._foreground.draw(draw_surface)
     
     def update(self, ticks):
+        if self._current_script != None:
+            self.execute_script_line()
         for y, row in enumerate(self._tiles):
             for x, tile in enumerate(row):
                 tile.update(ticks, self.get_nearby_tiles((x,y)))
+        
         Drawable.updateWindowOffset(self._player, self._screen_size, self._level_size)
+    
+    def execute_script_line(self):
+        try:
+            if eval(str(self._current_script[0][self._current_script[1]])) != False:
+                self._current_script[1] +=1
+                if self._current_script[1] + 1 > len(self._current_script[0]):
+                    self._current_script = None
+        except Exception as e:
+            print(e)
+            exec(str(self._current_script[0][self._current_script[1]]))
+            self._current_script[1] +=1
+            if self._current_script[1] + 1 > len(self._current_script[0]):
+                self._current_script = None
+
+
     
     def get_nearby_tiles(self, pos):
         nearby_tiles = {}
