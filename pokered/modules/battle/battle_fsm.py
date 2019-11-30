@@ -116,15 +116,6 @@ class BattleFSM:
 
         if self._state.value[0] == "text wait":
             self._text_wait_timer += ticks
-            # if self._active_string == None:
-            #     print("NO ACTIVE STRING!!!!")
-            #     if len(self._state_queue) > 0:
-            #             self._active_string = None
-            #             self._handle_state_change(self._state_queue.pop(0))
-            #     else:
-            #         self._active_string = None
-            #         self._handle_state_change(self.TRANSITIONS[self._state])
-
             if self._active_string != None and self._active_string != "":
                 if self._state == BattleStates.UPDATE_PLAYER_STATUS_EFFECT or self._state == BattleStates.UPDATE_ENEMY_STATUS_EFFECT or self._state == BattleStates.PARALYZED_CANT_MOVE:
                     self._text_cursor.set_pos(self._wrap_text(40))
@@ -411,7 +402,7 @@ class BattleFSM:
             self._player_move_queued = None
             self._enemy_move_queued = None
             self._active_string = str("What will " + self._player.get_active_pokemon().get_name().upper() + " do?")
-            self._wrap_text(12)
+            self._wrap_text(16)
             self._draw_list.append(self._fight_run)
             self._draw_list.append(self._cursor)
             self._cursor.activate()
