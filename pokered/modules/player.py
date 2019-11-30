@@ -11,14 +11,32 @@ class Player(Trainer):
         self._nFrames = 4
         self._last_wall_bump = 0
         self._current_tile = 0
+        self._move_script_active = None
         
     
     def handle_event(self, event, nearby_tiles):
-        if (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and event.key in [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_b]:
-            self.move(event)
-        elif event.type == pygame.KEYDOWN and event.key == BattleActions.SELECT.value:
-            if nearby_tiles[self._orientation]._obj != None:
-                return nearby_tiles[self._orientation]._obj.talk_event(self)
+        if self._move_script_active == None:
+            if (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and event.key in [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_b]:
+                self.move(event)
+            elif event.type == pygame.KEYDOWN and event.key == BattleActions.SELECT.value:
+                if nearby_tiles[self._orientation]._obj != None:
+                    return nearby_tiles[self._orientation]._obj.talk_event(self)
+        else:
+            pass
+    
+    def move_forward_to_tile(self, tile):
+        self._move_script_active = tile
+        return self._current_tile._pos == tile
+    
+    def _move_forward_to_tile(self, tile):
+        if self._current_tile._pos != tile:
+            self._orientation = Cardinality.NORTH
+            self._moving = True
+            return False
+        else:
+            self._moving = False
+            self._move_script_active = None
+            return True
 
     def move(self, event):
         """Updates the players moving, flip, and orientation values based on the event"""
@@ -65,6 +83,9 @@ class Player(Trainer):
     def update(self, ticks, nearby_tiles, current_tile):
         """Updates the player class"""
         self._current_tile = current_tile
+        print(self._current_tile._pos)
+        if self._move_script_active != None:
+            self._move_forward_to_tile(self._move_script_active)
         if self._moving:
             self.startAnimation()
             self._key_down_timer += ticks
