@@ -185,6 +185,7 @@ class BattleFSM:
                         for x in range(num_hits):
                             self._state_queue.append(BattleStates.PLAYER_MOVE_ANIMATION if player == self._player else BattleStates.ENEMY_MOVE_ANIMATION)
                             self._state_queue.append(BattleStates.UPDATE_ENEMY_STATUS if player == self._player else BattleStates.UPDATE_PLAYER_STATUS)
+                            self._state_queue.append(BattleStates.DISPLAY_EFFECT)
                             self._state_queue.append(BattleStates.UPDATE_ENEMY_STATUS_EFFECT if player == self._player else BattleStates.UPDATE_PLAYER_STATUS_EFFECT)
                             self._state_queue.append(BattleStates.CHECK_HEALTH)
                         if num_hits > 1:
@@ -286,6 +287,8 @@ class BattleFSM:
                     dmg = calc.get_damage()
                     if dmg > 0:
                         self._active_animation = [ChangeHP(self._player.get_active_pokemon(), dmg, calc.get_effectiveness_sound()), Hit(self._player.get_active_pokemon())]
+                    else:
+                        self._active_animation = []
                     self._active_string = calc.get_effectiveness()
                 
                 if self._state == BattleStates.UPDATE_ENEMY_STATUS:
@@ -294,9 +297,8 @@ class BattleFSM:
                     if dmg > 0:
                         self._active_animation = [ChangeHP(self._opponent.get_active_pokemon(), dmg, calc.get_effectiveness_sound()), Hit(self._opponent.get_active_pokemon())]
                     else:
-                        
                         self._active_animation = []
-                        self._active_string = calc.get_effectiveness()
+                    self._active_string = calc.get_effectiveness()
                 
                 if self._state == BattleStates.OPPONENT_FEINT:
                     self._active_animation = PokeDeath(self._opponent.get_active_pokemon())
