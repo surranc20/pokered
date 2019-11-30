@@ -35,9 +35,14 @@ class LevelManager(object):
       
     def update(self, ticks):
         if self._active_battle == None:
-            self._level.update(ticks)
+            warped = self._level.update(ticks)
+            if warped != None:
+                return warped
         else:
             self._active_battle.update(ticks)
             if self._active_battle.is_over():
+                if self._active_battle.get_end_event() != None:
+                    self._level.load_script(self._active_battle.get_end_event())
                 self._active_battle = None
                 self._level.play_music()
+                

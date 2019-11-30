@@ -46,7 +46,11 @@ class Battle:
     def is_over(self):
         if self._battle_fsm.is_over():
             pygame.mixer.music.pause()
+            self._event = self._opponent._event
         return self._battle_fsm.is_over()
+
+    def get_end_event(self):
+        return self._event
 
             
                 

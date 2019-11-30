@@ -306,6 +306,7 @@
         "Accuracy": 100,
         "PP": 15,
         "Crit":       0.0625,
+        "Effect Accuracy": 100,
         "Effects": "Brick Break deals damage, but removes the effects of Reflect and Light Screen before attacking."
     },
     "Facade" : {

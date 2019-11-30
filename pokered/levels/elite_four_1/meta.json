@@ -3,12 +3,15 @@
     [6,11],
     [
         [[6,5],"lorelei", 1, 
-        [
-            ["dewgong", ["Surf", "Ice Beam", "Hail", "Safeguard"]],
-            ["cloyster", ["Dive", "Spikes", "Hail", "Protect"]],
-            ["slowbro", ["Ice Beam", "Surf", "Amnesia", "Yawn"]],
-            ["jynx", ["Double Slap", "Ice Punch", "Sweet Kiss", "Attract"]],
-            ["lapras", ["Body Slam", "Confuse Ray", "Surf", "Ice Beam"] ]]
+            [
+                ["dewgong", ["Surf", "Ice Beam", "Hail", "Safeguard"]],
+                ["cloyster", ["Dive", "Spikes", "Hail", "Protect"]],
+                ["slowbro", ["Ice Beam", "Surf", "Amnesia", "Yawn"]],
+                ["jynx", ["Double Slap", "Ice Punch", "Sweet Kiss", "Attract"]],
+                ["lapras", ["Body Slam", "Confuse Ray", "Surf", "Ice Beam"] ]
+                
+            ],
+            "defeat_script.json"
         ]
     ],
     [
@@ -25,5 +28,6 @@
         [1,0,0,0,0,0,0,0,0,0,0,0,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1]
-    ]
+    ],
+    ["entry_script.json", "defeat_script.json"]
 ]

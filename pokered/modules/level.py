@@ -2,6 +2,7 @@ import json
 import pygame
 from os.path import join
 from .trainer import Trainer
+from .player import Player
 from .pokemon import Pokemon
 from .utils.drawable import Drawable
 from .utils.vector2D import Vector2
@@ -25,8 +26,10 @@ class Level():
         self._background.center_with_border(screen_size)
         self.populate_trainers()
         SoundManager.getInstance().playMusic("gym_music.mp3", -1, .5)
-        with open(join("levels", level_name, "entry_script.json"), "r") as script:
-            self._current_script = [json.load(script), 0]
+        self._scripts = self._level_meta[4]
+        self._current_script = None
+        if "entry_script.json" in self._scripts:
+            self.load_script("entry_script.json")
 
     
     def _tile(self):
@@ -50,6 +53,8 @@ class Level():
         self._player._current_tile = self._tiles[self._level_meta[1][1]][self._level_meta[1][0]]
         for trainer_args in self._level_meta[2]:
             train = Trainer(self.correct_border_and_height_pos(trainer_args[0]), trainer_args[1], trainer_args[2], enemy=True)
+            if len(trainer_args) > 4:
+                train._event = trainer_args[4]
             for pokemon in trainer_args[3]:
                 train._pokemon_team.append(Pokemon(pokemon[0], enemy=True, move_set=pokemon[1]))
             self._tiles[trainer_args[0][1]][trainer_args[0][0]].add_obj(train)
@@ -68,6 +73,8 @@ class Level():
         for y, row in enumerate(self._tiles):
             for x, tile in enumerate(row):
                 tile.update(ticks, self.get_nearby_tiles((x,y)))
+                if tile.warp_triggered():
+                    return tile.get_warp_level()
         
         Drawable.updateWindowOffset(self._player, self._screen_size, self._level_size)
     
@@ -107,6 +114,13 @@ class Level():
     
     def correct_border_and_height_pos(self, pos):
         return Vector2(pos[0] * self.TILE_SIZE + self._foreground._x_off, pos[1] * self.TILE_SIZE - 6)
+    
+    def load_script(self, script_name):
+        if script_name not in self._scripts:
+            raise Exception
+
+        with open(join("levels", self._level_name, script_name), "r") as script:
+            self._current_script = [json.load(script), 0]
 
 
 class Tile:
@@ -114,6 +128,7 @@ class Tile:
         self._pos = pos
         self._obj = obj
         self._base_colidable = colidable
+        self._is_warp = False
         self._colidable = True if colidable == 1 else False
     
     def add_obj(self, obj):
@@ -137,6 +152,20 @@ class Tile:
     def update(self, ticks, nearby_tiles):
         if self._obj != None:
             self._obj.update(ticks, nearby_tiles, self)
+
+    def set_warp(self, level_name):
+        self._colidable = False
+        self._is_warp = True
+        self._warp_level = level_name
+    
+    def warp_triggered(self):
+        return self._is_warp and type(self._obj) == Player
+    
+    def get_warp_level(self):
+        return self._warp_level
+            
+    
+    
            
     
     def __repr__(self):
