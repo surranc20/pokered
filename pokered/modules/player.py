@@ -12,6 +12,7 @@ class Player(Trainer):
         self._last_wall_bump = 0
         self._current_tile = 0
         self._move_script_active = None
+        self._hidden_inventory = []
         
     
     def handle_event(self, event, nearby_tiles):

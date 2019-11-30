@@ -5,7 +5,7 @@ from .utils.mobile import Mobile
 from .enumerated.cardinality import Cardinality
 
 class Trainer(Mobile):
-    def __init__(self, position, name, facing, enemy=True):
+    def __init__(self, position, name, facing, enemy=True, event=None):
         if not enemy:
             super().__init__("trainer.png", position, facing)
         else:
@@ -22,6 +22,7 @@ class Trainer(Mobile):
         self._key_down_timer = 0
         self._wait_till_next_update = 0
         self._walk_event = None
+        self._event= event
     
     def all_dead(self):
         for pokemon in self._pokemon_team:

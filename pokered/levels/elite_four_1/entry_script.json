@@ -2,7 +2,6 @@
     "self._player.move_forward_to_tile((6,7))",
     "self._foreground = Drawable(join(self._level_name, 'level_foreground_closed.png'), (0,0))\nself._foreground.center_with_border(self._screen_size)",
     "SoundManager.getInstance().playSound('firered_0026.wav', sound=1)"
-
 ]
 
     

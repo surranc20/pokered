@@ -17,5 +17,7 @@ class GameManager(object):
     
     def update(self, ticks):
         if self._FSM == "running":
-            self._level.update(ticks)
+            warped = self._level.update(ticks)
+            if warped != None:
+                self._level = LevelManager(self._player, warped)
 
