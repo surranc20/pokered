@@ -27,7 +27,7 @@ class Surf(MoveBase):
                 self._move_surface.blit(self._water_surface, (0, self._surf._position[1] + 50))
                 self._move_surface.blit(self._surf._image, self._surf._position)
                 self._move_surface.set_alpha(200)
-                self._surf._position = (self._surf._position[0] + 2, self._surf._position[1] - 1)
+                self._surf._position = (self._surf._position[0] + 4, self._surf._position[1] - 2)
 
                 if self._surf._position[0] > 130:
                     self._is_dead = True
@@ -38,7 +38,7 @@ class Surf(MoveBase):
                 self._move_surface.blit(self._water_surface, (0, 0))
                 self._move_surface.blit(self._surf._image, self._surf._position)
                 self._move_surface.set_alpha(200)
-                self._surf._position = (self._surf._position[0] - 2, self._surf._position[1] + 1)
+                self._surf._position = (self._surf._position[0] - 4, self._surf._position[1] + 2)
 
                 if self._surf._position[0] < 2:
                     self._is_dead = True
