@@ -1,6 +1,7 @@
 import pygame
 from os.path import join
 from .battle.battle import Battle
+from .dialogue import Dialogue
 from .utils.mobile import Mobile
 from .enumerated.cardinality import Cardinality
 
@@ -56,4 +57,4 @@ class Trainer(Mobile):
         pass
 
     def talk_event(self, player):
-        return Battle(player, self)
+        return Dialogue("1")
