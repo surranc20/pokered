@@ -4,20 +4,24 @@ import textwrap
 from os.path import join
 from .enumerated.battle_actions import BattleActions
 from .utils.drawable import Drawable
+from .battle.battle import Battle
 
 class Dialogue():
-    def __init__(self, dialogue_id, box=0):
+    def __init__(self, dialogue_id, player, npc, box=0):
         self._dialogue_frame = Drawable("dialog_boxes.png", (0, 116), offset=(0, box), world_bound=False)
         self._line_surface = pygame.Surface((self._dialogue_frame.getSize()))
+        self._player = player
+        self._npc = npc
 
         # Get line from json
         with open(join("jsons", "lines.json"), "r") as lines_json:
             lines = json.load(lines_json)
-            self._dialogue = lines[dialogue_id]
+            self._dialogue = lines[dialogue_id][0]
+            self._end_battle = bool(lines[dialogue_id][1])
         self._dialogue = self._dialogue.split("\n")
         self._current_line = 0
-
         self._blit_line()
+        
 
     def _blit_line(self):
         print(self._current_line)
@@ -51,7 +55,10 @@ class Dialogue():
         return self._current_line == len(self._dialogue) + 1
     
     def get_end_event(self):
-        return None
+        if self._end_battle:
+            return Battle(self._player, self._npc)
+        else:
+            return None
 
     
 

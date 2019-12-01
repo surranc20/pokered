@@ -57,4 +57,4 @@ class Trainer(Mobile):
         pass
 
     def talk_event(self, player):
-        return Dialogue("1")
+        return Dialogue("1", player, self)
