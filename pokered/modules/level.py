@@ -52,7 +52,7 @@ class Level():
         self._tiles[self._level_meta[1][1]][self._level_meta[1][0]].add_obj(self._player)
         self._player._current_tile = self._tiles[self._level_meta[1][1]][self._level_meta[1][0]]
         for trainer_args in self._level_meta[2]:
-            train = Trainer(self.correct_border_and_height_pos(trainer_args[0]), trainer_args[1], trainer_args[2], enemy=True)
+            train = Trainer(self.correct_border_and_height_pos(trainer_args[0]), trainer_args[1], trainer_args[2], enemy=True, dialogue_id=trainer_args[2])
             if len(trainer_args) > 4:
                 train._event = trainer_args[4]
             for pokemon in trainer_args[3]:
