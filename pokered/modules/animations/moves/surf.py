@@ -23,7 +23,7 @@ class Surf(MoveBase):
 
             if not self._enemy:
                 self._water_surface = pygame.Surface((240, 112 - self._surf._position[1] + 64))
-                self._water_surface.fill(self._surf._image.get_at((0, 64)))
+                self._water_surface.fill(self._surf._image.get_at((0, 63)))
                 self._move_surface.blit(self._water_surface, (0, self._surf._position[1] + 50))
                 self._move_surface.blit(self._surf._image, self._surf._position)
                 self._move_surface.set_alpha(200)
