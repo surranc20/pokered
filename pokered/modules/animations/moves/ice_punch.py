@@ -7,7 +7,6 @@ import math
 
 class IcePunch(MoveBase):
     FRAME_LIST = [
-
     ]
 
     def __init__(self, attacker, defender, enemy=False):
@@ -54,14 +53,10 @@ class IcePunch(MoveBase):
             for line in self._shard_anim.FRAME_LIST:
                 print(line)
 
-        
-
 
 
     def create_square(self):
-        
         lyst = [(120, 20), (200, 20), (120, 100), (200, 100)]
-
         for x in range(20):
             x1, x2, y1, y2 = lyst[0][0], lyst[1][0], lyst[0][1], lyst[3][1]
             midx, midy = (x1 + x2) / 2, (y1 + y2) / 2
@@ -87,9 +82,6 @@ class IcePunch(MoveBase):
     def make_smaller(self, points):
         x = []
         y = []
-
-
-        
 
         for point in points:
             x.append(point[0])

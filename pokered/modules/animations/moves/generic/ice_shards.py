@@ -6,6 +6,7 @@ from ....utils.soundManager import SoundManager
 class IceShards(MoveBase):
     FRAME_LIST = []
     def __init__(self, attacker, defender, enemy=False):
+        self.FRAME_LIST = []
         super().__init__(attacker, defender, enemy=enemy)
         self._move_file_name = join("moves", "ice_beam.png")
         self._fps = 10
