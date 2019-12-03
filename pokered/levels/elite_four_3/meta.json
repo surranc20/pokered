@@ -4,12 +4,11 @@
     [
         [[6,5],"agatha", 3, 
             [
-                ["dewgong", ["Surf", "Ice Beam", "Hail", "Safeguard"]],
-                ["cloyster", ["Dive", "Spikes", "Hail", "Protect"]],
-                ["slowbro", ["Ice Beam", "Surf", "Amnesia", "Yawn"]],
-                ["jynx", ["Double Slap", "Ice Punch", "Sweet Kiss", "Attract"]],
-                ["lapras", ["Body Slam", "Confuse Ray", "Surf", "Ice Beam"] ]
-    
+                ["gengar", ["Shadow Punch", "Double Team", "Toxic", "Confuse Ray"]],
+                ["golbat", ["Air Cutter", "Poison Fang", "Bite", "Confuse Ray"]],
+                ["haunter", ["Dream Eater", "Hypnosis", "Curse", "Mean Look"]],
+                ["arbok", ["Bite", "Iron Tail", "Screech", "Sludge Bomb"]],
+                ["gengar", ["Shadow Ball", "Sludge Bomb", "Hypnosis", "Nightmare"]]
             ],
             "defeat_script.json"
         ]

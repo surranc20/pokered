@@ -369,6 +369,150 @@
         "Effect Accuracy": 100,
         "Effects": "Scary Face lowers the target's Speed by two stages."
     },
+    "Shadow Punch" : {
+        "Move type": "Ghost",
+        "Category":   "Physical",
+        "Move power": 60,
+        "Accuracy": 1000,
+        "PP": 20,
+        "Crit":       0.0625,
+        "Effect Accuracy": 100,
+        "Effects": "Shadow Punch deals damage and ignores changes to the Accuracy and Evasion stats. However, it will not hit Pokémon during the invulnerable stage of Bounce, Dig, Dive, Fly, Shadow Force or Sky Drop."
+    },
+    "Double Team": {
+        "Move type": "Normal",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 1000,
+        "PP": 15,
+        "Crit":       "--",
+        "Effect Accuracy": 100,
+        "Effects": "Double Team raises the user's Evasiveness by one stage, thus making the user more difficult to hit."
+    },
+    "Toxic": {
+        "Move type": "Poison",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 90,
+        "PP": 10,
+        "Crit":       "--",
+        "Effect Accuracy": 100,
+        "Effects": "Toxic causes the target to be badly poisoned. Pokémon that are badly poisoned will lose an increasing amount of HP at the end of each turn."
+    },
+    "Air Cutter": {
+        "Move type": "Flying",
+        "Category":   "Special",
+        "Move power": 60,
+        "Accuracy": 95,
+        "PP": 25,
+        "Crit":       0.125,
+        "Effect Accuracy": 0,
+        "Effects": ""
+    },
+    "Poison Fang": {
+        "Move type": "Poison",
+        "Category":   "Physical",
+        "Move power": 50,
+        "Accuracy": 100,
+        "PP": 15,
+        "Crit":       0.0625,
+        "Effect Accuracy": 50,
+        "Effects": "Poison Fang deals damage and has a 50% chance of badly poisoning the target. Badly poisoned Pokémon will lose an increasing amount of HP at the end of each turn."
+    },
+    "Bite": {
+        "Move type": "Dark",
+        "Category":   "Physical",
+        "Move power": 60,
+        "Accuracy": 100,
+        "PP": 25,
+        "Crit":       0.0625,
+        "Effect Accuracy": 30,
+        "Effects": "Bite deals damage and has a 30% chance of causing the target to flinch (if the target has not yet moved)."
+    },
+    "Dream Eater": {
+        "Move type": "Psychic",
+        "Category":   "Special",
+        "Move power": 100,
+        "Accuracy": 100,
+        "PP": 15,
+        "Crit":       0.0625,
+        "Effect Accuracy": 100,
+        "Effects": "Dream Eater deals damage only on sleeping foes and the user will recover 50% of the HP drained."
+    },
+    "Hypnosis": {
+        "Move type": "Psychic",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 60,
+        "PP": 20,
+        "Crit":       "--",
+        "Effect Accuracy": 100,
+        "Effects": "Sleep"
+    },
+    "Curse": {
+        "Move type": "Ghost",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 1000,
+        "PP": 10,
+        "Crit":       "--",
+        "Effect Accuracy": 100,
+        "Effects": "This move is really complicated"
+    },
+    "Mean Look": {
+        "Move type": "Normal",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 1000,
+        "PP": 5,
+        "Crit":       "--",
+        "Effect Accuracy": 100,
+        "Effects": "Opponent cannot flee or switch."
+    },
+    "Screech": {
+        "Move type": "Normal",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 85,
+        "PP": 40,
+        "Crit":       "--",
+        "Effect Accuracy": 100,
+        "Effects": "Screech lowers the target's Defense by two stages."
+    },
+    "Sludge Bomb": {
+        "Move type": "Poison",
+        "Category":   "Special",
+        "Move power": 90,
+        "Accuracy": 100,
+        "PP": 10,
+        "Crit": 0.0625,
+        "Effect Accuracy": 30,
+        "Effects": "Poison"
+    },
+    "Shadow Ball": {
+        "Move type": "Ghost",
+        "Category":   "Special",
+        "Move power": 80,
+        "Accuracy": 100,
+        "PP": 15,
+        "Crit": 0.0625,
+        "Effect Accuracy": 20,
+        "Effects": "Special Defense by one stage."
+    },
+    "Nightmare": {
+        "Move type": "Ghost",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 100,
+        "PP": 15,
+        "Crit": "--",
+        "Effect Accuracy": 20,
+        "Effects":"If the target is asleep, Nightmare causes it to lose 1⁄4 of its maximum HP after each turn. The status condition is cured when the Pokémon wakes up."
+    },
+    
+
+
+
     "Multi" : {
         "Double Slap" : {"2": 37.5, "3": 37.5, "4": 12.5, "5": 12.5}
     }
