@@ -24,12 +24,12 @@ class Pokemon(Drawable):
         self._status = []
         self._enemy = enemy     
         self._stats = {
-            "LVL" : 99,
-            "HP": 168,
-            "Current HP" : 168,
+            "LVL" : 62,
+            "HP": 147,
+            "Current HP" : 147,
             "Attack": 49,
             "Defense": 49,
-            "Sp. Attack": 65,
+            "Sp. Attack": 100,
             "Sp. Defense": 117,
             "Speed": 45
         }
