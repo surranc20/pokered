@@ -1,10 +1,11 @@
 import pygame
+from os.path import join
 from .level_manager import LevelManager
 
 class GameManager(object):
     def __init__(self, screen_size, player):
         self._player = player
-        self._level = LevelManager(player, "elite_four_1")
+        self._level = LevelManager(player, "elite_four_1", movie="intro_folder")
         self._FSM = "running" #This is a temporary hack. Do not know if I will need FSM.
 
     def draw(self, surface):
