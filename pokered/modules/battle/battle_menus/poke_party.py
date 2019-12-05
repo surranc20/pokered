@@ -95,6 +95,8 @@ class PokeParty(Drawable):
                     return (response, 0)
                 elif response == "PKMN is already in battle!":
                     self._text_bar.blit_string(response)
+                elif response == "PKMN is in no shape to battle!":
+                    self._text_bar.blit_string(response)
     
     def update(self, ticks):
         for item in self._selectable_items:
@@ -131,6 +133,8 @@ class PokemonSelectedMenu(Drawable):
                 pass # summary
             elif self._cursor == 0:
                 if self._selected_pos != 0:
+                    if not self._player._pokemon_team[self._selected_pos].is_alive():
+                        return "PKMN is in no shape to battle!"
                     self._player._pokemon_team[0], self._player._pokemon_team[self._selected_pos] = \
                         self._player._pokemon_team[self._selected_pos], self._player._pokemon_team[0]
                     self._player.set_active_pokemon(0)
