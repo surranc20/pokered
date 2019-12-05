@@ -509,6 +509,66 @@
         "Effect Accuracy": 20,
         "Effects":"If the target is asleep, Nightmare causes it to lose 1⁄4 of its maximum HP after each turn. The status condition is cured when the Pokémon wakes up."
     },
+    "Hyper Beam": {
+        "Move type": "Normal",
+        "Category":   "Special",
+        "Move power": 150,
+        "Accuracy": 90,
+        "PP": 5,
+        "Crit": 0.0625,
+        "Effect Accuracy": 100,
+        "Effects": "Hyper Beam deals damage, but the user must recharge on the next turn (bringing its effective power down to 75 per turn)."
+    },
+    "Dragon Rage": {
+        "Move type": "Dragon",
+        "Category":   "Special",
+        "Move power": "--",
+        "Accuracy": 100,
+        "PP": 10,
+        "Crit": 0,
+        "Effect Accuracy": 100,
+        "Effects": "Dragon Rage always deals 40 HP damage to the target, regardless of typing. It has no additional effect."
+    },
+    "Outrage": {
+        "Move type": "Dragon",
+        "Category":   "Physical",
+        "Move power": 120,
+        "Accuracy": 100,
+        "PP": 10,
+        "Crit": 0.0625,
+        "Effect Accuracy": 100,
+        "Effects": "The user of Outrage attacks for 2-3 turns, during which it cannot switch out, and then becomes confused. Confused Pokémon have a 33% chance of hurting themselves each turn, for 1-4 attacking turns (50% chance in Generations 1-6)."
+    },
+    "Twister": {
+        "Move type": "Dragon",
+        "Category":   "Special",
+        "Move power": 40,
+        "Accuracy": 100,
+        "PP": 20,
+        "Crit": 0.0625,
+        "Effect Accuracy": 30,
+        "Effects": "flinch"
+    },
+    "Wing Attack": {
+        "Move type": "Flying",
+        "Category":   "Physical",
+        "Move power": 60,
+        "Accuracy": 100,
+        "PP": 35,
+        "Crit": 0.0625,
+        "Effect Accuracy": 100,
+        "Effects":""
+    },
+    "Ancient Power": {
+        "Move type": "Rock",
+        "Category":   "Special",
+        "Move power": 60,
+        "Accuracy": 100,
+        "PP": 5,
+        "Crit": 0.0625,
+        "Effect Accuracy": 10,
+        "Effects":"raise all stats"
+    },
     
 
 
