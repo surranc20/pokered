@@ -26,8 +26,7 @@ def main():
    
     # Create Player and Enemy for Test Battle
     player = Player(Vector2(32, 26), "Chris")
-    poke = Pokemon("charmander")
-    poke._stats["Current HP"] = 2
+    poke = Pokemon("pikachu")
     poke2 = Pokemon("goldeen")
     poke3 = Pokemon("blastoise")
     poke4 = Pokemon("charizard")
@@ -52,11 +51,11 @@ def main():
     poke6.add_move(Move("Thundershock"))
 
     player._pokemon_team.append(poke)
-    # player._pokemon_team.append(poke2)
-    # player._pokemon_team.append(poke3)
-    # player._pokemon_team.append(poke4)
-    # player._pokemon_team.append(poke5)
-    # player._pokemon_team.append(poke6)
+    player._pokemon_team.append(poke2)
+    player._pokemon_team.append(poke3)
+    player._pokemon_team.append(poke4)
+    player._pokemon_team.append(poke5)
+    player._pokemon_team.append(poke6)
 
     # Make game variable
     game = GameManager(SCREEN_SIZE, player)
