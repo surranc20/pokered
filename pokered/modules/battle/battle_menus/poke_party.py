@@ -236,6 +236,9 @@ class PokemonMenuPokemon(Drawable):
         self._hp_remaining.fill((255, 255, 255))
         self._hp_remaining.set_colorkey((255, 255, 255))
         current_hp = self._pokemon._stats["Current HP"]
+        while len(str(current_hp)) < 3:
+            current_hp = " " + str(current_hp)
+
         start_pos = Vector2(0,0)
         current_pos = start_pos
         for char in str(str(current_hp) + " " + str(self._pokemon._stats["HP"])):
