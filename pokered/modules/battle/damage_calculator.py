@@ -33,6 +33,9 @@ class DamageCalculator:
         else: return ""
 
     def get_damage(self):
+        if self._move.move_name == "Dragon Rage":
+            self.get_type_modifier()
+            return 40
         if self._move.category == "Status":
             return 0
         modifier = self.get_total_modifier()
