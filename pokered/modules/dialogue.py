@@ -4,8 +4,10 @@ import textwrap
 from os.path import join
 from .enumerated.battle_actions import BattleActions
 from .utils.drawable import Drawable
+from .utils.soundManager import SoundManager
 from .battle.battle import Battle
 from .text_cursor import TextCursor
+
 
 class Dialogue():
     def __init__(self, dialogue_id, player, npc, box=0, gender="male"):
@@ -59,6 +61,7 @@ class Dialogue():
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN and event.key == BattleActions.SELECT.value:
+            SoundManager.getInstance().playSound("firered_0005.wav")
             self._blit_line()
     
     def is_over(self):
