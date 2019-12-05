@@ -76,7 +76,7 @@ class Pokemon(Drawable):
         return self._moves
     
     def is_alive(self):
-        return True
+        return self._stats["Current HP"] != 0
     
     def add_move(self, move):
         if len(self._moves) < 4:
