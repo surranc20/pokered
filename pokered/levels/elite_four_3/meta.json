@@ -10,7 +10,8 @@
                 ["arbok", ["Bite", "Iron Tail", "Screech", "Sludge Bomb"]],
                 ["gengar", ["Shadow Ball", "Sludge Bomb", "Hypnosis", "Nightmare"]]
             ],
-            "defeat_script.json"
+            "defeat_script.json",
+            "female"
         ]
     ],
     [
