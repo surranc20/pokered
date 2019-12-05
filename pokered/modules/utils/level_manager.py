@@ -12,16 +12,13 @@ from ..movie import Movie
 
 
 class LevelManager(object):
-    def __init__(self, player, level_name, screen_size =(240, 160)):
+    def __init__(self, player, level_name, screen_size =(240, 160), movie=None):
         self._player = player
         self._level_name = level_name
         self._screen_size = screen_size
-        enemy = Player(Vector2(30,30), "CHAMPION GARY", enemy=True)
-        enemy._pokemon_team.append(Pokemon("charizard", enemy=True))
-        enemy._pokemon_team.append(Pokemon("pikachu", enemy=True))
-        enemy._pokemon_team.append(Pokemon("charizard", enemy=True))
         self._level = Level(level_name, player, screen_size)
-        self._active_battle = Movie(screen_size) 
+        if movie != None:
+            self._active_battle = Movie(screen_size, movie) 
         
         
     
