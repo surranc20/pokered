@@ -51,7 +51,7 @@ class Drawable(object):
    
    def center_with_border(self, screen_size):
       x_off = (screen_size[0] - self.getSize()[0]) / 2
-      self._x_off = x_off
+      self._x_off = max(x_off, 0)
       y_off = (screen_size[1] - self.getSize()[1]) / 2
       print(x_off, y_off)
       if x_off > 0 and y_off > 0:
@@ -69,6 +69,7 @@ class Drawable(object):
          surf.blit(border, (x_off + self.getSize()[0], 0))
          surf.blit(border_h, (0, y_off + self.getSize()[1]))
          print((0, y_off + self.getSize()[1]))
+         self._image = surf
 
          
       elif x_off > 0:
@@ -80,7 +81,8 @@ class Drawable(object):
          surf.blit(border, (0,0))
          surf.blit(self._image, (x_off, 0))
          surf.blit(border, (x_off + self.getSize()[0], 0))
-      self._image = surf
+         self._image = surf
+      
       
    def draw(self, surface):
       if self._world_bound:

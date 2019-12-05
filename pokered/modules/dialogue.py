@@ -43,7 +43,7 @@ class Dialogue():
             height += 15
         self._current_line += 1
 
-        self._text_cursor.set_pos((rendered.get_width() + 10, height + 17))
+        self._text_cursor.set_pos((rendered.get_width() + 10, height))
         
     
     def draw(self, draw_surface):
