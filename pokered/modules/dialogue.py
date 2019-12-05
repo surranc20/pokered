@@ -8,11 +8,13 @@ from .battle.battle import Battle
 from .text_cursor import TextCursor
 
 class Dialogue():
-    def __init__(self, dialogue_id, player, npc, box=0):
+    def __init__(self, dialogue_id, player, npc, box=0, gender="male"):
         self._dialogue_frame = Drawable("dialog_boxes.png", (0, 110), offset=(0, box), world_bound=False)
         self._line_surface = pygame.Surface((self._dialogue_frame.getSize()[0] - 10, self._dialogue_frame.getSize()[1] ))
         self._player = player
         self._npc = npc
+        self._color = (232, 81, 78) if gender == "female" else (55, 88, 193)
+
         self._text_cursor = TextCursor((0,0))
         self._text_cursor.activate()
 
@@ -38,7 +40,7 @@ class Dialogue():
         string_lyst = textwrap.wrap(self._dialogue[self._current_line], width=41)
         height = 10
         for string in string_lyst:
-            rendered = self._font.render(string, False, (232, 81, 78))
+            rendered = self._font.render(string, False, self._color)
             self._line_surface.blit(rendered, (10, height))
             height += 15
         self._current_line += 1
