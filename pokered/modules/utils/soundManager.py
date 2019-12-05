@@ -39,7 +39,8 @@ class SoundManager(object):
          "firered_0007.wav"     : _SFX_FOLDER,
          "thunder.mp3"           : _SFX_FOLDER,
          "gym_music.wav"        : _MUSIC_FOLDER,
-         "gym_battle_music.mp3"        : _MUSIC_FOLDER
+         "gym_battle_music.mp3"        : _MUSIC_FOLDER,
+         "intro.mp3" : _MUSIC_FOLDER
       }
       
       

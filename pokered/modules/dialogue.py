@@ -33,7 +33,6 @@ class Dialogue():
         
 
     def _blit_line(self):
-        print(self._current_line)
         if self._current_line == len(self._dialogue):
             self._current_line += 1
             return

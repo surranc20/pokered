@@ -1,4 +1,5 @@
 import json
+import pygame
 from os.path import join
 from ..level import Level
 from ..player import Player
@@ -6,6 +7,8 @@ from ..pokemon import Pokemon
 from ..white_out import WhiteOut
 from ..battle.battle import Battle
 from .vector2D import Vector2
+from ..movie import Movie
+
 
 
 class LevelManager(object):
@@ -17,8 +20,10 @@ class LevelManager(object):
         enemy._pokemon_team.append(Pokemon("charizard", enemy=True))
         enemy._pokemon_team.append(Pokemon("pikachu", enemy=True))
         enemy._pokemon_team.append(Pokemon("charizard", enemy=True))
-        self._active_battle = None 
         self._level = Level(level_name, player, screen_size)
+        self._active_battle = Movie(screen_size) 
+        
+        
     
 
     def draw(self, draw_surface):
@@ -45,6 +50,9 @@ class LevelManager(object):
                 if self._active_battle.get_end_event() != None:
                     if self._active_battle.get_end_event() == "RESTART":
                         return "RESTART"
+                    elif self._active_battle.get_end_event() == "INTRO OVER":
+                        self._active_battle = None
+                        self._level.play_music()
 
                     elif type(self._active_battle.get_end_event()) == Battle:
                         self._active_battle = self._active_battle.get_end_event()
