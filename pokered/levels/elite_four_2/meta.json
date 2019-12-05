@@ -10,7 +10,8 @@
                 ["onix", ["Double-Edge", "Iron Tail", "Earthquake", "Sand Tomb"]],
                 ["machamp", ["Bulk Up", "Cross Chop", "Scary Face", "Rock Tomb"] ]
             ],
-            "defeat_script.json"
+            "defeat_script.json",
+            "male"
         ]
     ],
     [
