@@ -186,12 +186,28 @@ class PokemonMenuPokemon(Drawable):
         self._blit_level_and_gender()
         self._blit_hp_bar()
         self._blit_hp_remaining()
+        self.reload()
+        if not self._pokemon.is_alive():
+            print("WE HERE")
+            pygame.transform.threshold(self._image, self._image.copy(), (56, 144, 216), set_color=(192, 104, 16), inverse_set=True)
+            pygame.transform.threshold(self._image, self._image.copy(), (128, 192, 216), set_color=(208, 160, 32), inverse_set=True)
+
     
     def set_selected(self):
         self._image = FRAMES.getFrame(self._imageName, (1,0))
+        if not self._pokemon.is_alive():
+            print("WE HERE")
+            pygame.transform.threshold(self._image, self._image.copy(), (120, 208, 232), set_color=(248, 184, 144), inverse_set=True)
+            pygame.transform.threshold(self._image, self._image.copy(), (168, 232, 248), set_color=(248, 208, 216), inverse_set=True)
+        
     
     def set_unselected(self):
+        self.reload()
         self._image = FRAMES.getFrame(self._imageName, (0,0))
+        if not self._pokemon.is_alive():
+            print("WE HERE")
+            pygame.transform.threshold(self._image, self._image.copy(), (56, 144, 216), set_color=(192, 104, 16), inverse_set=True)
+            pygame.transform.threshold(self._image, self._image.copy(), (128, 192, 216), set_color=(208, 160, 32), inverse_set=True)
     
     def update(self, ticks):
         self._bouncing_pokemon.update(ticks)
