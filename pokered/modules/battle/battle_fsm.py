@@ -72,6 +72,7 @@ class BattleFSM:
         self._draw_list = [self._background, self._battle_text_background, self._active_player_pokemon, self._active_opponent_pokemon, self._player_poke_info, self._opponent_poke_info, self._text_cursor]
         self._update_list = [self._player_poke_info, self._opponent_poke_info, self._text_cursor]
         self._is_over = False
+        self._player_lost = False
    
     def is_over(self):
         return self._is_over
@@ -146,6 +147,12 @@ class BattleFSM:
                 self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.BATTLE_OVER]
                 self._active_string = "Player defeated " + self._opponent.get_name().upper() + "!"
                 self._handle_state_change(self._state_queue.pop(0))
+            
+            elif self._state == BattleStates.DEFEAT:
+                self._player_lost = True
+                self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.BATTLE_OVER]
+                self._active_string = "Player was defeated by " + self._opponent.get_name().upper() + "!"
+                self._handle_state_change(self._state_queue.pop(0))
 
             elif self._state == BattleStates.DECIDING_BATTLE_ORDER:
                 if self._player_move_queued == None and self._enemy_move_queued == None:
@@ -210,9 +217,12 @@ class BattleFSM:
                     self._handle_state_change(self._state_queue.pop(0))
 
             elif self._state == BattleStates.PLAYER_POKEMON_DIED:
-                self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.PLAYER_FEINT, BattleStates.CHOOSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
-                self._active_string = self._player.get_active_pokemon().get_name().capitalize() + " fainted!"
-                self._handle_state_change(self._state_queue.pop(0))
+                if self._player.all_dead():
+                    self._handle_state_change(BattleStates.DEFEAT)
+                else:
+                    self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.PLAYER_FEINT, BattleStates.CHOOSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
+                    self._active_string = self._player.get_active_pokemon().get_name().capitalize() + " fainted!"
+                    self._handle_state_change(self._state_queue.pop(0))
 
             elif self._state == BattleStates.OPPONENT_CHOOSING_POKEMON:
                 while self._opponent.get_active_pokemon()._stats["Current HP"] <= 0:

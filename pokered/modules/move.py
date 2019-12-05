@@ -32,6 +32,9 @@ class Move:
                 else:
                     prob -= prob_dict[str(x)]
             raise Exception 
+    
+    def reset_pp(self):
+        self.current_pp = self.max_pp
 
 
 

@@ -60,3 +60,9 @@ class Trainer(Mobile):
 
     def talk_event(self, player):
         return Dialogue(str(self._dialogue_id), player, self, gender=self._gender)
+    
+    def heal_all(self):
+        for pokemon in self._pokemon_team:
+            pokemon._stats["Current HP"] = pokemon._stats["HP"]
+            for move in pokemon.get_moves():
+                move.reset_pp()

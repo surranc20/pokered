@@ -11,6 +11,7 @@ from ..pokemon import Pokemon
 from .battle_menus.poke_info import PokeInfo
 from .battle_menus.pokemon_remaining import PokemonRemaining
 from .battle_fsm import BattleFSM
+from ..white_out import WhiteOut
 
 
 
@@ -50,7 +51,12 @@ class Battle:
         return self._battle_fsm.is_over()
 
     def get_end_event(self):
-        return self._event
+        if self._battle_fsm._player_lost:
+            return WhiteOut(self._player)
+        else:
+            return self._event
+    
+    
 
             
                 

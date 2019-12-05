@@ -26,12 +26,14 @@ def main():
    
     # Create Player and Enemy for Test Battle
     player = Player(Vector2(32, 26), "Chris")
-    poke = Pokemon("pikachu")
+    poke = Pokemon("charmander")
+    poke._stats["Current HP"] = 2
     poke2 = Pokemon("goldeen")
     poke3 = Pokemon("blastoise")
     poke4 = Pokemon("charizard")
     poke5 = Pokemon("dragonite")
     poke6 = Pokemon("mewtwo")
+    poke6._stats["Current HP"] = 0
     poke.add_move(Move("Thunder"))
     poke.add_move(Move("Thunderbolt"))
     poke.add_move(Move("Thunder Wave"))
@@ -50,11 +52,11 @@ def main():
     poke6.add_move(Move("Thundershock"))
 
     player._pokemon_team.append(poke)
-    player._pokemon_team.append(poke2)
-    player._pokemon_team.append(poke3)
-    player._pokemon_team.append(poke4)
-    player._pokemon_team.append(poke5)
-    player._pokemon_team.append(poke6)
+    # player._pokemon_team.append(poke2)
+    # player._pokemon_team.append(poke3)
+    # player._pokemon_team.append(poke4)
+    # player._pokemon_team.append(poke5)
+    # player._pokemon_team.append(poke6)
 
     # Make game variable
     game = GameManager(SCREEN_SIZE, player)
@@ -83,7 +85,10 @@ def main():
 
         # Update everything
         ticks = game_clock.get_time() / 1000
-        game.update(ticks)
+        response = game.update(ticks)
+        if response == "RESTART" and running == True:
+            main()
+            break
 
 if __name__ == "__main__":
    main()
