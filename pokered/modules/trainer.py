@@ -6,7 +6,7 @@ from .utils.mobile import Mobile
 from .enumerated.cardinality import Cardinality
 
 class Trainer(Mobile):
-    def __init__(self, position, name, facing, enemy=True, dialogue_id=None, event=None):
+    def __init__(self, position, name, facing, enemy=True, dialogue_id=None, event=None, gender="male"):
         if not enemy:
             super().__init__("trainer.png", position, facing)
         else:
@@ -25,6 +25,7 @@ class Trainer(Mobile):
         self._walk_event = None
         self._event = event
         self._dialogue_id = dialogue_id
+        self._gender = gender
     
     def all_dead(self):
         for pokemon in self._pokemon_team:
@@ -58,4 +59,4 @@ class Trainer(Mobile):
         pass
 
     def talk_event(self, player):
-        return Dialogue(str(self._dialogue_id), player, self)
+        return Dialogue(str(self._dialogue_id), player, self, gender=self._gender)
