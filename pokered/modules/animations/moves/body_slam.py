@@ -25,6 +25,13 @@ class BodySlam(MoveBase):
         self._displayed_png = False
         self._fps = 30
         SoundManager.getInstance().playSound(join("moves", "body_slam.wav"))
+        if enemy:
+            self.FRAME_LIST = [
+                [(0, (175, 20))],
+                [(0, (175, 20))],
+                [(0, (175, 20))],
+                []
+            ]
     
     def update(self, ticks):
         if not self._drop.is_dead():
