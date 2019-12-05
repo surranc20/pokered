@@ -6,6 +6,7 @@ class TextCursor(Drawable):
         self._is_active = False
         self._current_delta = 1
         self._timer = 0
+        self._world_bound = False
     
     def activate(self):
         self._is_active = True
