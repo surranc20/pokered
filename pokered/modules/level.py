@@ -33,8 +33,11 @@ class Level():
 
     
     def _tile(self):
+        
         tile_dims = (self._level_size[0] // self.TILE_SIZE, self._level_size[1] // self.TILE_SIZE)
+        
         tiles = []
+        
         for y in range(tile_dims[1]):
             row = []
             for x in range(tile_dims[0]):
@@ -95,6 +98,7 @@ class Level():
     
     def get_nearby_tiles(self, pos):
         nearby_tiles = {}
+        
         if self.tile_within_map((pos[0], pos[1] - 1)):
             nearby_tiles[Cardinality.NORTH] = self._tiles[pos[1] - 1][pos[0]]
         if self.tile_within_map((pos[0], pos[1] + 1)):
@@ -116,11 +120,13 @@ class Level():
         return Vector2(pos[0] * self.TILE_SIZE + self._foreground._x_off, pos[1] * self.TILE_SIZE - 6)
     
     def load_script(self, script_name):
-        if script_name not in self._scripts:
+        if script_name != "None" and script_name not in self._scripts:
+            print(script_name)
             raise Exception
-
-        with open(join("levels", self._level_name, script_name), "r") as script:
-            self._current_script = [json.load(script), 0]
+        
+        elif script_name != "None":
+            with open(join("levels", self._level_name, script_name), "r") as script:
+                self._current_script = [json.load(script), 0]
 
 
 class Tile:
