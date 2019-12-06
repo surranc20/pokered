@@ -32,8 +32,7 @@ class PokeInfo(Drawable):
         
 
     def _blit_name_and_gender(self):
-        #TODO: This way of accomplishing this has serious negative side effects.
-        #TODO: Clean up some of the magic numbers here
+        """Create the name and gender surface."""    
         self._text_image = pygame.Surface((self._image.get_width(), self._image.get_height()))
         self._text_image.fill((255,255,255,0))
         self._text_image.set_colorkey((255, 255, 255))
@@ -46,7 +45,6 @@ class PokeInfo(Drawable):
             self._text_image.blit(font_char, (current_pos.x, current_pos.y))
             current_pos.x += 5
         
-        
         current_pos.x += 2
         if self._pokemon.get_gender() == "male":
             font_index = 11
@@ -58,6 +56,7 @@ class PokeInfo(Drawable):
             self._text_image.blit(font_char, (current_pos.x, current_pos.y))
     
     def blit_lvl(self):
+        """Create the level surface"""
         self._lvl = pygame.Surface((10, 8))
         self._lvl.fill((255, 255, 255))
         self._lvl.set_colorkey((255,255,255))
@@ -71,6 +70,7 @@ class PokeInfo(Drawable):
             current_pos.x += 5
 
     def blit_hp_bar(self):
+        """Create the hp bar surface."""
         green = (112, 248, 168)
         yellow = (248, 224, 56)
         red = (241, 14, 14)
@@ -90,6 +90,7 @@ class PokeInfo(Drawable):
         self._hp_darken.set_alpha(50)
     
     def blit_hp_remaining(self):
+        """Create the hp remaining surface."""
         self._hp_remaining = pygame.Surface((35, 8))
         self._hp_remaining.fill((255, 255, 255))
         self._hp_remaining.set_colorkey((255, 255, 255))
@@ -106,6 +107,7 @@ class PokeInfo(Drawable):
             current_pos.x += 5
     
     def blit_status(self):
+        """Add the status (ie is it paralyzed) surface."""
         self._status = pygame.Surface((22, 8))
         self._status.fill((255,255,255))
         self._status.set_colorkey((255,255,255))
@@ -117,11 +119,11 @@ class PokeInfo(Drawable):
 
 
     def is_dead(self):
-        """Returns whether or not the instance is dead. 
-        An instance is dead if its pokemon is dead."""
+        """Returns whether or not the instance is dead. An instance is dead if its pokemon is dead."""
         return not self._pokemon.is_alive()
     
     def draw(self, draw_surface):
+        """Draws the various subsurfaces to the screen in the correct location based on whether or not the pokemon is an enemy."""
         super().draw(draw_surface)
         draw_surface.blit(self._text_image, (self._position[0], self._position[1]))
         if self._enemy:
@@ -138,6 +140,8 @@ class PokeInfo(Drawable):
             draw_surface.blit(self._status, (145, 95))
     
     def update(self, ticks):
+        """Updates the poke info. In reality it just creates another poke info to ensure the current hp
+        is always displayed correctly. This can be made more effecient but as of right now it is not a problem."""
         self.__init__(self._pokemon, self._enemy)
 
             
