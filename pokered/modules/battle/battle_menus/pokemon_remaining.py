@@ -2,6 +2,8 @@ from os.path import join
 from ...utils.animated import AnimatedGroup, AnimatedGroupPart
 from ...utils.vector2D import Vector2
 
+#TODO: Put this in the actual game
+
 class PokemonRemaining(AnimatedGroup):
 
     PLAYER_POSITION = Vector2(156,85)
