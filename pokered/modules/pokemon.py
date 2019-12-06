@@ -10,6 +10,9 @@ class Pokemon(Drawable):
     ENEMY_POKE_POS = Vector2(148, 6) 
 
     def __init__(self, pokemon_name, enemy=False, gender="male", move_set=None):
+        """Creates an instance of a pokemon. Requires the pokemon name in all lowercase as well as if the 
+        pokemon belongs to an enemy. Also requires the gender of the pokemon. Can provide a list of the pokemon's 
+        moves right in the constructor as well."""
         with open(join("jsons", "pokemon_lookup.json"), "r") as pokemon_lookup_json:
             pokemon_lookup = json.load(pokemon_lookup_json)
             _lookup = tuple(pokemon_lookup[pokemon_name])
@@ -21,6 +24,7 @@ class Pokemon(Drawable):
         self._moves = []
         self._held_item = None
         self._ability = None
+        # Keeps track of the status effects currently on the pokemon.
         self._status = []
         self._enemy = enemy     
         self._stats = {
@@ -34,11 +38,14 @@ class Pokemon(Drawable):
             "Speed": 45
         }
 
+        # Get the type of the pokemon.
         with open(join("jsons", "pokemon.json"), "r") as pokemon_json:
             pokemon = json.load(pokemon_json)
             pokemon_data = pokemon[pokemon_name.capitalize()]
 
         self._type = pokemon_data["type"]
+
+        # Determines whether or not to draw the pokemon.
         self._draw = True
 
         if move_set != None:
@@ -47,60 +54,76 @@ class Pokemon(Drawable):
         super().__init__(join("pokemon", "pokemon_big.png"), Vector2(_pos.x, _pos.y), offset= _offset)
     
     def draw(self, draw_surface):
+        """Draws the pokemon."""
         if self._draw:
             super().draw(draw_surface)
 
     def add_move_list(self, lyst):
+        """Adds the move list to the pokemon."""
         for move in lyst:
             self._moves.append(Move(move))
     
     def add_status(self, status):
+        """Adds a status effect to a pokemon."""
         self._status.append(status)
 
     def get_nick_name(self):
+        """Gets the pokemon's nickname."""
         return self._nick_name
     
     def get_name(self):
+        """Gets the pokemon's actual name."""
         return self._name
     
     def get_ability(self):
+        """Gets the pokemon's ability."""
         return self._ability
     
     def get_status(self):
+        """Gets the status of the pokemon."""
         return self._status
     
     def get_gender(self):
+        """Gets the gender of the pokemon."""
         return self._gender
     
     def get_moves(self):
+        """Gets the moveset of the pokemon."""
         return self._moves
     
     def is_alive(self):
+        """Returns if the pokmeon is alive."""
         return self._stats["Current HP"] != 0
     
     def add_move(self, move):
+        """Adds a single move to the pokemon's moveset."""
         if len(self._moves) < 4:
             self._moves.append(move)
     
     def can_move(self):
+        """Determines whether a pokemon's status ailments will allow it to move."""
         if "paralyze" in self._status:
             prob = random.randint(0, 100)
-            print(prob)
             if prob < 25:
                 return "paralyze"
         return True
     
     def get_lvl(self):
+        """Get the level of the pokemon."""
         return self._stats["LVL"]
     
     def get_type(self):
+        """Get the type of the pokemon."""
         return self._type
     
     def get_held_item(self):
+        """Get the pokemon's held item."""
         return self._held_item
 
     def __str__(self):
+        """Allows a pokemon object to be printed."""
         return self._name
     
     def __repr__(self):
+        """Used for debugging purposes primarily."""
         return self._name
