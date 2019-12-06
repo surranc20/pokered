@@ -17,8 +17,9 @@ class LevelManager(object):
         self._level_name = level_name
         self._screen_size = screen_size
         self._level = Level(level_name, player, screen_size)
+        self._active_battle = None
         if movie != None:
-            self._active_battle = Movie(screen_size, movie) 
+            self._active_battle = Movie(movie) 
         
         
     
@@ -54,6 +55,8 @@ class LevelManager(object):
                     elif type(self._active_battle.get_end_event()) == Battle:
                         self._active_battle = self._active_battle.get_end_event()
                     elif type(self._active_battle.get_end_event()) == WhiteOut:
+                            self._active_battle = self._active_battle.get_end_event()
+                    elif type(self._active_battle.get_end_event()) == Movie:
                             self._active_battle = self._active_battle.get_end_event()
                     else:
                         self._level.load_script(self._active_battle.get_end_event())

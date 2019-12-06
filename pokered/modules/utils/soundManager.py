@@ -40,7 +40,8 @@ class SoundManager(object):
          "thunder.mp3"           : _SFX_FOLDER,
          "gym_music.wav"        : _MUSIC_FOLDER,
          "gym_battle_music.mp3"        : _MUSIC_FOLDER,
-         "intro.mp3" : _MUSIC_FOLDER
+         "intro.mp3" : _MUSIC_FOLDER,
+         "outro.mp3" : _MUSIC_FOLDER
       }
       
       
