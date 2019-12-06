@@ -47,6 +47,9 @@ class Thunderbolt(MoveBase):
         
     ]
     def __init__(self, attacker, defender, enemy=False):
+        """Creates the thunderbolt animation. Follows the same design pattern as thunder wave
+        in that it uses three distinct frame lists. This is because thunderbolt needs sprites
+        from three different sprite sheets that are all different sizes."""
         super().__init__(attacker, defender, enemy=enemy)
         self._move_file_name = join("moves", "thunderbolt.png")
         self._fps = 20
@@ -54,6 +57,9 @@ class Thunderbolt(MoveBase):
         SoundManager.getInstance().playSound(join("moves", "thunderbolt.wav"))
 
     def update(self, ticks):
+        """Updates the thunderbolt animation. Runs through the first frame list and then changes to the
+        second frame list. After the second frame list is done it transitions to the third frame list. 
+        Once this is done the animation is over."""
         super().update(ticks)
         if self.is_dead() and self.FRAME_LIST != self.SECONDARY_FRAME_LIST and self._round_two:
             self._is_dead = False

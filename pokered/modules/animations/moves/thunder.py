@@ -65,19 +65,9 @@ class Thunder(ScrollingMove):
     [(4, (180, 34))],
     []]
     def __init__(self, attacker, defender, enemy=False):
+        """Creates the thunder animation. This move extends ScrollingMove."""
         super().__init__(attacker, defender, enemy=enemy)
         self._move_file_name = join("moves", "thunder.png")
         self._scrolling_background = FRAMES.getFrame(join("moves", "thunder_background.png"))
         self._scrolling_background = FRAMES.reload(join("moves", "thunder_background.png"), (0,0))
         SoundManager.getInstance().playSound(join("moves", "thunder.wav"))
-
-        
-    
-    
-
-
-    
-
-
-
-    
