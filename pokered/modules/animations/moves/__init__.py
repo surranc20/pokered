@@ -1,3 +1,5 @@
+# This allows the moves to all be imported with one import statement
+
 from .thunder import Thunder
 from .thunderbolt import Thunderbolt
 from .thunder_wave import ThunderWave
