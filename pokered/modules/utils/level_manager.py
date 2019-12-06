@@ -13,51 +13,64 @@ from ..movie import Movie
 
 class LevelManager(object):
     def __init__(self, player, level_name, screen_size =(240, 160), movie=None):
+        """Handles switching between a levels over world and the various events that could be happening. 
+        NOTE: Right now these events are called self._active_battle. I will change this name later but
+        I don't want to start refactoring code the night before demo day."""
         self._player = player
         self._level_name = level_name
         self._screen_size = screen_size
         self._level = Level(level_name, player, screen_size)
         self._active_battle = None
+        # If the level manager was passed a movie set the active event to the movie
         if movie != None:
             self._active_battle = Movie(movie) 
-        
-        
-    
 
     def draw(self, draw_surface):
+        """If an event is happeing draw the event. Otherwise, draw the over world."""
         if self._active_battle == None:
             self._level.draw(draw_surface)
-
         else:
             self._active_battle.draw(draw_surface)
       
     def handle_event(self, event):
+        """If an even is happening have the event handle the pygame event, otherwise have the player
+        handle the event."""
         if self._active_battle == None:
             self._active_battle = self._player.handle_event(event, self._level.get_nearby_tiles(self._player._current_tile._pos))
         else:
             self._active_battle.handle_event(event)
       
     def update(self, ticks):
+        """If an event is active update the event, otherwise update the level."""
         if self._active_battle == None:
             warped = self._level.update(ticks)
+            # Warped will be some non None value when it is time to change levels.
             if warped != None:
                 return warped
+
+        # Update the current event.
         else:
             self._active_battle.update(ticks)
             if self._active_battle.is_over():
                 if self._active_battle.get_end_event() != None:
+                    # This response means it is time for the game to restart.
                     if self._active_battle.get_end_event() == "RESTART":
                         return "RESTART"
+                    # This response means the intro video is over and it is time to load the first level.
                     elif self._active_battle.get_end_event() == "INTRO OVER":
                         self._active_battle = None
                         self._level.play_music()
-
+                    # This response means a dialogue event has ended and it is time to start a battle.
                     elif type(self._active_battle.get_end_event()) == Battle:
                         self._active_battle = self._active_battle.get_end_event()
+                    # This response means the player lost a battle and it is time to start the white out event.
+                    # This will eventually lead to the game restarting.
                     elif type(self._active_battle.get_end_event()) == WhiteOut:
                             self._active_battle = self._active_battle.get_end_event()
+                    # This response means it is time to play a movie.
                     elif type(self._active_battle.get_end_event()) == Movie:
                             self._active_battle = self._active_battle.get_end_event()
+                    # This means the response was nothing and its time to return to the over world.
                     else:
                         self._level.load_script(self._active_battle.get_end_event())
                         self._active_battle = None

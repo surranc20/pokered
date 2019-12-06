@@ -50,28 +50,33 @@ class Drawable(object):
       return self._is_dead
    
    def center_with_border(self, screen_size):
+      """Should only be called on overworld level backgrounds and foregrounds. Only does something if one of the overworld 
+      levels is smaller than the screen. Adds black borders around the image where needed."""
+      # Calculate how much border space is needed on each axis.
       x_off = (screen_size[0] - self.getSize()[0]) / 2
       self._x_off = max(x_off, 0)
       y_off = (screen_size[1] - self.getSize()[1]) / 2
-      print(x_off, y_off)
+      # In this case we need to add borders on all four sides.
       if x_off > 0 and y_off > 0:
-         print("here")
+         # Create the border rectangles
          border = pygame.Surface((math.ceil(x_off), self.getSize()[1] + math.ceil(y_off) * 2))
          border.fill((0,30,200))
          border_h = pygame.Surface((math.ceil(x_off) * 2 + self.getSize()[0] , math.ceil(y_off)))
          border_h.fill((40,200,0))
+         # Prep the new surface for the Drawable object
          surf = pygame.Surface((math.ceil(x_off) * 2 + self.getSize()[0], math.ceil(y_off) * 2 + self.getSize()[1]))
          surf.fill((30,30,30))
          surf.set_colorkey((30,30,30))
+         # Add the vertical borders
          surf.blit(border, (0,0))
          surf.blit(border_h, (0,0))
          #surf.blit(self._image, (x_off, y_off))
          surf.blit(border, (x_off + self.getSize()[0], 0))
          surf.blit(border_h, (0, y_off + self.getSize()[1]))
-         print((0, y_off + self.getSize()[1]))
          self._image = surf
 
-         
+      # In this case we only need to add borders on the sides. As of right now this is the only condition that
+      # ever actually happens.
       elif x_off > 0:
          border = pygame.Surface((math.ceil(x_off), self.getSize()[1]))
          border.fill((0,0,0))

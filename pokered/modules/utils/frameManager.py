@@ -112,6 +112,8 @@ class FrameManager(object):
          except Exception as e:
             print(e)
             print()
+            # This allows me to dynamically load each level's foreground and background without having
+            # to specify the frame size of each.
             fullImage = image.load(join("levels", fileName))
          
          # Look up some information about the image to be loaded
