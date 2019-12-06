@@ -10,7 +10,7 @@ class IcePunch(MoveBase):
     ]
 
     def __init__(self, attacker, defender, enemy=False):
-        """Displays the ice punch animation. It is a group of four crystals that form a square. 
+        """Creates the ice punch animation. It is a group of four crystals that form a square. 
         The crystals are rotating and slowly converging on one another. Once they have converged
         a punch animation plays and then an ice shard animation plays."""
         super().__init__(attacker, defender, enemy=enemy)
