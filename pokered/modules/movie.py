@@ -4,8 +4,8 @@ from .utils.soundManager import SoundManager
 from .enumerated.battle_actions import BattleActions
 
 class Movie():
-    def __init__(self, screen_size, folder_name):
-        self._surface = pygame.Surface(screen_size)
+    def __init__(self, folder_name):
+        self._surface = pygame.Surface((240,160))
         self._folder_name = folder_name
         self._counter = 0
         self._timer = 0
@@ -14,7 +14,10 @@ class Movie():
         self._frame = pygame.image.load(join(self._folder_name, "scene00001.png"))
         self._frame.convert()
         self._surface.blit(self._frame, (0,0))
-        SoundManager.getInstance().playMusic("intro.mp3")
+        if self._folder_name == "outro_folder":
+            SoundManager.getInstance().playMusic("outro.mp3")
+        else:
+            SoundManager.getInstance().playMusic("intro.mp3")
     
     def draw(self, draw_surface):
         draw_surface.blit(self._surface, (0,0))
@@ -30,7 +33,10 @@ class Movie():
                 self._counter =1
                 self._frame = pygame.image.load(join(self._folder_name, "scene" + self._get_num() + ".png"))
                 self._frame.convert()
-                SoundManager.getInstance().playMusic("intro.mp3")
+                if self._folder_name == "outro_folder":
+                    SoundManager.getInstance().playMusic("outro.mp3")
+                else:
+                    SoundManager.getInstance().playMusic("intro.mp3")
             self._surface.blit(self._frame, (0,0))
             self._timer -= 1 /self._fps
 
@@ -43,7 +49,10 @@ class Movie():
         return self._is_over
     
     def get_end_event(self):
-        return "INTRO OVER"
+        if self._folder_name == "intro_folder":
+            return "INTRO OVER"
+        elif self._folder_name == "outro_folder":
+            return "RESTART"
 
     def _get_num(self):
         print(str(self._counter).zfill(5))
