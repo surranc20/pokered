@@ -5,3 +5,4 @@ The player is controlled by using wasd and the player interacts with objects by 
 Current known bugs:
    - It is possible for the player to back out of the choose a pokemon screen after their currently battling pokemon has died.
      Once this happens, all sorts of crazy things can happen. In fact, it is even possible for the dead pokemon to attack the           enemy. This is a very easy fix and I plan to make said fix in the very near future.
+   - My restarting mechanism does not work as expected. It seems to change the directory the program is ran in and this can cause problems (a key error for example). 
