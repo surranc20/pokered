@@ -4,11 +4,11 @@
     [
         [[6,5],"agatha", 3, 
             [
-                ["gengar", ["Shadow Punch", "Double Team", "Toxic", "Confuse Ray"]],
-                ["golbat", ["Air Cutter", "Poison Fang", "Bite", "Confuse Ray"]],
-                ["haunter", ["Dream Eater", "Hypnosis", "Curse", "Mean Look"]],
-                ["arbok", ["Bite", "Iron Tail", "Screech", "Sludge Bomb"]],
-                ["gengar", ["Shadow Ball", "Sludge Bomb", "Hypnosis", "Nightmare"]]
+                ["gengar", ["Shadow Punch", "Double Team", "Toxic", "Confuse Ray"], 54],
+                ["golbat", ["Air Cutter", "Poison Fang", "Bite", "Confuse Ray"], 54],
+                ["haunter", ["Dream Eater", "Hypnosis", "Curse", "Mean Look"], 53],
+                ["arbok", ["Bite", "Iron Tail", "Screech", "Sludge Bomb"], 56],
+                ["gengar", ["Shadow Ball", "Sludge Bomb", "Hypnosis", "Nightmare"], 58]
             ],
             "defeat_script.json",
             "female"

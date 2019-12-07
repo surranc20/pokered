@@ -6,6 +6,7 @@ from modules.player import Player
 from modules.battle.battle import Battle
 from modules.pokemon import Pokemon
 from modules.move import Move
+from modules.utils.stat_calc import StatCalculator
 from modules.battle.damage_calculator import DamageCalculator
 from modules.utils.game_manager import GameManager
 
@@ -49,6 +50,14 @@ def main():
     poke6.add_move(Move("Thunderbolt"))
     poke6.add_move(Move("Thunder Wave"))
     poke6.add_move(Move("Thundershock"))
+    
+    stat_calc = StatCalculator()
+    poke._stats = stat_calc.calculate_main(poke, 65)
+    poke2._stats = stat_calc.calculate_main(poke2, 55)
+    poke3._stats = stat_calc.calculate_main(poke3, 51)
+    poke4._stats = stat_calc.calculate_main(poke4, 58)
+    poke5._stats = stat_calc.calculate_main(poke5, 53)
+    poke6._stats = stat_calc.calculate_main(poke6, 70)
 
     player._pokemon_team.append(poke)
     player._pokemon_team.append(poke2)

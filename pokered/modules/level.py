@@ -6,6 +6,7 @@ from .player import Player
 from .pokemon import Pokemon
 from .utils.drawable import Drawable
 from .utils.vector2D import Vector2
+from .utils.stat_calc import StatCalculator
 from .utils.soundManager import SoundManager
 from .enumerated.cardinality import Cardinality
 
@@ -33,11 +34,8 @@ class Level():
 
     
     def _tile(self):
-        
         tile_dims = (self._level_size[0] // self.TILE_SIZE, self._level_size[1] // self.TILE_SIZE)
-        
         tiles = []
-        
         for y in range(tile_dims[1]):
             row = []
             for x in range(tile_dims[0]):
@@ -58,8 +56,11 @@ class Level():
             train = Trainer(self.correct_border_and_height_pos(trainer_args[0]), trainer_args[1], trainer_args[2], enemy=True, dialogue_id=trainer_args[2], gender=trainer_args[5])
             if len(trainer_args) > 4:
                 train._event = trainer_args[4]
+            stat_calc = StatCalculator()
             for pokemon in trainer_args[3]:
-                train._pokemon_team.append(Pokemon(pokemon[0], enemy=True, move_set=pokemon[1]))
+                new_pokemon = Pokemon(pokemon[0], enemy=True, move_set=pokemon[1])
+                new_pokemon._stats = stat_calc.calculate_main(new_pokemon, pokemon[2])
+                train._pokemon_team.append(new_pokemon)
             self._tiles[trainer_args[0][1]][trainer_args[0][0]].add_obj(train)
 
 
@@ -170,10 +171,6 @@ class Tile:
     def get_warp_level(self):
         return self._warp_level
             
-    
-    
-           
-    
     def __repr__(self):
         string = str(self._pos) + "is clear: " + str(self.is_clear())
         return string
