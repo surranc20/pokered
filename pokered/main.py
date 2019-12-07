@@ -22,12 +22,13 @@ def main():
     pygame.init()
     # load and set the logo
     pygame.display.set_caption("Pokemon Gym")
-    screen = pygame.display.set_mode(UPSCALED)
+    screen = pygame.display.set_mode(UPSCALED, pygame.FULLSCREEN)
     draw_surface = pygame.Surface(SCREEN_SIZE)
    
     # Create Player and add pokemon to their team
     player = Player(Vector2(32, 26), "Chris")
     poke = Pokemon("pikachu")
+    poke2 = Pokemon("mewtwo")
     poke3 = Pokemon("blastoise")
     poke4 = Pokemon("onix")
     poke5 = Pokemon("dragonite")
@@ -37,6 +38,11 @@ def main():
     poke.add_move(Move("Thunderbolt"))
     poke.add_move(Move("Thunder Wave"))
     poke.add_move(Move("Double Slap"))
+    poke2.add_move(Move("Thunder"))
+    poke2.add_move(Move("Thunderbolt"))
+    poke2.add_move(Move("Thunder Wave"))
+    poke2.add_move(Move("Double Slap"))
+    
     poke3.add_move(Move("Surf"))
     poke3.add_move(Move("Ice Beam"))
     poke3.add_move(Move("Ice Punch"))
@@ -56,12 +62,14 @@ def main():
     
     stat_calc = StatCalculator()
     poke._stats = stat_calc.calculate_main(poke, 65)
+    poke2._stats = stat_calc.calculate_main(poke2, 60)
     poke3._stats = stat_calc.calculate_main(poke3, 51)
     poke4._stats = stat_calc.calculate_main(poke4, 58)
     poke5._stats = stat_calc.calculate_main(poke5, 53)
     poke6._stats = stat_calc.calculate_main(poke6, 70)
 
     player._pokemon_team.append(poke)
+    player._pokemon_team.append(poke2)
     player._pokemon_team.append(poke3)
     player._pokemon_team.append(poke4)
     player._pokemon_team.append(poke5)

@@ -32,7 +32,7 @@ class BattleFSM:
 
     TRANSITIONS = {
         (BattleStates.CHOOSING_FIGHT_OR_RUN, 0) : BattleStates.CHOOSING_MOVE,
-        (BattleStates.CHOOSING_FIGHT_OR_RUN, 1) : BattleStates.TEST,
+        (BattleStates.CHOOSING_FIGHT_OR_RUN, 1) : BattleStates.CHOOSING_FIGHT_OR_RUN,
         (BattleStates.CHOOSING_FIGHT_OR_RUN, 2) : BattleStates.CHOOSING_POKEMON,
         (BattleStates.CHOOSING_FIGHT_OR_RUN, 3) : BattleStates.RUNNING,
         BattleStates.CHOOSING_MOVE : BattleStates.CHOOSE_OPPONENT_ACTION,
