@@ -13,6 +13,7 @@ class IcePunch(MoveBase):
         """Creates the ice punch animation. It is a group of four crystals that form a square. 
         The crystals are rotating and slowly converging on one another. Once they have converged
         a punch animation plays and then an ice shard animation plays."""
+        self.FRAME_LIST = []
         super().__init__(attacker, defender, enemy=enemy)
         self._move_file_name = join("moves", "ice_punch.png")
 
