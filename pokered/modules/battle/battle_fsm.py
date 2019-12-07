@@ -184,7 +184,11 @@ class BattleFSM:
 
             # The opponent chooses the move to use and then the current state is set to Deciding Battle Order
             elif self._state == BattleStates.OPPONENT_CHOOSING_MOVE:
-                self._enemy_move_queued = self._opponent.get_active_pokemon().get_moves()[0]
+                while True:
+                    self._enemy_move_queued = self._opponent.get_active_pokemon().get_moves()[random.randint(0, 3)]
+                    if self._enemy_move_queued.category in ["Physical", "Special"]:
+                        print(self._enemy_move_queued.move_name)
+                        break
                 self._handle_state_change(BattleStates.DECIDING_BATTLE_ORDER)
             
             # The player has won. Triggers the series of events that happens after the player wins
@@ -519,6 +523,9 @@ class BattleFSM:
             self._draw_list.pop(self._draw_list.index(self._move_select))
             self._draw_list.pop(self._draw_list.index(self._pp_surface))
             self._draw_list.pop(self._draw_list.index(self._moves_surface))
+            try:
+                self._draw_list.pop(self._draw_list.index(self._cursor))
+            except ValueError: pass
             self._cursor.deactivate()
         
         if self._state == BattleStates.CHOOSING_POKEMON:
@@ -548,6 +555,9 @@ class BattleFSM:
             self._draw_list.append(self._cursor)
         
         elif new_state == BattleStates.RUNNING:
+            try:
+                self._draw_list.pop(self._draw_list.index(self._cursor))
+            except ValueError: pass
             self._active_string = "There is no running from a trainer battle!"
             
         elif new_state == BattleStates.CHOOSING_POKEMON:
