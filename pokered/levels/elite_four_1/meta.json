@@ -4,11 +4,11 @@
     [
         [[6,5],"lorelei", 1, 
             [
-                ["dewgong", ["Surf", "Ice Beam", "Hail", "Safeguard"]],
-                ["cloyster", ["Dive", "Spikes", "Hail", "Protect"]],
-                ["slowbro", ["Ice Beam", "Surf", "Amnesia", "Yawn"]],
-                ["jynx", ["Double Slap", "Ice Punch", "Sweet Kiss", "Attract"]],
-                ["lapras", ["Body Slam", "Confuse Ray", "Surf", "Ice Beam"] ]
+                ["dewgong", ["Surf", "Ice Beam", "Hail", "Safeguard"], 52],
+                ["cloyster", ["Dive", "Spikes", "Hail", "Protect"], 51],
+                ["slowbro", ["Ice Beam", "Surf", "Amnesia", "Yawn"], 52],
+                ["jynx", ["Double Slap", "Ice Punch", "Sweet Kiss", "Attract"], 54],
+                ["lapras", ["Body Slam", "Confuse Ray", "Surf", "Ice Beam"], 54]
                 
                 
             ],
