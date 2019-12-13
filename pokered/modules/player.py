@@ -72,9 +72,11 @@ class Player(Trainer):
         if event.type == pygame.KEYDOWN and event.key == pygame.K_b:
             self.start_running()
         
-        # If wasd have been lifted then the player is no longer moving
+        # If no more wasd keys are held down then the player stops moving
         if event.type == pygame.KEYUP and event.key in [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d]:
             if (event.key == pygame.K_w and self._orientation == Cardinality.NORTH) or (event.key == pygame.K_s and self._orientation == Cardinality.SOUTH) or (event.key == pygame.K_d and self._orientation == self._orientation.EAST) or (event.key == pygame.K_a and self._orientation == Cardinality.WEST):
+                
+                # Make sure that no other wasd key is pressed. If one is, then start moving in that direction
                 still_pressed = [x for x in pygame.key.get_pressed() if x in [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d]]
                 if still_pressed != []:
                     return self.move(pygame.event.Event(pygame.KEYDOWN, {key : still_pressed[0]}))
