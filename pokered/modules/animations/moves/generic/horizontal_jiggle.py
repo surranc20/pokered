@@ -3,7 +3,7 @@ from ....utils.vector2D import Vector2
 class HorizontalJiggle():
     def __init__(self, pokemon, timer=None):
         """This animation jiggles a pokemon back and forth. If no timer is provided it will 
-        doo so indefinitly."""
+        do so indefinitly."""
         self._pokemon = pokemon
         self._timer = 0
         self._current_delta = 1        
