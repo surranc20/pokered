@@ -22,7 +22,7 @@ def main():
     pygame.init()
     # load and set the logo
     pygame.display.set_caption("Pokemon Gym")
-    screen = pygame.display.set_mode(UPSCALED, pygame.FULLSCREEN)
+    screen = pygame.display.set_mode(UPSCALED)
     draw_surface = pygame.Surface(SCREEN_SIZE)
    
     # Create Player and add pokemon to their team
