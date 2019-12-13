@@ -652,6 +652,7 @@ class Cursor(Drawable):
             super().draw(draw_surface)
     
     def get_move_corrected_value(self):
+        """Corrects issue where moves 2 and 3 would be switched. This is becuase the moves list is ordered differently then the cursor."""
         if self._cursor == 1: return 2
         elif self._cursor == 2: return 1 
         else: return self._cursor
@@ -731,6 +732,7 @@ class PPSurface(Drawable):
         self._add_pp()
     
     def get_move_corrected_value(self):
+        """Corrects issue where moves 2 and 3 would be switched. This is becuase the moves list is ordered differently then the cursor."""
         if self._cursor_pos == 1: return 2
         elif self._cursor_pos == 2: return 1 
         else: return self._cursor_pos
