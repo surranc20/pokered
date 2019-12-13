@@ -484,13 +484,7 @@ class BattleFSM:
                 else:
                     SoundManager.getInstance().playSound("firered_0005.wav")
                     if self._state == BattleStates.CHOOSING_MOVE:
-                        move_index = self._cursor.get_value()
-                        
-                        # This simple correction needs to be made because the move index is ordered differently from the cursor index. 
-                        if move_index == 1: move_index = 2
-                        elif move_index == 2: move_index = 1
-
-                        self._player_move_queued = self._player.get_active_pokemon().get_moves()[move_index]
+                        self._player_move_queued = self._player.get_active_pokemon().get_moves()[self._cursor.get_move_corrected_value()]
                         self._handle_state_change(self.TRANSITIONS[self._state])
                     else:
                         self._handle_state_change(self.TRANSITIONS[(self._state), self._cursor.get_value()])
@@ -657,6 +651,11 @@ class Cursor(Drawable):
         if self._is_active:
             super().draw(draw_surface)
     
+    def get_move_corrected_value(self):
+        if self._cursor == 1: return 2
+        elif self._cursor == 2: return 1 
+        else: return self._cursor
+    
     def __add__(self, other):
         """Add a simple add method to the cursor. Takes in an int as its argument."""
         return self._cursor + other
@@ -718,7 +717,7 @@ class PPSurface(Drawable):
     
     def _add_pp(self):
         """Blit the various pp data to the image surface."""
-        move = self._pokemon.get_moves()[self._cursor_pos]
+        move = self._pokemon.get_moves()[self.get_move_corrected_value()]
         self._image.blit(self._font.render(str(move.current_pp), False, (69, 60, 60)), (34, 2))
         self._image.blit(self._font.render(str(move.max_pp), False, (69, 60, 60)), (53, 2))
         self._image.blit(self._font.render(move.move_type.upper(), False, (69, 60, 60)), (24, 19))
@@ -730,6 +729,11 @@ class PPSurface(Drawable):
         self._image.fill((255,255,255,0))
         self._image.set_colorkey((255, 255, 255))
         self._add_pp()
+    
+    def get_move_corrected_value(self):
+        if self._cursor_pos == 1: return 2
+        elif self._cursor_pos == 2: return 1 
+        else: return self._cursor_pos
 
 
     
