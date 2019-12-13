@@ -111,9 +111,15 @@ class Player(Trainer):
                     if self._key_down_timer > .2:
                         self._walk_event = [0, self._orientation]    
                 else: 
+                    # Make sure walking frame is displayed
+                    self._frame = 0
+                    self.get_current_frame()
+
+                    # Play the wall bump sound based on timer if player continously walks into wall.
                     if self._last_wall_bump > .7:
                         SoundManager.getInstance().playSound("firered_0007.wav", sound=1)
                         self._last_wall_bump = self._last_wall_bump - .7
+                        
                     
         # This ensures the player travels a full tile once they have begun moving.
         if self._walk_event != None:
