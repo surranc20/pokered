@@ -74,8 +74,13 @@ class Player(Trainer):
         
         # If wasd have been lifted then the player is no longer moving
         if event.type == pygame.KEYUP and event.key in [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d]:
-            self._moving = False
-            self._key_down_timer = 0
+            if (event.key == pygame.K_w and self._orientation == Cardinality.NORTH) or (event.key == pygame.K_s and self._orientation == Cardinality.SOUTH) or (event.key == pygame.K_d and self._orientation == self._orientation.EAST) or (event.key == pygame.K_a and self._orientation == Cardinality.WEST):
+                still_pressed = [x for x in pygame.key.get_pressed() if x in [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d]]
+                if still_pressed != []:
+                    return self.move(pygame.event.Event(pygame.KEYDOWN, {key : still_pressed[0]}))
+                else:
+                    self._moving = False
+                    self._key_down_timer = 0
         
         if event.type == pygame.KEYUP and event.key == pygame.K_b:
             self.stop_running()
@@ -101,7 +106,7 @@ class Player(Trainer):
                 if self._current_image_row != self._row:
                     self.get_current_frame()
                 if nearby_tiles[self._orientation].is_clear():
-                    if self._key_down_timer > .1:
+                    if self._key_down_timer > .2:
                         self._walk_event = [0, self._orientation]    
                 else: 
                     if self._last_wall_bump > .7:
