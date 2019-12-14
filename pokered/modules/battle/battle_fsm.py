@@ -491,8 +491,15 @@ class BattleFSM:
             
             # If the action is the back key being pressed then go to the state specefied in the TRANSITION dictionary
             if action.key == BattleActions.BACK.value:
-                self._handle_state_change(self.TRANSITIONS[(self._state), BattleActions.BACK])
-                SoundManager.getInstance().playSound("firered_0005.wav")
+                if self._state == BattleStates.CHOOSING_POKEMON:
+                    response = self._poke_party.handle_back_event()
+                    if response == "change":
+                        self._handle_state_change(self.TRANSITIONS[(self._state), BattleActions.BACK])
+                        SoundManager.getInstance().playSound("firered_0005.wav")
+        
+                else:
+                    self._handle_state_change(self.TRANSITIONS[(self._state), BattleActions.BACK])
+                    SoundManager.getInstance().playSound("firered_0005.wav")
 
     def _handle_action_during_text_wait(self, action):
         """Handles actions during a text wait event."""
