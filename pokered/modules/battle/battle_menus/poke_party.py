@@ -24,6 +24,7 @@ class PokeParty(Drawable):
         self._cursor = 0
         self._selected_pokemon = False
         self._pokemon_selected_menu = None
+        self._party_size = len(self._player.get_pokemon_team())
     
     def _blit_active_pokemon(self):
         """Creates the active pokemon object. This is the pokemon that appears on the left in the party screen."""
@@ -54,13 +55,18 @@ class PokeParty(Drawable):
             old_pos = self._cursor
             if action.key == BattleActions.UP.value:
                 if self._cursor > 0:
+                    if self._cursor == 6:
+                        self._cursor = self._party_size - 1
+                    else: self._cursor -= 1
                     SoundManager.getInstance().playSound("firered_0005.wav")
-                    self._cursor -= 1
 
             elif action.key == BattleActions.DOWN.value:
                 if self._cursor <= 5:
+                    if self._cursor == self._party_size - 1:
+                        self._cursor = 6
+                    else: self._cursor += 1
                     SoundManager.getInstance().playSound("firered_0005.wav")
-                    self._cursor += 1
+                    
             
             elif action.key == BattleActions.LEFT.value:
                 if self._cursor > 0:
@@ -68,9 +74,13 @@ class PokeParty(Drawable):
                     self._cursor = 0
             
             elif action.key == BattleActions.RIGHT.value:
-                if self._cursor == 0:
+                if self._cursor == 0 and self._party_size > 1:
                     SoundManager.getInstance().playSound("firered_0005.wav")
                     self._cursor = 1
+                if self._cursor == 0 and self._party_size == 1:
+                    self._cursor = 6
+                    SoundManager.getInstance().playSound("firered_0005.wav")
+
             if old_pos != self._cursor: self._update_selected_pos(old_pos)
         else:
             self._pokemon_selected_menu.handle_event(action)
