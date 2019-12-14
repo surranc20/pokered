@@ -245,9 +245,14 @@ class PokemonMenuPokemon(Drawable):
 
         # If the pokemon is dead then make the box red
         if not self._pokemon.is_alive():
-            pygame.transform.threshold(self._image, self._image.copy(), (56, 144, 216), set_color=(192, 104, 16), inverse_set=True)
-            pygame.transform.threshold(self._image, self._image.copy(), (128, 192, 216), set_color=(208, 160, 32), inverse_set=True)
-
+            if selected:
+                pygame.transform.threshold(self._image, self._image.copy(), (120, 208, 232), set_color=(248, 184, 144), inverse_set=True)
+                pygame.transform.threshold(self._image, self._image.copy(), (168, 232, 248), set_color=(248, 208, 216), inverse_set=True)
+                pygame.transform.threshold(self._image, self._image.copy(), (72, 168, 200), set_color=(232, 160, 128), inverse_set=True)
+            else:
+                pygame.transform.threshold(self._image, self._image.copy(), (56, 144, 216), set_color=(192, 104, 16), inverse_set=True)
+                pygame.transform.threshold(self._image, self._image.copy(), (128, 192, 216), set_color=(208, 160, 32), inverse_set=True)
+                pygame.transform.threshold(self._image, self._image.copy(), (40, 120, 176), set_color=(162, 72, 0), inverse_set=True)
     
     def set_selected(self):
         """Gets the correct frame for a selected pokemon"""
@@ -257,7 +262,7 @@ class PokemonMenuPokemon(Drawable):
         if not self._pokemon.is_alive():
             pygame.transform.threshold(self._image, self._image.copy(), (120, 208, 232), set_color=(248, 184, 144), inverse_set=True)
             pygame.transform.threshold(self._image, self._image.copy(), (168, 232, 248), set_color=(248, 208, 216), inverse_set=True)
-        
+            pygame.transform.threshold(self._image, self._image.copy(), (72, 168, 200), set_color=(232, 160, 128), inverse_set=True)
     
     def set_unselected(self):
         """Gets the unselected frame for a pokemon"""
@@ -268,7 +273,8 @@ class PokemonMenuPokemon(Drawable):
         if not self._pokemon.is_alive():
             pygame.transform.threshold(self._image, self._image.copy(), (56, 144, 216), set_color=(192, 104, 16), inverse_set=True)
             pygame.transform.threshold(self._image, self._image.copy(), (128, 192, 216), set_color=(208, 160, 32), inverse_set=True)
-    
+            pygame.transform.threshold(self._image, self._image.copy(), (40, 120, 176), set_color=(162, 72, 0), inverse_set=True)
+
     def update(self, ticks):
         """Updates the bouncing pokemon."""
         self._bouncing_pokemon.update(ticks)
