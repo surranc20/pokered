@@ -6,7 +6,7 @@ from .utils.mobile import Mobile
 from .enumerated.cardinality import Cardinality
 
 class Trainer(Mobile):
-    def __init__(self, position, name, facing, enemy=True, dialogue_id=None, event=None, gender="male"):
+    def __init__(self, position, name, facing, enemy=True, dialogue_id=None, battle_dialogue_id=None, post_battle_dialogue_id=None, event=None, gender="male"):
         """Creates a trainer instance. Expects the trainer's position, orientation in the world. Optionally expects
         whether or not the trainer is an enemy, the dialouge id associated with the trainer, the event that happens
         when interacting with the trainer, and the gender of the trainer."""
@@ -28,7 +28,10 @@ class Trainer(Mobile):
         self._walk_event = None
         self._event = event
         self._dialogue_id = dialogue_id
+        self._battle_dialogue_id = battle_dialogue_id
+        self._post_battle_dialogue_id = post_battle_dialogue_id
         self._gender = gender
+        self.defeated = False
     
     def all_dead(self):
         """Returns if all of the trainers pokemon are dead."""
@@ -68,7 +71,10 @@ class Trainer(Mobile):
 
     def talk_event(self, player):
         """Returns the talke event associated with the trainer."""
-        return Dialogue(str(self._dialogue_id), player, self, gender=self._gender)
+        if not self.defeated:
+            return Dialogue(str(self._dialogue_id), player, self, gender=self._gender)
+        else:
+            return Dialogue(str(self._post_battle_dialogue_id), player, self, gender=self._gender)
     
     def heal_all(self):
         """Heals all of the trainer's pokemon."""

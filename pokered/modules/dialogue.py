@@ -26,7 +26,7 @@ class Dialogue():
         with open(join("jsons", "lines.json"), "r") as lines_json:
             lines = json.load(lines_json)
             self._dialogue = lines[dialogue_id][0]
-            self._end_battle = bool(lines[dialogue_id][1])
+            self._end_battle = True if lines[dialogue_id][1] == "True" else False
 
         self._dialogue = self._dialogue.split("\n")
         self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"), 15)
@@ -83,7 +83,7 @@ class Dialogue():
         if self._end_battle:
             return Battle(self._player, self._npc)
         else:
-            return None
+            return "Level"
 
     
 

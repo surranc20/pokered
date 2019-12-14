@@ -60,6 +60,8 @@ class LevelManager(object):
                     elif self._active_battle.get_end_event() == "INTRO OVER":
                         self._active_battle = None
                         self._level.play_music()
+                    elif self._active_battle.get_end_event() == "Level":
+                        self._active_battle = None
                     # This response means a dialogue event has ended and it is time to start a battle.
                     elif type(self._active_battle.get_end_event()) == Battle:
                         self._active_battle = self._active_battle.get_end_event()

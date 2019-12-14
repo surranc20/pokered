@@ -2,5 +2,7 @@
     "1": ["Welcome to the POKéMON LEAGUE.\nI am LORELEI of the ELITE FOUR.\nNo one can best me when it comes to icy POKéMON.\nFreezing moves are powerful.\nYour POKéMON will be at my mercy when they are frozen solid.\nHahaha! Are you ready?", "True"],
     "2": ["I am BRUNO of the ELITE FOUR!\nThrough rigorous training, people can become stronger without limit.\nI've lived and trained with my fighting POKéMON! And that will never change!\nRodri!", "True"],
     "3": ["I am AGATHA of the ELITE FOUR.\nI hear OAK's taken a lot of interest in you child.\nThat old duff was once tough and handsome.\nBut that was decades ago. He's a shadow of his former self.\nNow he just wants to fiddle with his POKéDEX.\nHe's wrong. POKéMON are for battling!\nI'll show you how a real TRAINER battles!","True"],
-    "4": ["Ah! I have heard about you!\nI lead the ELITE FOUR.\nYou can call me LANCE the dragon trainer.\nYou know that dragons are mythical pokemon.\nThey're hard to catch and raise but their powers are superior.\nThey're virtually indestructible. There is no being clever with them.\nWell, are you ready to lose?\nYour LEAGUE challenge ends with me!", "True"]
+    "4": ["Ah! I have heard about you!\nI lead the ELITE FOUR.\nYou can call me LANCE the dragon trainer.\nYou know that dragons are mythical pokemon.\nThey're hard to catch and raise but their powers are superior.\nThey're virtually indestructible. There is no being clever with them.\nWell, are you ready to lose?\nYour LEAGUE challenge ends with me!", "True"],
+    "5": ["..Things shouldn't be this way!", "False"],
+    "6": ["You're better than I thought.\nGo on ahead.\nYou only got a taste of the Pokémon League's power.", "False"]
 }
