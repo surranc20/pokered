@@ -4,6 +4,6 @@ The player is controlled by using wasd and the player interacts with objects by 
 
 Current known bugs:
    - Trainers can be talked to after battles and it will start another battle with them. All of the opposing trainer's pokemon will have fainted and the battle will end in one turn. 
-   - If the player has less than 6 pokemon in their party the select a pokemon screen can return an error if the player trys to select an empty pokemon slot. 
+  
    
    
