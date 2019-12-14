@@ -35,6 +35,7 @@ class BattleFSM:
         (BattleStates.CHOOSING_FIGHT_OR_RUN, 1) : BattleStates.CHOOSING_FIGHT_OR_RUN,
         (BattleStates.CHOOSING_FIGHT_OR_RUN, 2) : BattleStates.CHOOSING_POKEMON,
         (BattleStates.CHOOSING_FIGHT_OR_RUN, 3) : BattleStates.RUNNING,
+        (BattleStates.CHOOSING_FIGHT_OR_RUN, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN,
         BattleStates.CHOOSING_MOVE : BattleStates.CHOOSE_OPPONENT_ACTION,
         BattleStates.RUNNING : BattleStates.CHOOSING_FIGHT_OR_RUN,
         (BattleStates.CHOOSING_POKEMON, BattleActions.BACK) : BattleStates.CHOOSING_FIGHT_OR_RUN,
