@@ -63,7 +63,7 @@ class PokeParty(Drawable):
                     self._cursor += 1
             
             elif action.key == BattleActions.LEFT.value:
-                if self._cursor == 1:
+                if self._cursor > 0:
                     SoundManager.getInstance().playSound("firered_0005.wav")
                     self._cursor = 0
             
@@ -86,11 +86,26 @@ class PokeParty(Drawable):
         if old_pos == 6: self._cancel_button.set_unselected()
         else: self._selectable_items[old_pos].set_unselected()
     
+    def handle_back_event(self):
+        """Handles a back event. If the the active pokemon is dead then a small error sound is played. If a poke menu is open,
+        then the window is closed. Otherwise, the poke party closes."""
+        if self._selected_pokemon:
+            self._selected_pokemon = False
+            self._pokemon_selected_menu = None
+            self._text_bar.blit_string("Choose a POKeMON.")
+        elif self._player.get_active_pokemon()._stats["Current HP"] == 0:
+            SoundManager.getInstance().playSound("firered_0016.wav")
+        else: return "change"
+
+    
     def handle_select_event(self, action):
         """Handles a select event. If the user selects cancel then they return to the battle screen. Otherwise,
         a variety of checks are performed to perform the correct action."""
         if self._cursor == 6: 
-            return (BattleStates.CHOOSING_FIGHT_OR_RUN, 0)
+            # If the pokemon is dead the screen can not be canceled
+            if self._player.get_active_pokemon()._stats["Current HP"] == 0:
+                SoundManager.getInstance().playSound("firered_0016.wav")
+            else:return (BattleStates.CHOOSING_FIGHT_OR_RUN, 0)
         else:
             # If a pokemon has not been selected then select the pokmeon
             if not self._selected_pokemon:
