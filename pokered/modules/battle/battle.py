@@ -61,6 +61,7 @@ class Battle:
 
     def get_end_event(self):
         """Returns the end event that will happen after the battle is over."""
+        if not self._battle_fsm._player_lost: self._opponent.defeated = True
         if self._battle_fsm._player_lost:
             return WhiteOut(self._player)
         elif self._opponent.get_name().lower() == "lance":
