@@ -11,7 +11,7 @@ from ...enumerated.battle_actions import BattleActions
 
 class PokeParty(Drawable):
     def __init__(self, player):
-        """Creates a poke party. This is what appears when you are choosing a pokemon. Shows the 
+        """Creates a poke party. This is what appears when you are choosing a pokemon. Shows the
         pokemon in the players current party."""
         super().__init__("party_background.png",(0,0))
         self._player = player
@@ -25,19 +25,19 @@ class PokeParty(Drawable):
         self._selected_pokemon = False
         self._pokemon_selected_menu = None
         self._party_size = len(self._player.pokemon_team)
-    
+
     def _blit_active_pokemon(self):
         """Creates the active pokemon object. This is the pokemon that appears on the left in the party screen."""
-        self._active_pokemon = ActivePokemon(self._player.get_active_pokemon(), selected=True)
+        self._active_pokemon = ActivePokemon(self._player.active_pokemon, selected=True)
         self._selectable_items.append(self._active_pokemon)
-    
+
     def _blit_secondary_pokemon(self):
         """Creates the other display objects. These are the pokemon that are not in position one."""
         position = (88,9)
         for pokemon in self._player.pokemon_team[1:]:
             self._selectable_items.append(SecondaryPokemon(pokemon, position))
             position = (88, position[1] + 24)
-    
+
     def draw(self, draw_surface):
         """Draws the active pokemon, all secondary pokemon, the cancel button, and the text box"""
         super().draw(draw_surface)
@@ -47,7 +47,7 @@ class PokeParty(Drawable):
             item.draw(draw_surface)
         if self._pokemon_selected_menu != None:
             self._pokemon_selected_menu.draw(draw_surface)
-    
+
     def change_cursor_pos(self, action):
         """Changes the cursor position. The cursor keeps track of which pokemon is selected.
         or where you are in the pokemon selected menu if a pokemon is selected."""
@@ -66,13 +66,13 @@ class PokeParty(Drawable):
                         self._cursor = 6
                     else: self._cursor += 1
                     SoundManager.getInstance().playSound("firered_0005.wav")
-                    
-            
+
+
             elif action.key == BattleActions.LEFT.value:
                 if self._cursor > 0:
                     SoundManager.getInstance().playSound("firered_0005.wav")
                     self._cursor = 0
-            
+
             elif action.key == BattleActions.RIGHT.value:
                 if self._cursor == 0 and self._party_size > 1:
                     SoundManager.getInstance().playSound("firered_0005.wav")
@@ -86,16 +86,16 @@ class PokeParty(Drawable):
             self._pokemon_selected_menu.handle_event(action)
 
     def _update_selected_pos(self, old_pos):
-        """Toggles the appearance of the selectable objects (active pokmeon, secondary pokemon, and cancel button) 
+        """Toggles the appearance of the selectable objects (active pokmeon, secondary pokemon, and cancel button)
         based on whether or not they are selected."""
         if self._cursor == 6:
             self._cancel_button.set_selected()
-        else: 
+        else:
             self._selectable_items[self._cursor].set_selected()
-        
+
         if old_pos == 6: self._cancel_button.set_unselected()
         else: self._selectable_items[old_pos].set_unselected()
-    
+
     def handle_back_event(self):
         """Handles a back event. If the the active pokemon is dead then a small error sound is played. If a poke menu is open,
         then the window is closed. Otherwise, the poke party closes."""
@@ -103,17 +103,17 @@ class PokeParty(Drawable):
             self._selected_pokemon = False
             self._pokemon_selected_menu = None
             self._text_bar.blit_string("Choose a POKeMON.")
-        elif self._player.get_active_pokemon().stats["Current HP"] == 0:
+        elif self._player.active_pokemon.stats["Current HP"] == 0:
             SoundManager.getInstance().playSound("firered_0016.wav")
         else: return "change"
 
-    
+
     def handle_select_event(self, action):
         """Handles a select event. If the user selects cancel then they return to the battle screen. Otherwise,
         a variety of checks are performed to perform the correct action."""
-        if self._cursor == 6: 
+        if self._cursor == 6:
             # If the pokemon is dead the screen can not be canceled
-            if self._player.get_active_pokemon().stats["Current HP"] == 0:
+            if self._player.active_pokemon.stats["Current HP"] == 0:
                 SoundManager.getInstance().playSound("firered_0016.wav")
             else:return (BattleStates.CHOOSING_FIGHT_OR_RUN, 0)
         else:
@@ -122,7 +122,7 @@ class PokeParty(Drawable):
                 self._selected_pokemon = True
                 self._pokemon_selected_menu = PokemonSelectedMenu(self._player, self._cursor, battle=True)
                 self._text_bar.blit_string("Do what with this PKMN?")
-            
+
             # Determine whether or not the pokemon can be sent into battle and act accordingly
             else:
                 response = self._pokemon_selected_menu.handle_event(action)
@@ -136,12 +136,12 @@ class PokeParty(Drawable):
                     self._text_bar.blit_string(response)
                 elif response == "PKMN is in no shape to battle!":
                     self._text_bar.blit_string(response)
-    
+
     def update(self, ticks):
         """This update method allows the pokemon sprites to bounce up and down."""
         for item in self._selectable_items:
             item.update(ticks)
-        
+
 class PokemonSelectedMenu(Drawable):
     def __init__(self, player, selected_pos, battle=False):
         """Creates the menu that displays when a pokemon is selected."""
@@ -154,7 +154,7 @@ class PokemonSelectedMenu(Drawable):
         # Add the text and cursor arrow to the menu
         self.blit_text()
         self.blit_arrow()
-    
+
     def handle_event(self, action):
         """Handle wasd and select actions."""
         if action.key == BattleActions.UP.value:
@@ -168,14 +168,14 @@ class PokemonSelectedMenu(Drawable):
                 SoundManager.getInstance().playSound("firered_0005.wav")
                 self._cursor += 1
                 self.blit_arrow()
-        
+
         elif action.key == BattleActions.SELECT.value:
             SoundManager.getInstance().playSound("firered_0005.wav")
 
             # If the select button is selected then cancel
             if self._cursor == 2:
                 return "cancel"
-            
+
             # If the summary button is selected then get summary NOTE: This is not implemented yet
             elif self._cursor == 1:
                 pass # summary
@@ -197,7 +197,7 @@ class PokemonSelectedMenu(Drawable):
                 else:
                     return "PKMN is already in battle!"
 
-        
+
     def blit_arrow(self):
         """Add the cursor arrow to the menu"""
         y_pos = self._cursor * 12
@@ -229,10 +229,10 @@ class PokemonSelectedMenu(Drawable):
                 current_pos.y += 12
                 current_pos.x = 15
             self._num_lines = len(lines)
-            
+
         else: #TODO: Will need to be implemented for party system to work outside of battle
             pass
-    
+
     def draw(self, draw_surface):
         """Draw the menu to the screen."""
         super().draw(draw_surface)
@@ -263,7 +263,7 @@ class PokemonMenuPokemon(Drawable):
                 pygame.transform.threshold(self._image, self._image.copy(), (56, 144, 216), set_color=(192, 104, 16), inverse_set=True)
                 pygame.transform.threshold(self._image, self._image.copy(), (128, 192, 216), set_color=(208, 160, 32), inverse_set=True)
                 pygame.transform.threshold(self._image, self._image.copy(), (40, 120, 176), set_color=(162, 72, 0), inverse_set=True)
-    
+
     def set_selected(self):
         """Gets the correct frame for a selected pokemon"""
         self._image = FRAMES.getFrame(self._imageName, (1,0))
@@ -273,7 +273,7 @@ class PokemonMenuPokemon(Drawable):
             pygame.transform.threshold(self._image, self._image.copy(), (120, 208, 232), set_color=(248, 184, 144), inverse_set=True)
             pygame.transform.threshold(self._image, self._image.copy(), (168, 232, 248), set_color=(248, 208, 216), inverse_set=True)
             pygame.transform.threshold(self._image, self._image.copy(), (72, 168, 200), set_color=(232, 160, 128), inverse_set=True)
-    
+
     def set_unselected(self):
         """Gets the unselected frame for a pokemon"""
         self.reload()
@@ -288,7 +288,7 @@ class PokemonMenuPokemon(Drawable):
     def update(self, ticks):
         """Updates the bouncing pokemon."""
         self._bouncing_pokemon.update(ticks)
-    
+
     def _blit_level_and_gender(self):
         """Add the level and gender to the pokemon box"""
         self._lvl = pygame.Surface((40, 8))
@@ -296,7 +296,7 @@ class PokemonMenuPokemon(Drawable):
         self._lvl.set_colorkey((255,255,255))
         start_pos = Vector2(0, 0)
         current_pos = start_pos
-        for char in str(self._pokemon.get_lvl()):
+        for char in str(self._pokemon.lvl):
             font_index = int(ord(char)) - 48
             font_char = FRAMES.getFrame("party_font.png", offset=(font_index, 1))
             font_char.set_colorkey((0,128,0))
@@ -304,10 +304,10 @@ class PokemonMenuPokemon(Drawable):
             current_pos.x += 5
 
         current_pos.x += 15
-        font_index = 0 if self._pokemon.get_gender() == "male" else 1
+        font_index = 0 if self._pokemon.gender == "male" else 1
         font_char = FRAMES.getFrame("gender.png", offset=(font_index,0))
         self._lvl.blit(font_char, (current_pos.x, current_pos.y))
-    
+
     def _blit_hp_bar(self):
         """Add the hp bar to the pokemon box"""
         green = (112, 248, 168)
@@ -317,7 +317,7 @@ class PokemonMenuPokemon(Drawable):
         current_hp = self._pokemon.stats["Current HP"]
         max_hp = self._pokemon.stats["HP"]
         percentage = (current_hp / max_hp)
-        
+
         self._hp = pygame.Surface((int(percentage * 48), 3))
         if percentage > .50: self._hp.fill(green)
         elif percentage > .15: self._hp.fill(yellow)
@@ -325,7 +325,7 @@ class PokemonMenuPokemon(Drawable):
         self._hp_darken = pygame.Surface((48, 1))
         self._hp_darken.fill((0,0,0))
         self._hp_darken.set_alpha(50)
-    
+
     def _blit_hp_remaining(self):
         """Add the hp remaining string to the pokemon box"""
         self._hp_remaining = pygame.Surface((35, 8))
@@ -343,7 +343,7 @@ class PokemonMenuPokemon(Drawable):
             font_index = int(ord(char)) - 48
             font_char = FRAMES.getFrame("party_font.png", offset=(font_index, 1))
             font_char.set_colorkey((0,128,0))
-            if char == " ": pass 
+            if char == " ": pass
             else: self._hp_remaining.blit(font_char, (current_pos.x, current_pos.y))
             current_pos.x += 5
 
@@ -361,7 +361,7 @@ class ActivePokemon(PokemonMenuPokemon):
         draw_surface.blit(self._hp_remaining, (self._position[0] + 44, self._position[1] + 46))
         draw_surface.blit(self._hp, (self._position[0] + 30, self._position[1] + 41))
         draw_surface.blit(self._hp_darken, (self._position[0] + 30, self._position[1] + 41))
-    
+
 class SecondaryPokemon(PokemonMenuPokemon):
 
     def __init__(self, pokemon, position, selected=False):
@@ -385,7 +385,7 @@ class BouncingPokemon(Animated):
         self._pokemon = pokemon
         with open(join("jsons", "pokemon_lookup_s.json"), "r") as pokemon_lookup_json:
             pokemon_lookup = json.load(pokemon_lookup_json)
-            _lookup = pokemon_lookup[self._pokemon.get_name()]
+            _lookup = pokemon_lookup[self._pokemon.name]
         _offset = (0, _lookup)
         super().__init__(join("pokemon", "pokemon_small.png"), position, offset=_offset)
         self._nFrames = 2
@@ -398,22 +398,22 @@ class CancelButton(Drawable):
         a different appearance based on whether or not it is selected."""
         _offset = (1,0) if selected else (0,0)
         super().__init__("party_cancel_bar.png", (184, 132), offset=_offset)
-    
+
     def set_selected(self):
         """Get the frame for when the image is selected."""
         self._image = FRAMES.getFrame(self._imageName, (1,0))
-    
+
     def set_unselected(self):
         """Get the frame for when the image is not selected."""
         self._image = FRAMES.getFrame(self._imageName, (0,0))
-    
+
 
 class PartyTextBar(Drawable):
     def __init__(self):
         """"Creates the text bar which displays in the bottom right of the pokemon party menu screen."""
         super().__init__("party_text_box.png", (2, 130))
         self.blit_string("")
-    
+
     def draw(self, draw_surface):
         """Draws the text box to the screen."""
         super().draw(draw_surface)
@@ -426,7 +426,7 @@ class PartyTextBar(Drawable):
         self._txt.set_colorkey((255,255,255))
         current_pos = Vector2(4, 4)
         for char in string:
-            if char.islower(): 
+            if char.islower():
                 font_index = int(ord(char)) - 97
                 font_char = FRAMES.getFrame("party_txt_font.png", offset=(font_index, 1))
                 font_char.set_colorkey((255,255,255))
@@ -436,7 +436,7 @@ class PartyTextBar(Drawable):
                 off = 0
                 font_index = int(ord(char)) - 65
                 if char in [".", ","]: font_index = [",", "."].index(char) + 25
-                elif char in ["!", "?"]: 
+                elif char in ["!", "?"]:
                     font_index = ["!", "?"].index(char)
                     off = 3
                 font_char = FRAMES.getFrame("party_txt_font.png", offset=(font_index, off))
@@ -448,9 +448,9 @@ class PartyTextBar(Drawable):
                 current_pos.x += 5
             else:
                 current_pos.x += 3
-    
 
-    
-       
-    
+
+
+
+
 

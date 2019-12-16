@@ -7,11 +7,11 @@ from .move import Move
 
 class Pokemon(Drawable):
     PLAYER_POKE_POS = Vector2(36, 48)
-    ENEMY_POKE_POS = Vector2(148, 6) 
+    ENEMY_POKE_POS = Vector2(148, 6)
 
     def __init__(self, pokemon_name, enemy=False, gender="male", move_set=None):
-        """Creates an instance of a pokemon. Requires the pokemon name in all lowercase as well as if the 
-        pokemon belongs to an enemy. Also requires the gender of the pokemon. Can provide a list of the pokemon's 
+        """Creates an instance of a pokemon. Requires the pokemon name in all lowercase as well as if the
+        pokemon belongs to an enemy. Also requires the gender of the pokemon. Can provide a list of the pokemon's
         moves right in the constructor as well."""
         with open(join("jsons", "pokemon_lookup.json"), "r") as pokemon_lookup_json:
             pokemon_lookup = json.load(pokemon_lookup_json)
@@ -27,7 +27,7 @@ class Pokemon(Drawable):
 
         # Keeps track of the status effects currently on the pokemon.
         self.status = []
-        self.enemy = enemy     
+        self.enemy = enemy
         self.stats = {
             "LVL" : 62,
             "HP": 147,
@@ -47,60 +47,38 @@ class Pokemon(Drawable):
         self.type = pokemon_data["type"]
 
         # Determines whether or not to draw the pokemon.
-        self._draw = True
+        self.can_draw = True
 
+        # Add moves if given if passed in via constructor
         if move_set != None:
             self.add_move_list(move_set)
 
-        super().__init__(join("pokemon", "pokemon_big.png"), Vector2(_pos.x, _pos.y), offset= _offset)
-    
+        # Create drawable portion of the pokemon
+        super().__init__(join("pokemon", "pokemon_big.png"), Vector2(_pos.x, _pos.y), offset =_offset)
+
     def draw(self, draw_surface):
         """Draws the pokemon."""
-        if self._draw:
+        if self.can_draw:
             super().draw(draw_surface)
 
     def add_move_list(self, lyst):
         """Adds the move list to the pokemon."""
         for move in lyst:
             self.moves.append(Move(move))
-    
+
     def add_status(self, status):
         """Adds a status effect to a pokemon."""
         self.status.append(status)
 
-    def get_nick_name(self):
-        """Gets the pokemon's nickname."""
-        return self.nick_name
-    
-    def get_name(self):
-        """Gets the pokemon's actual name."""
-        return self.name
-    
-    def get_ability(self):
-        """Gets the pokemon's ability."""
-        return self.ability
-    
-    def get_status(self):
-        """Gets the status of the pokemon."""
-        return self.status
-    
-    def get_gender(self):
-        """Gets the gender of the pokemon."""
-        return self.gender
-    
-    def get_moves(self):
-        """Gets the moveset of the pokemon."""
-        return self.moves
-    
     def is_alive(self):
         """Returns if the pokmeon is alive."""
         return self.stats["Current HP"] != 0
-    
+
     def add_move(self, move):
         """Adds a single move to the pokemon's moveset."""
         if len(self.moves) < 4:
             self.moves.append(move)
-    
+
     def can_move(self):
         """Determines whether a pokemon's status ailments will allow it to move."""
         if "paralyze" in self.status:
@@ -108,15 +86,16 @@ class Pokemon(Drawable):
             if prob < 25:
                 return "paralyze"
         return True
-    
-    def get_lvl(self):
+
+    @property
+    def lvl(self):
         """Get the level of the pokemon."""
         return self.stats["LVL"]
 
     def __str__(self):
         """Allows a pokemon object to be printed."""
         return self.name
-    
+
     def __repr__(self):
         """Used for debugging purposes primarily."""
         return self.name
