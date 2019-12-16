@@ -4,7 +4,7 @@ from os.path import join
 from .trainer import Trainer
 from .player import Player
 from .pokemon import Pokemon
-from .utils.drawable import Drawable
+from .utils.UI.drawable import Drawable
 from .utils.vector2D import Vector2
 from .utils.stat_calc import StatCalculator
 from .utils.soundManager import SoundManager
@@ -27,7 +27,7 @@ class Level():
             self._level_meta = json.load(level_json)
             self._level_size = (self.TILE_SIZE * self._level_meta[0][0], self.TILE_SIZE * self._level_meta[0][1])
             self._colide_list = self._level_meta[3]
-        
+
         # Tile the level up into 16x16 tiles.
         self._tiles = self._tile()
 
@@ -49,7 +49,7 @@ class Level():
         if "entry_script.json" in self._scripts:
             self.load_script("entry_script.json")
 
-    
+
     def _tile(self):
         """Returns the level's 2d array of tiles."""
         tile_dims = (self._level_size[0] // self.TILE_SIZE, self._level_size[1] // self.TILE_SIZE)
@@ -60,7 +60,7 @@ class Level():
                 row.append(Tile((x,y), self._colide_list[y][x], None))
             tiles.append(row)
         return tiles
-    
+
     def play_music(self):
         """Play the level's music. Can be called by the level manager."""
         SoundManager.getInstance().playMusic("gym_music.mp3", -1, .5)
@@ -97,7 +97,7 @@ class Level():
             for tile in row:
                 tile.draw(draw_surface)
         self._foreground.draw(draw_surface)
-    
+
     def update(self, ticks):
         """Updates the level. Updates each of the tiles in the level. If there is a current script active, then also update that script."""
         if self._current_script != None:
@@ -107,11 +107,11 @@ class Level():
                 tile.update(ticks, self.get_nearby_tiles((x,y)))
                 if tile.warp_triggered():
                     return tile.get_warp_level()
-        
+
         Drawable.updateWindowOffset(self._player, self._screen_size, self._level_size)
-    
+
     def execute_script_line(self):
-        """This is a super temporary and simple scripting engine. If I decide to develop the game further this will have to be changed. 
+        """This is a super temporary and simple scripting engine. If I decide to develop the game further this will have to be changed.
         I am well aware of the risks of usign eval and exec."""
         try:
             if eval(str(self._current_script[0][self._current_script[1]])) != False:
@@ -126,11 +126,11 @@ class Level():
                 self._current_script = None
 
 
-    
+
     def get_nearby_tiles(self, pos):
         """Returns a dictionary of tiles adjacent to a tile."""
         nearby_tiles = {}
-        
+
         if self.tile_within_map((pos[0], pos[1] - 1)):
             nearby_tiles[Cardinality.NORTH] = self._tiles[pos[1] - 1][pos[0]]
         if self.tile_within_map((pos[0], pos[1] + 1)):
@@ -139,7 +139,7 @@ class Level():
             nearby_tiles[Cardinality.WEST] = self._tiles[pos[1]][pos[0] - 1]
         if self.tile_within_map((pos[0] + 1, pos[1])):
             nearby_tiles[Cardinality.EAST] = self._tiles[pos[1]][pos[0] + 1]
-        
+
         return nearby_tiles
 
     def tile_within_map(self, pos):
@@ -148,17 +148,17 @@ class Level():
         if pos[0] < 0 or pos[1] < 0: return False
         elif pos[0] >= tile_dims[0] or pos[1] >= tile_dims[1]: return False
         else: return True
-    
+
     def correct_border_and_height_pos(self, pos):
         """The player is 22 pixels high so we need to adjust his position down a little when first loading the level. """
         return Vector2(pos[0] * self.TILE_SIZE + self._foreground._x_off, pos[1] * self.TILE_SIZE - 6)
-    
+
     def load_script(self, script_name):
         """Loads a script."""
         if script_name != "None" and script_name not in self._scripts:
             print(script_name)
             raise Exception
-        
+
         elif script_name != "None":
             with open(join("levels", self._level_name, script_name), "r") as script:
                 self._current_script = [json.load(script), 0]
@@ -177,7 +177,7 @@ class Tile:
         # A tile is a warp if occupying it sends the player to another level.
         self._is_warp = False
         self._colidable = True if colidable == 1 else False
-    
+
     def add_obj(self, obj):
         """Adds an object to a tile. Usually a player or a trainer. If a tile has an object than it becomes colidable."""
         if self._obj == None:
@@ -185,21 +185,21 @@ class Tile:
             self._colidable = True
         else:
             raise Exception
-    
+
     def remove_obj(self):
         """Removes a tiles object and sets its colidability back to what it was at the start of the level."""
         self._obj = None
         self._colidable = self._base_colidable
-    
+
     def is_clear(self):
         """Returns whether or not a tile has nothing on it and is not collidable."""
         return not self._colidable
-    
+
     def draw(self, draw_surface):
         """Draws the tile's obj if one exists."""
         if self._obj != None:
             self._obj.draw(draw_surface)
-        
+
     def update(self, ticks, nearby_tiles):
         """Updates the tiles obj if one exists."""
         if self._obj != None:
@@ -210,15 +210,15 @@ class Tile:
         self._colidable = False
         self._is_warp = True
         self._warp_level = level_name
-    
+
     def warp_triggered(self):
         """Determines if a warp has been triggered."""
         return self._is_warp and type(self._obj) == Player
-    
+
     def get_warp_level(self):
         """Return the warp tiles warp level."""
         return self._warp_level
-            
+
     def __repr__(self):
         """Allows the tile to be printed in a nice format."""
         string = str(self._pos) + "is clear: " + str(self.is_clear())

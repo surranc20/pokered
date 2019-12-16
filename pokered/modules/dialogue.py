@@ -3,7 +3,7 @@ import json
 import textwrap
 from os.path import join
 from .enumerated.battle_actions import BattleActions
-from .utils.drawable import Drawable
+from .utils.UI.drawable import Drawable
 from .utils.soundManager import SoundManager
 from .battle.battle import Battle
 from .text_cursor import TextCursor
@@ -11,8 +11,8 @@ from .text_cursor import TextCursor
 
 class Dialogue():
     def __init__(self, dialogue_id, player, npc, box=0, gender="male"):
-        """Creates a Dialogue instance. The dialogue tells the object which lines the dialogue consists off. 
-        It requires the player and npc to passed in so that a battle can be created if necessary. Also, the 
+        """Creates a Dialogue instance. The dialogue tells the object which lines the dialogue consists off.
+        It requires the player and npc to passed in so that a battle can be created if necessary. Also, the
         color of the dialogue is based on the gender of the npc."""
         self._dialogue_frame = Drawable("dialog_boxes.png", (0, 110), offset=(0, box), world_bound=False)
         self._line_surface = pygame.Surface((self._dialogue_frame.getSize()[0] - 10, self._dialogue_frame.getSize()[1] ))
@@ -33,7 +33,7 @@ class Dialogue():
         self._current_line = 0
         # Display the first line of the dialogue
         self._blit_line()
-        
+
 
     def _blit_line(self):
         """Blits the next line to the line surface."""
@@ -55,8 +55,8 @@ class Dialogue():
 
         # Make sure the cusor is bouncing up and down at the end of the dialogue
         self._text_cursor.set_pos((rendered.get_width() + 10, height))
-        
-    
+
+
     def draw(self, draw_surface):
         """Draw the dialogue frame, text cursor, and line surface."""
         self._dialogue_frame.draw(draw_surface)
@@ -73,11 +73,11 @@ class Dialogue():
         if event.type == pygame.KEYDOWN and event.key == BattleActions.SELECT.value:
             SoundManager.getInstance().playSound("firered_0005.wav")
             self._blit_line()
-    
+
     def is_over(self):
         """Determines whether the dialogue is over."""
         return self._current_line == len(self._dialogue) + 1
-    
+
     def get_end_event(self):
         """Returns the event that happens after the dialgoue (if one exists)."""
         if self._end_battle:
@@ -85,6 +85,5 @@ class Dialogue():
         else:
             return "Level"
 
-    
 
-    
+

@@ -1,4 +1,4 @@
-from .utils.drawable import Drawable
+from .utils.UI.drawable import Drawable
 
 class TextCursor(Drawable):
     def __init__(self, pos):
@@ -8,21 +8,21 @@ class TextCursor(Drawable):
         self._current_delta = 1
         self._timer = 0
         self._world_bound = False
-    
+
     def activate(self):
         """Activates the cursor so that it can be drawn."""
         self._is_active = True
-    
+
     def deactivate(self):
         """Deactivates the cursor so that if will not be drawn."""
         self._is_active = False
-    
+
     def set_pos(self, pos):
         """Sets the position of the cursor. The parameter expects the position passed in to be the cursors position in the text box."""
         pos = (pos[0] + 10, pos[1] + 100)
         self._position = pos
         self._anchored_pos = pos
-    
+
     def draw(self, draw_surface):
         """Draws the cursor."""
         if self._is_active:

@@ -2,8 +2,8 @@ import pygame
 from os.path import join, exists
 
 from ..utils.vector2D import Vector2
-from ..utils.drawable import Drawable
-from ..utils.animated import AnimatedGroup
+from ..utils.UI.drawable import Drawable
+from ..utils.UI.animated import AnimatedGroup
 from ..utils.soundManager import SoundManager
 from ..animations.toss_pokemon import TossPokemon
 from ..animations.moves.scrolling_move import ScrollingMove
@@ -28,11 +28,11 @@ class Battle:
 
         SoundManager.getInstance().playMusic("gym_battle_music.mp3", -1, .4)
 
-    
+
     def handle_event(self, event):
         """Handles the event by passing it to the battle_fsm."""
         self._battle_fsm.handle_action(event)
-    
+
     def draw(self, draw_surface):
         """Gets the draw list from the battle_fsm and draws each item in the list."""
         for obj in self._battle_fsm.get_draw_list():
@@ -47,11 +47,11 @@ class Battle:
             if issubclass(type(obj), ScrollingMove):
                 background = obj.update(ticks)
                 self._battle_fsm._scrolling_background_surf = background
-            
+
             # Otherwise simply update the object.
             else:
                 new_anim = obj.update(ticks)
-    
+
     def is_over(self):
         """Return whether or not the battle is over. If it is over it gets the end event from the opponent."""
         if self._battle_fsm.is_over():

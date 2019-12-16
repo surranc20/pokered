@@ -2,12 +2,12 @@ import pygame
 from os.path import join
 from .move_base import MoveBase
 from ...utils.frameManager import FRAMES
-from ...utils.drawable import Drawable
+from ...utils.UI.drawable import Drawable
 
 class ScrollingMove(MoveBase):
     def __init__(self, attacker, defender, enemy=False):
-        """This class, which extends MoveBase, is the basis for all moves that have a scrolling background. 
-        One can see an example of this in moves like Thunder. This class controls the scrolling of the 
+        """This class, which extends MoveBase, is the basis for all moves that have a scrolling background.
+        One can see an example of this in moves like Thunder. This class controls the scrolling of the
         background."""
         self._attacker = attacker
         self._defender = defender
@@ -27,7 +27,7 @@ class ScrollingMove(MoveBase):
             # The splice operaton gets rid of the .png which appears at the end of the move file name.
             self._scrolling_background = FRAMES.reload(self._move_file_name[:-4] + "_background.png", (0,0))
             return
-        
+
         # Blit the scrolled move to the background_surfae and return it
         background_surface = Drawable("", (0,0))
         background_surface._image = pygame.Surface((240, 112))

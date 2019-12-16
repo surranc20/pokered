@@ -1,7 +1,7 @@
 import json
 import random
 from os.path import join
-from .utils.drawable import Drawable
+from .utils.UI.drawable import Drawable
 from .utils.vector2D import Vector2
 from .move import Move
 
