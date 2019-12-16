@@ -33,7 +33,7 @@ def main():
     poke4 = Pokemon("onix")
     poke5 = Pokemon("dragonite")
     poke6 = Pokemon("mew")
-    poke6._stats["Current HP"] = 0
+    poke6.stats["Current HP"] = 0
     poke.add_move(Move("Thunder"))
     poke.add_move(Move("Thunderbolt"))
     poke.add_move(Move("Thunder Wave"))
@@ -61,19 +61,19 @@ def main():
     poke6.add_move(Move("Thunder Wave"))
     
     stat_calc = StatCalculator()
-    poke._stats = stat_calc.calculate_main(poke, 65)
-    poke2._stats = stat_calc.calculate_main(poke2, 60)
-    poke3._stats = stat_calc.calculate_main(poke3, 51)
-    poke4._stats = stat_calc.calculate_main(poke4, 58)
-    poke5._stats = stat_calc.calculate_main(poke5, 53)
-    poke6._stats = stat_calc.calculate_main(poke6, 70)
+    poke.stats = stat_calc.calculate_main(poke, 65)
+    poke2.stats = stat_calc.calculate_main(poke2, 60)
+    poke3.stats = stat_calc.calculate_main(poke3, 51)
+    poke4.stats = stat_calc.calculate_main(poke4, 58)
+    poke5.stats = stat_calc.calculate_main(poke5, 53)
+    poke6.stats = stat_calc.calculate_main(poke6, 70)
 
-    player._pokemon_team.append(poke)
-    player._pokemon_team.append(poke2)
-    player._pokemon_team.append(poke3)
-    player._pokemon_team.append(poke4)
-    player._pokemon_team.append(poke5)
-    player._pokemon_team.append(poke6)
+    player.pokemon_team.append(poke)
+    player.pokemon_team.append(poke2)
+    player.pokemon_team.append(poke3)
+    player.pokemon_team.append(poke4)
+    player.pokemon_team.append(poke5)
+    player.pokemon_team.append(poke6)
 
     # Make game variable
     game = GameManager(SCREEN_SIZE, player)
