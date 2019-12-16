@@ -5,19 +5,22 @@ from .generic.tint import Tint
 from ...utils.managers.soundManager import SoundManager
 import math
 
+
 class IcePunch(MoveBase):
     FRAME_LIST = [
     ]
 
     def __init__(self, attacker, defender, enemy=False):
-        """Creates the ice punch animation. It is a group of four crystals that form a square.
-        The crystals are rotating and slowly converging on one another. Once they have converged
-        a punch animation plays and then an ice shard animation plays."""
+        """Creates the ice punch animation. It is a group of four crystals
+        that form a square. The crystals are rotating and slowly converging on
+        one another. Once they have converged a punch animation plays and then
+        an ice shard animation plays."""
         self.FRAME_LIST = []
         super().__init__(attacker, defender, enemy=enemy)
         self._move_file_name = join("moves", "ice_punch.png")
 
-        # We need a fairly high fps here in order to make the ice crystals' rotation appear smooth
+        # We need a fairly high fps here in order to make the ice crystals'
+        # rotation appear smooth
         self._fps = 45
 
         # Play the ice_punch sound
@@ -26,7 +29,8 @@ class IcePunch(MoveBase):
         # Add the rotating crystal frames to the frame list
         self.create_square()
 
-        # Determine when we need to change our move file name to grab the punch png
+        # Determine when we need to change our move file name to grab the
+        # punch png.
         self._transfer_num = len(self.FRAME_LIST)
 
         # Add the punch frames to the frame list
@@ -38,22 +42,21 @@ class IcePunch(MoveBase):
         # This helps keep track of which phase of the move the animation is in
         self._part_one_over = False
 
-
     def create_punch(self):
-        """Adds the punch frames to the frame list. Doing this in a method instead of at
-        the beginning because the create square must be run and added to the frame list
-        before the punch frames are."""
+        """Adds the punch frames to the frame list. Doing this in a method
+        instead of at the beginning because the create square must be run and
+        added to the frame list before the punch frames are."""
         self.FRAME_LIST.append([(0, (170, 30))])
         self.FRAME_LIST.append([(0, (170, 30))])
         self.FRAME_LIST.append([(0, (170, 30))])
         self.FRAME_LIST.append([(0, (170, 30))])
-
 
     def draw(self, draw_surface):
         """Draw the current active sub animation and tints the pokemon."""
         self._tint.draw(draw_surface)
 
-        # This will draw the crystals and punch if still in the first half of the animation.
+        # This will draw the crystals and punch if still in the first half of
+        # the animation.
         if not self._part_one_over:
             super().draw(draw_surface)
 
@@ -62,33 +65,38 @@ class IcePunch(MoveBase):
             self._shard_anim.draw(draw_surface)
 
     def update(self, ticks):
-        """Updates the animation. Behaves just like a normal MoveBase move in the first phase.
-        After the first phase it then updates the shard animation."""
+        """Updates the animation. Behaves just like a normal MoveBase move in
+        the first phase. After the first phase it then updates the shard
+        animation."""
         if not self._part_one_over:
             super().update(ticks)
 
-        # Change the move file name once all the crystal frames have been played.
+        # Change the move file name once all the crystal frames have been
+        # played.
         if self._frame_num == self._transfer_num:
             self._move_file_name = join("moves", "fist.png")
 
-        # Updates the shard animation after we have created them in the next conditional block and terminate animation after shards are done.
+        # Updates the shard animation after we have created them in the next
+        # conditional block and terminate animation after shards are done.
         if self._part_one_over:
             self._shard_anim.update(ticks)
-            if self._shard_anim.is_dead(): self._is_dead = True
+            if self._shard_anim.is_dead():
+                self._is_dead = True
 
-        # After the first half of the animation reset the is_dead which is triggerd in super() at end of the first phase
-        # and create the shard animation. We must do that here so the shard sound does not play at the beginnign of the move.
+        # After the first half of the animation reset the is_dead which is
+        # triggerd in super() at end of the first phase and create the shard
+        # animation. We must do that here so the shard sound does not play at
+        # the beginnign of the move.
         elif self.is_dead():
             self._part_one_over = True
             self._is_dead = False
-            self._shard_anim = IceShards(self._attacker, self._defender, enemy=self._enemy)
-
-
-
+            self._shard_anim = IceShards(self._attacker, self._defender,
+                                         enemy=self._enemy)
 
     def create_square(self):
-        """This function populates the frame list with the frames that make the four ice shards spiral inward
-        and converge on one another. To do this some linear algebra is used."""
+        """This function populates the frame list with the frames that make
+        the four ice shards spiral inward and converge on one another. To do
+        this some linear algebra is used."""
 
         # The initial coordinates of the four shards
         lyst = [(120, 20), (200, 20), (120, 100), (200, 100)]
@@ -102,17 +110,20 @@ class IcePunch(MoveBase):
             # Calculate the x and y midpoints
             midx, midy = (x1 + x2) / 2, (y1 + y2) / 2
 
-            # Points keep track of the new points generated by rotating the inital points
+            # Points keep track of the new points generated by rotating the
+            # inital points
             points = []
             # Frame keep track of the frames created by rotaing the points
             frame = []
             for corner in lyst:
 
-                # This translates the square corners to the origin so the matrix multiplation will work
+                # This translates the square corners to the origin so the
+                # matrix multiplation will work
                 tempx = corner[0] - midx
                 tempy = corner[1] - midy
 
-                # This performs a matrix multiplation that rotates the square 45 degrees
+                # This performs a matrix multiplation that rotates the square
+                # 45 degrees
                 rotatedx = tempx * math.cos(45) - tempy * math.sin(45)
                 rotatedy = tempx * math.sin(45) + tempy * math.cos(45)
 
@@ -121,8 +132,8 @@ class IcePunch(MoveBase):
                 y = rotatedy + midy
 
                 # Add point to points and create frame
-                points.append((x,y))
-                frame.append((1, (math.floor(x),math.floor(y))))
+                points.append((x, y))
+                frame.append((1, (math.floor(x), math.floor(y))))
 
             # Add frame to the frame list
             self.FRAME_LIST.append(frame)
@@ -146,15 +157,12 @@ class IcePunch(MoveBase):
         sortx.sort()
         sorty.sort()
 
-        # Split x and y values up based on bigger and smaller values
+        # Get the two smallest x and y values
         small_x = sortx[0:2]
-        big_x = sortx[2:]
-
         small_y = sorty[0:2]
-        big_y = sorty[2:]
 
         # Find new x coordinates by moving each x coordinate in two pixels
-        new_x =[]
+        new_x = []
         for num in x:
             if num in small_x:
                 new_x.append(num + 2)
@@ -170,8 +178,5 @@ class IcePunch(MoveBase):
                 new_y.append(num - 2)
 
         # Return the new square based on the new corners
-        return [(new_x[0], new_y[0]), (new_x[1], new_y[1]), (new_x[2], new_y[2]), (new_x[3], new_y[3])]
-
-
-
-
+        return [(new_x[0], new_y[0]), (new_x[1], new_y[1]),
+                (new_x[2], new_y[2]), (new_x[3], new_y[3])]

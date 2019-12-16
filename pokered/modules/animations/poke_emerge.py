@@ -2,11 +2,9 @@ import pygame
 import json
 import random
 from os.path import join
-from ..utils.managers.frameManager import FRAMES
 from ..utils.managers.soundManager import SoundManager
 from ..utils.UI.animated import AnimatedGroupPart
 from ..utils.vector2D import Vector2
-
 
 
 class PokeEmerge(AnimatedGroupPart):
@@ -17,19 +15,22 @@ class PokeEmerge(AnimatedGroupPart):
     PLAYER_POKE_POS = Vector2(68, 112)
     ENEMY_POKE_POS = Vector2(180, 70)
 
-    def __init__(self, position, pokemon_name, anim_sequence_pos, enemy = False):
-        """This is animation that plays when a pokemon is emerging from a pokeball. Has all the
-        same arguments as an AnimatedGroupPart as well as an enemy argument which is necessary
-        becuase it tells PokeEmerge whether or not to use the front or back of the pokemon and
-        where to draw the animation when it is occuring."""
+    def __init__(self, position, pokemon_name, anim_sequence_pos, enemy=False):
+        """This is animation that plays when a pokemon is emerging from a
+        pokeball. Has all the same arguments as an AnimatedGroupPart as well
+        as an enemy argument which is necessary becuase it tells PokeEmerge
+        whether or not to use the front or back of the pokemon and where to
+        draw the animation when it is occuring."""
 
-        # Look up pokemon position in sprite sheet and determine whether or not to use the
-        # front or back image of the pokemon
-        with open(join("jsons", "pokemon_lookup.json"), "r") as pokemon_lookup_json:
+        # Look up pokemon position in sprite sheet and determine whether or
+        # not to use the front or back image of the pokemon
+        with open(join("jsons", "pokemon_lookup.json"), "r") as \
+                pokemon_lookup_json:
             pokemon_lookup = json.load(pokemon_lookup_json)
             _lookup = tuple(pokemon_lookup[pokemon_name])
         _offset = _lookup if enemy else (_lookup[0] + 1, _lookup[1])
-        super().__init__(join("pokemon", "pokemon_big.png"), position, anim_sequence_pos, offset=_offset)
+        super().__init__(join("pokemon", "pokemon_big.png"), position,
+                         anim_sequence_pos, offset=_offset)
 
         self._pokemon_name = pokemon_name
         self._enemy = enemy
@@ -42,7 +43,8 @@ class PokeEmerge(AnimatedGroupPart):
         self._framesPerSecond = 30
         self._first_update = True
 
-        # Initial image for PokeEmerge needs to be the smallest version of the pokemon
+        # Initial image for PokeEmerge needs to be the smallest version of the
+        # pokemon.
         self._image = self.scale_pokemon()
 
     def __repr__(self):
@@ -51,8 +53,9 @@ class PokeEmerge(AnimatedGroupPart):
         return "Poke Emerge"
 
     def update(self, ticks):
-        """Overrides the update of AnimatedGroupPart. Decides whether the pokemon should be
-        scaled up to the next size based on the animation timer"""
+        """Overrides the update of AnimatedGroupPart. Decides whether the
+        pokemon should be scaled up to the next size based on the animation
+        timer."""
         if self._first_update:
             SoundManager.getInstance().playSound("firered_000F.wav")
             self._first_update = False
@@ -65,13 +68,16 @@ class PokeEmerge(AnimatedGroupPart):
             self._image = self.scale_pokemon()
 
     def _update_position(self, image):
-        """Helper method used to update the position of the image after it has been scalled.
-        This is necessary because scaling changes the dimensions of the image and the image needs
-        to be centered on the position specified in PLAYER_POKE_POS of ENEMY_POKE_POS."""
-        if not self._enemy: pos = self.PLAYER_POKE_POS
-        else: pos = self.ENEMY_POKE_POS
+        """Helper method used to update the position of the image after it has
+        been scalled. This is necessary because scaling changes the dimensions
+        of the image and the image needs to be centered on the position
+        specified in PLAYER_POKE_POS of ENEMY_POKE_POS."""
+        if not self._enemy:
+            pos = self.PLAYER_POKE_POS
+        else:
+            pos = self.ENEMY_POKE_POS
 
-        self._position.x = pos.x  - image.get_width() // 2
+        self._position.x = pos.x - image.get_width() // 2
         self._position.y = pos.y - image.get_height()
 
     def scale_pokemon(self):
@@ -82,38 +88,34 @@ class PokeEmerge(AnimatedGroupPart):
         if not self._anim_started:
             next_scale_size = 8
             self._anim_started = True
-        else: next_scale_size = self._image.get_height() + 8
+        else:
+            next_scale_size = self._image.get_height() + 8
 
         # If the next_scale_size is > 64 then the animation is done.
         if next_scale_size >= 64:
             self._update_position(self._orig_image)
             self.kill()
+
+            # Play the pokemon's emerge sound.
+
             if self._pokemon_name.capitalize() == "Pikachu":
-                rando = str(random.randint(1,97))
-                print(rando)
-                SoundManager.getInstance().playSound(join("cries", self._pokemon_name.capitalize(), "025 - Pikachu (" + rando + ").wav"))
-            else: SoundManager.getInstance().playSound(join("cries", self._pokemon_name.capitalize() + ".wav"))
+                rando = str(random.randint(1, 97))
+                sound_path = join("cries", self._pokemon_name.capitalize(),
+                                  "025 - Pikachu (" + rando + ").wav")
+                SoundManager.getInstance().playSound(sound_path)
+            else:
+                sound_path = join("cries", self._pokemon_name.capitalize() +
+                                  ".wav")
+                SoundManager.getInstance().playSound(sound_path)
+
             return self._orig_image
 
         # Scale pokemon and then update its position
-        copy = pygame.transform.scale(self._orig_image, (next_scale_size, next_scale_size))
+        copy = pygame.transform.scale(self._orig_image, (next_scale_size,
+                                                         next_scale_size))
         self._update_position(copy)
 
         # Turn all non-transparent pixels purple
-        pygame.transform.threshold(copy, copy, self._image.get_colorkey(), set_color=(244, 189, 244))
-        return  copy
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        pygame.transform.threshold(copy, copy, self._image.get_colorkey(),
+                                   set_color=(244, 189, 244))
+        return copy

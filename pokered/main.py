@@ -89,8 +89,9 @@ def main():
         # event handling, gets all event from the event queue
         game_clock.tick(60)
         for event in pygame.event.get():
-            # only do something if the event is of type QUIT or ESCAPE is pressed
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            # Catch quit events
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and
+                                             event.key == pygame.K_ESCAPE):
                 # change the value to False, to exit the main loop
                 running = False
             if (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP):
@@ -102,6 +103,7 @@ def main():
         if response == "RESTART" and running:
             main()
             break
+
 
 if __name__ == "__main__":
     main()
