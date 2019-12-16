@@ -1,3 +1,4 @@
+# flake8: noqa
 # This allows the moves to all be imported with one import statement
 
 from .thunder import Thunder

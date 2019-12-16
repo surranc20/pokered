@@ -9,8 +9,8 @@ class Hit():
         self._is_dead = False
 
     def draw(self, draw_surface):
-        """Since this animation simply toggles the pokemon's image on/off it does not need
-        to do anything in the draw method."""
+        """Since this animation simply toggles the pokemon's image on/off it does not
+        need to do anything in the draw method."""
         return
 
     def is_dead(self):
@@ -18,7 +18,8 @@ class Hit():
         return self._is_dead
 
     def update(self, ticks):
-        """Updates the animation. Toggles the pokemon's image 9 times a second."""
+        """Updates the animation. Toggles the pokemon's image 9
+        times a second."""
         self._animation_timer += ticks
         if self._animation_timer > 1 / self._fps:
             self._animation_timer -= 1 / self._fps
@@ -27,5 +28,3 @@ class Hit():
                 self._pokemon.can_draw = not self._pokemon.can_draw
             else:
                 self._is_dead = True
-
-
