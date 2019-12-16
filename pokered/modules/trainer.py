@@ -66,10 +66,11 @@ class Trainer(Mobile):
 
     def update(self, ticks, nearby_tiles, current_tile):
         """Updates the trainer. Right now it does not need to do anything."""
-        pass
+        return
 
     def talk_event(self, player):
         """Returns the talke event associated with the trainer."""
+        #TODO: Turn to face the player
         if not self.defeated:
             return Dialogue(str(self._dialogue_id), player, self, gender=self.gender)
         else:
