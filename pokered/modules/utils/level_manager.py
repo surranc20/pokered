@@ -10,7 +10,6 @@ from .vector2D import Vector2
 from ..movie import Movie
 
 
-
 class LevelManager(object):
     def __init__(self, player, level_name, screen_size =(240, 160), movie=None):
         """Handles switching between a levels over world and the various events that could be happening.
