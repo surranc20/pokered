@@ -2,7 +2,7 @@ from os.path import join
 from .move_base import MoveBase
 from .generic.ice_shards import IceShards
 from .generic.tint import Tint
-from ...utils.soundManager import SoundManager
+from ...utils.managers.soundManager import SoundManager
 import math
 
 class IcePunch(MoveBase):
@@ -10,7 +10,7 @@ class IcePunch(MoveBase):
     ]
 
     def __init__(self, attacker, defender, enemy=False):
-        """Creates the ice punch animation. It is a group of four crystals that form a square. 
+        """Creates the ice punch animation. It is a group of four crystals that form a square.
         The crystals are rotating and slowly converging on one another. Once they have converged
         a punch animation plays and then an ice shard animation plays."""
         self.FRAME_LIST = []
@@ -19,7 +19,7 @@ class IcePunch(MoveBase):
 
         # We need a fairly high fps here in order to make the ice crystals' rotation appear smooth
         self._fps = 45
-        
+
         # Play the ice_punch sound
         SoundManager.getInstance().playSound(join("moves", "ice_punch.wav"))
 
@@ -37,7 +37,7 @@ class IcePunch(MoveBase):
 
         # This helps keep track of which phase of the move the animation is in
         self._part_one_over = False
-        
+
 
     def create_punch(self):
         """Adds the punch frames to the frame list. Doing this in a method instead of at
@@ -47,8 +47,8 @@ class IcePunch(MoveBase):
         self.FRAME_LIST.append([(0, (170, 30))])
         self.FRAME_LIST.append([(0, (170, 30))])
         self.FRAME_LIST.append([(0, (170, 30))])
-        
-        
+
+
     def draw(self, draw_surface):
         """Draw the current active sub animation and tints the pokemon."""
         self._tint.draw(draw_surface)
@@ -62,11 +62,11 @@ class IcePunch(MoveBase):
             self._shard_anim.draw(draw_surface)
 
     def update(self, ticks):
-        """Updates the animation. Behaves just like a normal MoveBase move in the first phase. 
+        """Updates the animation. Behaves just like a normal MoveBase move in the first phase.
         After the first phase it then updates the shard animation."""
         if not self._part_one_over:
             super().update(ticks)
-        
+
         # Change the move file name once all the crystal frames have been played.
         if self._frame_num == self._transfer_num:
             self._move_file_name = join("moves", "fist.png")
@@ -75,14 +75,14 @@ class IcePunch(MoveBase):
         if self._part_one_over:
             self._shard_anim.update(ticks)
             if self._shard_anim.is_dead(): self._is_dead = True
-        
+
         # After the first half of the animation reset the is_dead which is triggerd in super() at end of the first phase
         # and create the shard animation. We must do that here so the shard sound does not play at the beginnign of the move.
         elif self.is_dead():
             self._part_one_over = True
             self._is_dead = False
             self._shard_anim = IceShards(self._attacker, self._defender, enemy=self._enemy)
-            
+
 
 
 
@@ -107,7 +107,7 @@ class IcePunch(MoveBase):
             # Frame keep track of the frames created by rotaing the points
             frame = []
             for corner in lyst:
-                
+
                 # This translates the square corners to the origin so the matrix multiplation will work
                 tempx = corner[0] - midx
                 tempy = corner[1] - midy
@@ -131,7 +131,7 @@ class IcePunch(MoveBase):
             lyst = self.make_smaller(points)
 
     def make_smaller(self, points):
-        """This takes a collection of points and makes the square smaller while 
+        """This takes a collection of points and makes the square smaller while
         still keeping the same midpoint."""
 
         x = []
@@ -139,7 +139,7 @@ class IcePunch(MoveBase):
         for point in points:
             x.append(point[0])
             y.append(point[1])
-        
+
         # Make a copy of x and y so that we can sort the values
         sortx = x.copy()
         sorty = y.copy()
@@ -160,7 +160,7 @@ class IcePunch(MoveBase):
                 new_x.append(num + 2)
             else:
                 new_x.append(num - 2)
-        
+
         # Find new y coordinates by moving each y coordinate in two pixels
         new_y = []
         for num in y:

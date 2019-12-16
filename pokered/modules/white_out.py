@@ -2,7 +2,7 @@ import pygame
 import textwrap
 from os.path import join
 from .enumerated.battle_actions import BattleActions
-from .utils.soundManager import SoundManager
+from .utils.managers.soundManager import SoundManager
 
 
 
@@ -34,7 +34,7 @@ class WhiteOut():
     def is_over(self):
         """Returns whether or not the event is over."""
         return self._is_over
-    
+
     def get_end_event(self):
         """Tells the level manager to tell the game manager to restart the game."""
         return "RESTART"
@@ -49,4 +49,3 @@ class WhiteOut():
             rendered = self._font.render(string, False, (255,255,255))
             self._white_out_surface.blit(rendered, (20, height))
             height += 15
-        

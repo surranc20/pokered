@@ -1,7 +1,7 @@
 from os.path import join
 from ..utils.UI.animated import AnimatedGroupPart
-from ..utils.frameManager import FRAMES
-from ..utils.soundManager import SoundManager
+from ..utils.managers.frameManager import FRAMES
+from ..utils.managers.soundManager import SoundManager
 from ..utils.vector2D import Vector2
 from .poke_emerge import PokeEmerge
 

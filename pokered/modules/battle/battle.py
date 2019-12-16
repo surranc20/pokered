@@ -4,7 +4,7 @@ from os.path import join, exists
 from ..utils.vector2D import Vector2
 from ..utils.UI.drawable import Drawable
 from ..utils.UI.animated import AnimatedGroup
-from ..utils.soundManager import SoundManager
+from ..utils.managers.soundManager import SoundManager
 from ..animations.toss_pokemon import TossPokemon
 from ..animations.moves.scrolling_move import ScrollingMove
 from ..pokemon import Pokemon

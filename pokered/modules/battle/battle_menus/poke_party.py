@@ -4,8 +4,8 @@ from os.path import join
 from ...utils.UI.drawable import Drawable
 from ...utils.UI.animated import Animated
 from ...utils.vector2D import Vector2
-from ...utils.frameManager import FRAMES
-from ...utils.soundManager import SoundManager
+from ...utils.managers.frameManager import FRAMES
+from ...utils.managers.soundManager import SoundManager
 from ...enumerated.battle_states import BattleStates
 from ...enumerated.battle_actions import BattleActions
 

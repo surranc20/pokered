@@ -1,13 +1,13 @@
 from os.path import join
 from .move_base import MoveBase
-from ...utils.soundManager import SoundManager
+from ...utils.managers.soundManager import SoundManager
 
 
 class Thunderbolt(MoveBase):
     FRAME_LIST = [
         [(0, (200, 0))],
         [(0, (200, 0)), (0, (200, 12))],
-        [(0, (200, 0)), (0, (200, 12)), (1, (200, 40))], 
+        [(0, (200, 0)), (0, (200, 12)), (1, (200, 40))],
         [(0, (160, 0)), (0, (200, 0)), (0, (200, 12)), (1, (200, 40))],
         [(0, (160, 0)), (0, (160, 12)), (0, (200, 12)), (1, (200, 40))],
         [(0, (160, 0)), (0, (160, 12)), (1, (160, 32)), (1, (200, 40)), (2, (180, -20))],
@@ -20,7 +20,7 @@ class Thunderbolt(MoveBase):
         [(2,  (180, 0)), (2,  (180, 12)), (2,  (180, 32)), (2,  (180, 40))],
         [(2,  (180, 12)), (2,  (180, 32)), (2,  (180, 40))],
         [(2,  (180, 32)), (2,  (180, 40))],
-        [(2,  (180, 40))], 
+        [(2,  (180, 40))],
         [],
         [],
         []
@@ -44,7 +44,7 @@ class Thunderbolt(MoveBase):
         [],
         [],
         []
-        
+
     ]
     def __init__(self, attacker, defender, enemy=False):
         """Creates the thunderbolt animation. Follows the same design pattern as thunder wave
@@ -58,7 +58,7 @@ class Thunderbolt(MoveBase):
 
     def update(self, ticks):
         """Updates the thunderbolt animation. Runs through the first frame list and then changes to the
-        second frame list. After the second frame list is done it transitions to the third frame list. 
+        second frame list. After the second frame list is done it transitions to the third frame list.
         Once this is done the animation is over."""
         super().update(ticks)
         if self.is_dead() and self.FRAME_LIST != self.SECONDARY_FRAME_LIST and self._round_two:
@@ -68,7 +68,7 @@ class Thunderbolt(MoveBase):
             self._frame_num = 0
             self._fps = 10
             self._move_file_name = join("moves", "thunderbolt_ball.png")
-        
+
 
         if self.is_dead() and self.FRAME_LIST != self.TERTIARY_FRAME_LIST:
             self._is_dead = False

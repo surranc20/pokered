@@ -2,7 +2,7 @@ import math
 import pygame
 from pygame import image
 import os
-from ..frameManager import FRAMES
+from ..managers.frameManager import FRAMES
 from ..vector2D import Vector2
 
 class Drawable(object):

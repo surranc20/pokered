@@ -3,7 +3,7 @@ import math
 from os.path import join
 from ...utils.UI.drawable import Drawable
 from ...utils.vector2D import Vector2
-from ...utils.frameManager import FRAMES
+from ...utils.managers.frameManager import FRAMES
 
 class PokeInfo(Drawable):
 

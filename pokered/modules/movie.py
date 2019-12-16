@@ -1,6 +1,6 @@
 import pygame
 from os.path import join
-from .utils.soundManager import SoundManager
+from .utils.managers.soundManager import SoundManager
 from .enumerated.battle_actions import BattleActions
 
 class Movie():
@@ -26,7 +26,7 @@ class Movie():
             SoundManager.getInstance().playMusic("outro.mp3")
         else:
             SoundManager.getInstance().playMusic("intro.mp3")
-    
+
     def draw(self, draw_surface):
         """Draw the movie to the screen"""
         draw_surface.blit(self._surface, (0,0))
@@ -62,7 +62,7 @@ class Movie():
     def is_over(self):
         """Returns whether or not the movie is over."""
         return self._is_over
-    
+
     def get_end_event(self):
         """Get the event that will play after the video is over."""
         if self._folder_name == "intro_folder":
@@ -74,4 +74,4 @@ class Movie():
         """Ensures that the counter object has the necessary padding of zeros."""
         return str(self._counter).zfill(5)
 
-    
+
