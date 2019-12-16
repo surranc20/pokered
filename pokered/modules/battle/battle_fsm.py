@@ -20,7 +20,7 @@ from ..enumerated.battle_actions import BattleActions
 from ..enumerated.battle_states import BattleStates
 from ..pokemon import Pokemon
 from ..move import Move
-from ..text_cursor import TextCursor
+from ..utils.UI.text_cursor import TextCursor
 from .battle_menus.poke_info import PokeInfo
 from .battle_menus.pokemon_remaining import PokemonRemaining
 from .battle_menus.poke_party import PokeParty

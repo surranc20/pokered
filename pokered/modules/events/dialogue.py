@@ -2,11 +2,11 @@ import pygame
 import json
 import textwrap
 from os.path import join
-from .enumerated.battle_actions import BattleActions
-from .utils.UI.drawable import Drawable
-from .utils.managers.soundManager import SoundManager
-from .battle.battle import Battle
-from .text_cursor import TextCursor
+from ..enumerated.battle_actions import BattleActions
+from ..utils.UI.drawable import Drawable
+from ..utils.managers.soundManager import SoundManager
+from ..battle.battle import Battle
+from ..utils.UI.text_cursor import TextCursor
 
 
 class Dialogue():

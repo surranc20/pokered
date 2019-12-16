@@ -4,10 +4,10 @@ from os.path import join
 from ...level import Level
 from ...player import Player
 from ...pokemon import Pokemon
-from ...white_out import WhiteOut
+from ...events.white_out import WhiteOut
 from ...battle.battle import Battle
 from ..vector2D import Vector2
-from ...movie import Movie
+from ...events.movie import Movie
 
 
 class LevelManager(object):

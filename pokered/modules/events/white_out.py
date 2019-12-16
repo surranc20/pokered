@@ -1,8 +1,8 @@
 import pygame
 import textwrap
 from os.path import join
-from .enumerated.battle_actions import BattleActions
-from .utils.managers.soundManager import SoundManager
+from ..enumerated.battle_actions import BattleActions
+from ..utils.managers.soundManager import SoundManager
 
 
 

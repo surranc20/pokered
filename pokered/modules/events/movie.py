@@ -1,7 +1,7 @@
 import pygame
 from os.path import join
-from .utils.managers.soundManager import SoundManager
-from .enumerated.battle_actions import BattleActions
+from ..utils.managers.soundManager import SoundManager
+from ..enumerated.battle_actions import BattleActions
 
 class Movie():
     def __init__(self, folder_name):
