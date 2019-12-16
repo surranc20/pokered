@@ -1,7 +1,7 @@
 import pygame
 from os.path import join
 from ...utils.frameManager import FRAMES
-from ...utils.drawable import Drawable
+from ...utils.UI.drawable import Drawable
 
 
 class MoveBase():
@@ -13,7 +13,7 @@ class MoveBase():
         self._defender = defender
         self._enemy = enemy
         self._is_dead = False
-        
+
         # Create the move surface that all move animations will be blitted to
         self._move_surface = pygame.Surface((240, 112))
         self._move_surface.set_colorkey((0,0,0))
@@ -28,11 +28,11 @@ class MoveBase():
     def is_dead(self):
         """Returns whether or not the MoveBase has finished its current animation."""
         return self._is_dead
-    
+
     def draw(self, draw_surface):
         """Draw the current frame"""
         draw_surface.blit(self._move_surface, (0,0))
-    
+
     def update(self, ticks):
         """Handles the updating of the MoveBase. Changes current frame at a speed
         depending on the set fps. When the frame changes the new frame is blitted to the move surface."""
@@ -58,32 +58,32 @@ class MoveBase():
                     # Flip horizontal
                     if sprite[2] == "h":
                         sprite_frame = pygame.transform.flip(sprite_frame, True, False)
-                    
+
                     # Flip vertical
                     elif sprite[2] == "v":
                         sprite_frame = pygame.transform.flip(sprite_frame, False, True)
-                    
+
                     # Flip horizontally and vertically
                     elif sprite[2] == "hv":
                         sprite_frame = pygame.transform.flip(sprite_frame, True, True)
-                    
+
                     # Rotate 90 degrees
                     elif sprite[2] == "r":
                         sprite_frame = pygame.transform.rotate(sprite_frame, 90)
-                
+
                 # In order to make enemy moves appear correctly we must change add an offset to the x and y pos specified in the frame
                 if self._enemy:
                     self._move_surface.blit(sprite_frame, (sprite[1][0] - 120, max(sprite[1][1], 0) + 40))
                 else:
                     self._move_surface.blit(sprite_frame, (sprite[1][0] - 5, sprite[1][1]))
-            
+
             # Go to next frame or end animation
             if self._frame_num < len(self.FRAME_LIST) - 1:
                 self._frame_num += 1
             else:
                  self._is_dead = True
-                 
 
-        
-        
+
+
+
 

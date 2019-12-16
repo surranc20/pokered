@@ -6,8 +6,8 @@ import sys
 from enum import Enum, auto
 from os.path import join
 
-from ..utils.animated import AnimatedGroup
-from ..utils.drawable import Drawable
+from ..utils.UI.animated import AnimatedGroup
+from ..utils.UI.drawable import Drawable
 from ..utils.vector2D import Vector2
 from ..animations.toss_pokemon import TossPokemon
 from ..animations.change_hp import ChangeHP

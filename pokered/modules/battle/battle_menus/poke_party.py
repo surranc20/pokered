@@ -1,8 +1,8 @@
 import json
 import pygame
 from os.path import join
-from ...utils.drawable import Drawable
-from ...utils.animated import Animated
+from ...utils.UI.drawable import Drawable
+from ...utils.UI.animated import Animated
 from ...utils.vector2D import Vector2
 from ...utils.frameManager import FRAMES
 from ...utils.soundManager import SoundManager

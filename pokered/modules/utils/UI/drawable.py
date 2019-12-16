@@ -2,13 +2,13 @@ import math
 import pygame
 from pygame import image
 import os
-from .frameManager import FRAMES
-from .vector2D import Vector2
+from ..frameManager import FRAMES
+from ..vector2D import Vector2
 
 class Drawable(object):
 
    WINDOW_OFFSET = Vector2(0,0)
-   
+
    @classmethod
    def updateWindowOffset(cls, followObject, screenSize, worldSize):
       position = followObject.getPosition()
@@ -16,7 +16,7 @@ class Drawable(object):
       Drawable.WINDOW_OFFSET = [min(max(0, position[x] - screenSize[x] // 2 + size[x] // 2), worldSize[x] - screenSize[x]) for x in range(2)]
       if Drawable.WINDOW_OFFSET[0] < 0: Drawable.WINDOW_OFFSET[0] = 0
       elif Drawable.WINDOW_OFFSET[1] < 0: Drawable.WINDOW_OFFSET[1] = 0
-   
+
    def __init__(self, imageName, position, offset=None, world_bound=True):
       self._imageName = imageName
       self._offset = offset
@@ -29,28 +29,28 @@ class Drawable(object):
       self._is_dead = False
       self._x_off = 0
 
-      
+
    def getPosition(self):
       return self._position
 
    def setPosition(self, newPosition):
       self._position = newPosition
-      
+
    def getSize(self):
       return self._image.get_size()
 
    def getCollisionRect(self):
       newRect =  self._position + self._image.get_rect()
       return newRect
-   
+
    def kill(self):
       self._is_dead = True
-   
+
    def is_dead(self):
       return self._is_dead
-   
+
    def center_with_border(self, screen_size):
-      """Should only be called on overworld level backgrounds and foregrounds. Only does something if one of the overworld 
+      """Should only be called on overworld level backgrounds and foregrounds. Only does something if one of the overworld
       levels is smaller than the screen. Adds black borders around the image where needed."""
       # Calculate how much border space is needed on each axis.
       x_off = (screen_size[0] - self.getSize()[0]) / 2
@@ -87,8 +87,8 @@ class Drawable(object):
          surf.blit(self._image, (x_off, 0))
          surf.blit(border, (x_off + self.getSize()[0], 0))
          self._image = surf
-      
-      
+
+
    def draw(self, surface):
       if self._world_bound:
          surface.blit(self._image, (int(self._position[0] - Drawable.WINDOW_OFFSET[0]),
@@ -96,7 +96,6 @@ class Drawable(object):
       else:
          surface.blit(self._image, self._position)
 
-   
+
    def reload(self):
       self._image = FRAMES.reload(self._imageName, self._offset)
-     

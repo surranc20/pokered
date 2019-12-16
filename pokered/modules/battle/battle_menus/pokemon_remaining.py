@@ -1,5 +1,5 @@
 from os.path import join
-from ...utils.animated import AnimatedGroup, AnimatedGroupPart
+from ...utils.UI.animated import AnimatedGroup, AnimatedGroupPart
 from ...utils.vector2D import Vector2
 
 #TODO: Put this in the actual game
@@ -42,10 +42,10 @@ class PokeballRemainingBall(AnimatedGroupPart):
         if pokeball_status == "empty": offset = (0, 0)
         elif pokeball_status == "dead": offset = (2, 0)
         else: offset = (1, 0)
-        
+
         super().__init__(join("battle", "pokemon_remaining_balls.png"), position, anim_sequence_pos, offset=offset)
 
-    
+
     def update(self, ticks):
         pass
 
@@ -61,8 +61,8 @@ class PokeballRemainingContainer(AnimatedGroupPart):
         offset = (0,0) if is_enemy else (0,1)
         print(offset)
         super().__init__(join("battle", "pokemon_remaining.png"), pos, 0, offset=offset)
-    
+
     def update(self, ticks):
         pass
-    
+
 

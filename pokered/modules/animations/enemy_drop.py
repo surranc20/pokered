@@ -1,5 +1,5 @@
 from os.path import join
-from ..utils.animated import AnimatedGroupPart
+from ..utils.UI.animated import AnimatedGroupPart
 from ..utils.frameManager import FRAMES
 from ..utils.vector2D import Vector2
 
@@ -19,5 +19,5 @@ class EnemyDrop(AnimatedGroupPart):
         if self.getPosition().x > self._initial_position.x + 4:
             if self.getPosition().x > 240: self.kill()
             return self._anim_sequence_pos + 1
-        
+
 
