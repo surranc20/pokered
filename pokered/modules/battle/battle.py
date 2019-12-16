@@ -11,8 +11,8 @@ from ..pokemon import Pokemon
 from .battle_menus.poke_info import PokeInfo
 from .battle_menus.pokemon_remaining import PokemonRemaining
 from .battle_fsm import BattleFSM
-from ..white_out import WhiteOut
-from ..movie import Movie
+from ..events.white_out import WhiteOut
+from ..events.movie import Movie
 
 
 

@@ -1,4 +1,4 @@
-from .utils.UI.drawable import Drawable
+from .drawable import Drawable
 
 class TextCursor(Drawable):
     def __init__(self, pos):

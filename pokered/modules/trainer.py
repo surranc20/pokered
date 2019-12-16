@@ -1,7 +1,7 @@
 import pygame
 from os.path import join
 from .battle.battle import Battle
-from .dialogue import Dialogue
+from .events.dialogue import Dialogue
 from .utils.UI.mobile import Mobile
 from .enumerated.cardinality import Cardinality
 
