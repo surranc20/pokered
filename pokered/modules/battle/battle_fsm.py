@@ -54,37 +54,50 @@ class BattleFSM:
 
         # Variable that keeps track of the state of the battle.
         self._state = state
+
         # Occasionally a certain state will need to que up multiple states that need to happen one after another.
         self._state_queue = []
+
         # The font used in text wait events
         self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"), 16)
+
         # The cursor that keeps track of where the player is clicking
         self._cursor = Cursor()
+
         # The animation that is currently playing. If this is a list then it is a collection of animations.
         self._active_animation = None
+
         # The string that will be rendered in the next text wait event
         self._active_string = None
+
         # The cursor that bounces up and down when waiting for player to hit enter
         self._text_cursor = TextCursor((0,0))
+
         # The opponent and player objects
         self._opponent = opponent
         self._player = player
+
         # These are placeholder objects and just exist to save a certain space in the draw list for
         # the corresponding object.
         self._active_player_pokemon = None
         self._active_opponent_pokemon = None
         self._player_poke_info = None
         self._opponent_poke_info = None
+
         # The player and opponents queued move. If it is equal to None at the end of the selecting actions
         # phase then then the player will do nothing.
         self._player_move_queued = None
         self._enemy_move_queued = None
+
         # List containing the move order of a specefic turn
         self._turn_order = []
+
         # Variable that keeps track of whether or not the initial battle animations are over
         self._initial_stage_over = False
+
         # How long a text_wait state has been displaying its text
         self._text_wait_timer = 0
+
         # The scrolling background of a move it it exists
         self._scrolling_background_surf = None
 
@@ -116,7 +129,6 @@ class BattleFSM:
                 for anim in self._active_animation:
                     draw_list.append(anim)
             else: draw_list.append(self._active_animation)
-
         return draw_list
 
     def get_update_list(self):
@@ -154,7 +166,19 @@ class BattleFSM:
 
         # Triggers if the value of the current state is text wait. This groups similar functionality together.
         if self._state.value[0] == "text wait":
-            # Sometimes the active string will be "" and if this is the case the text wait will end after the timer is up
+            self._update_text_wait(ticks)
+
+        # Triggers if the value of the current state is compute. An event is a compute event if it does not
+        # need to print anything to the screen or wait for user input.
+        elif self._state.value[0] == "compute":
+            self._update_compute(ticks)
+
+        # An event is an auto event if the event consists of an animation that needs to play.
+        elif self._state.value[0] == "auto":
+            self._update_auto(ticks)
+
+    def _update_text_wait(self, ticks):
+        # Sometimes the active string will be "" and if this is the case the text wait will end after the timer is up
             self._text_wait_timer += ticks
             if self._active_string != None and self._active_string != "":
                 # Different states need the text to be displayed at different widths
@@ -176,277 +200,272 @@ class BattleFSM:
                         self._active_string = None
                         self._handle_state_change(self.TRANSITIONS[self._state])
 
-        # Triggers if the value of the current state is compute. An event is a compute event if it does not
-        # need to print anything to the screen or wait for user input.
-        elif self._state.value[0] == "compute":
-            # As of right now the only action the player can select is choosing a move to use.
-            if self._state == BattleStates.CHOOSE_OPPONENT_ACTION:
-                self._handle_state_change(BattleStates.OPPONENT_CHOOSING_MOVE)
+    def _update_compute(self, ticks):
+        # As of right now the only action the player can select is choosing a move to use.
+        if self._state == BattleStates.CHOOSE_OPPONENT_ACTION:
+            self._handle_state_change(BattleStates.OPPONENT_CHOOSING_MOVE)
 
-            # The opponent chooses the move to use and then the current state is set to Deciding Battle Order
-            elif self._state == BattleStates.OPPONENT_CHOOSING_MOVE:
-                while True:
-                    self._enemy_move_queued = self._opponent.active_pokemon.moves[random.randint(0, 3)]
-                    if self._enemy_move_queued.category in ["Physical", "Special"]:
-                        print(self._enemy_move_queued.move_name)
-                        break
-                self._handle_state_change(BattleStates.DECIDING_BATTLE_ORDER)
+        # The opponent chooses the move to use and then the current state is set to Deciding Battle Order
+        elif self._state == BattleStates.OPPONENT_CHOOSING_MOVE:
+            while True:
+                self._enemy_move_queued = self._opponent.active_pokemon.moves[random.randint(0, 3)]
+                if self._enemy_move_queued.category in ["Physical", "Special"]:
+                    print(self._enemy_move_queued.move_name)
+                    break
+            self._handle_state_change(BattleStates.DECIDING_BATTLE_ORDER)
 
-            # The player has won. Triggers the series of events that happens after the player wins
-            elif self._state == BattleStates.VICTORY:
-                self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.BATTLE_OVER]
-                self._active_string = "Player defeated " + self._opponent.name.upper() + "!"
-                self._handle_state_change(self._state_queue.pop(0))
+        # The player has won. Triggers the series of events that happens after the player wins
+        elif self._state == BattleStates.VICTORY:
+            self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.BATTLE_OVER]
+            self._active_string = "Player defeated " + self._opponent.name.upper() + "!"
+            self._handle_state_change(self._state_queue.pop(0))
 
-            # The player has lost. Triggers the series of events that happens after the player has lost.
-            elif self._state == BattleStates.DEFEAT:
-                self._player_lost = True
-                self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.BATTLE_OVER]
-                self._active_string = "Player was defeated by " + self._opponent.name.upper() + "!"
-                self._handle_state_change(self._state_queue.pop(0))
+        # The player has lost. Triggers the series of events that happens after the player has lost.
+        elif self._state == BattleStates.DEFEAT:
+            self._player_lost = True
+            self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.BATTLE_OVER]
+            self._active_string = "Player was defeated by " + self._opponent.name.upper() + "!"
+            self._handle_state_change(self._state_queue.pop(0))
 
-            # Decides the battle order. Depends on whether or not each player has queued an action and the speeds of the pokemon.
-            elif self._state == BattleStates.DECIDING_BATTLE_ORDER:
-                if self._player_move_queued == None and self._enemy_move_queued == None:
-                    self._turn_order = []
-                elif self._player_move_queued == None and self._enemy_move_queued != None:
-                    self._turn_order.append(self._opponent)
-                elif self._player_move_queued != None and self._enemy_move_queued == None:
+        # Decides the battle order. Depends on whether or not each player has queued an action and the speeds of the pokemon.
+        elif self._state == BattleStates.DECIDING_BATTLE_ORDER:
+            if self._player_move_queued == None and self._enemy_move_queued == None:
+                self._turn_order = []
+            elif self._player_move_queued == None and self._enemy_move_queued != None:
+                self._turn_order.append(self._opponent)
+            elif self._player_move_queued != None and self._enemy_move_queued == None:
+                self._turn_order.append(self._player)
+            else:
+                if self._player.active_pokemon.stats["Speed"] >= self._opponent.active_pokemon.stats["Speed"]:
                     self._turn_order.append(self._player)
+                    self._turn_order.append(self._opponent)
                 else:
-                    if self._player.active_pokemon.stats["Speed"] >= self._opponent.active_pokemon.stats["Speed"]:
-                        self._turn_order.append(self._player)
-                        self._turn_order.append(self._opponent)
-                    else:
-                        self._turn_order.append(self._opponent)
-                        self._turn_order.append(self._player)
-                self._handle_state_change(BattleStates.EXECUTE_TURN)
+                    self._turn_order.append(self._opponent)
+                    self._turn_order.append(self._player)
+            self._handle_state_change(BattleStates.EXECUTE_TURN)
 
-            # Queues up the individual steps of a battle turn.
-            elif self._state == BattleStates.EXECUTE_TURN:
+        # Queues up the individual steps of a battle turn.
+        elif self._state == BattleStates.EXECUTE_TURN:
 
-                # For each player that has a move queued add each phase of executing that move
-                # Note: if checking whether or not the player/enemy can move yields the result that they cannot move
-                # then the rest of the states pertaining to that player will be removed from the state queue
-                # after the checking process.
-                for player in self._turn_order:
-                    self._state_queue.append(BattleStates.CHECK_PLAYER_CAN_MOVE if player == self._player else BattleStates.CHECK_OPPONENT_CAN_MOVE)
-                    self._state_queue.append(BattleStates.PLAYER_MOVE_TEXT if player == self._player else BattleStates.OPPONENT_MOVE_TEXT)
+            # For each player that has a move queued add each phase of executing that move
+            # Note: if checking whether or not the player/enemy can move yields the result that they cannot move
+            # then the rest of the states pertaining to that player will be removed from the state queue
+            # after the checking process.
+            for player in self._turn_order:
+                self._state_queue.append(BattleStates.CHECK_PLAYER_CAN_MOVE if player == self._player else BattleStates.CHECK_OPPONENT_CAN_MOVE)
+                self._state_queue.append(BattleStates.PLAYER_MOVE_TEXT if player == self._player else BattleStates.OPPONENT_MOVE_TEXT)
 
-                    # Decide whether or not the move hits
-                    accuracy = self._player_move_queued.accuracy if player == self._player else self._enemy_move_queued.accuracy
-                    if random.randint(0, 100) > accuracy:
-                        self._state_queue.append(BattleStates.MOVE_MISSED)
+                # Decide whether or not the move hits
+                accuracy = self._player_move_queued.accuracy if player == self._player else self._enemy_move_queued.accuracy
+                if random.randint(0, 100) > accuracy:
+                    self._state_queue.append(BattleStates.MOVE_MISSED)
 
-                    # If the move hits add the rest of the states pertaining to executing the move to the state queue
-                    else:
-                        num_hits = self._player_move_queued.get_num_hits() if player == self._player else self._enemy_move_queued.get_num_hits()
-                        # This for loop is neccessary because some move hit more than one time in a turn (double slap for example).
-                        for x in range(num_hits):
-                            self._state_queue.append(BattleStates.PLAYER_MOVE_ANIMATION if player == self._player else BattleStates.ENEMY_MOVE_ANIMATION)
-                            self._state_queue.append(BattleStates.UPDATE_ENEMY_STATUS if player == self._player else BattleStates.UPDATE_PLAYER_STATUS)
-                            self._state_queue.append(BattleStates.DISPLAY_EFFECT)
-                            self._state_queue.append(BattleStates.UPDATE_ENEMY_STATUS_EFFECT if player == self._player else BattleStates.UPDATE_PLAYER_STATUS_EFFECT)
-                            self._state_queue.append(BattleStates.CHECK_HEALTH)
+                # If the move hits add the rest of the states pertaining to executing the move to the state queue
+                else:
+                    num_hits = self._player_move_queued.get_num_hits() if player == self._player else self._enemy_move_queued.get_num_hits()
+                    # This for loop is neccessary because some move hit more than one time in a turn (double slap for example).
+                    for x in range(num_hits):
+                        self._state_queue.append(BattleStates.PLAYER_MOVE_ANIMATION if player == self._player else BattleStates.ENEMY_MOVE_ANIMATION)
+                        self._state_queue.append(BattleStates.UPDATE_ENEMY_STATUS if player == self._player else BattleStates.UPDATE_PLAYER_STATUS)
+                        self._state_queue.append(BattleStates.DISPLAY_EFFECT)
+                        self._state_queue.append(BattleStates.UPDATE_ENEMY_STATUS_EFFECT if player == self._player else BattleStates.UPDATE_PLAYER_STATUS_EFFECT)
+                        self._state_queue.append(BattleStates.CHECK_HEALTH)
 
-                        # If a move is a multi hit move it displays how many times it hits
-                        if num_hits > 1:
-                            # This variable is neccesary because Multi Hit Text needs to know how many times the move hit.
-                            self._num_hits = num_hits
-                            self._state_queue.append(BattleStates.MULTI_HIT_TEXT)
+                    # If a move is a multi hit move it displays how many times it hits
+                    if num_hits > 1:
+                        # This variable is neccesary because Multi Hit Text needs to know how many times the move hit.
+                        self._num_hits = num_hits
+                        self._state_queue.append(BattleStates.MULTI_HIT_TEXT)
 
-                # Add nothing to the state queue if nobody used a move and return to the choosing action screen.
+            # Add nothing to the state queue if nobody used a move and return to the choosing action screen.
+            if self._state_queue == []:
+                self._handle_state_change(BattleStates.CHOOSING_FIGHT_OR_RUN)
+
+            # Go to the first state in the newly generated queue
+            else:
+                self._handle_state_change(self._state_queue.pop(0))
+
+        # Checks the health of a pokemon after it has taken damage to see if it is still alive and handle accordingly.
+        elif self._state == BattleStates.CHECK_HEALTH:
+            if self._player.active_pokemon.stats["Current HP"] <= 0:
+                self._handle_state_change(BattleStates.PLAYER_POKEMON_DIED)
+            elif self._opponent.active_pokemon.stats["Current HP"] <= 0:
+                self._handle_state_change(BattleStates.OPPONENT_POKEMON_DIED)
+            else:
                 if self._state_queue == []:
                     self._handle_state_change(BattleStates.CHOOSING_FIGHT_OR_RUN)
-
-                # Go to the first state in the newly generated queue
                 else:
                     self._handle_state_change(self._state_queue.pop(0))
 
-            # Checks the health of a pokemon after it has taken damage to see if it is still alive and handle accordingly.
-            elif self._state == BattleStates.CHECK_HEALTH:
-                if self._player.active_pokemon.stats["Current HP"] <= 0:
-                    self._handle_state_change(BattleStates.PLAYER_POKEMON_DIED)
-                elif self._opponent.active_pokemon.stats["Current HP"] <= 0:
-                    self._handle_state_change(BattleStates.OPPONENT_POKEMON_DIED)
-                else:
-                    if self._state_queue == []:
-                        self._handle_state_change(BattleStates.CHOOSING_FIGHT_OR_RUN)
-                    else:
-                        self._handle_state_change(self._state_queue.pop(0))
+        # Make the appropriate state change if an opponent's pokemon has died.
+        elif self._state == BattleStates.OPPONENT_POKEMON_DIED:
+            # If all the opponent's pokemon are dead then the player has won the battle
+            if self._opponent.all_dead():
+                self._handle_state_change(BattleStates.VICTORY)
 
-            # Make the appropriate state change if an opponent's pokemon has died.
-            elif self._state == BattleStates.OPPONENT_POKEMON_DIED:
-                # If all the opponent's pokemon are dead then the player has won the battle
-                if self._opponent.all_dead():
-                    self._handle_state_change(BattleStates.VICTORY)
-
-                # Otherwise populate the state queue with the sequence of states that play when a pokemon dies.
-                else:
-                    self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.OPPONENT_FEINT, BattleStates.OPPONENT_CHOOSING_POKEMON, BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
-                    self._active_string = "Foe " + self._opponent.active_pokemon.name.capitalize() + " fainted!"
-                    self._handle_state_change(self._state_queue.pop(0))
-
-            # Does the exact same as the OPPONENT_POKEMON_DIED except for the player
-            elif self._state == BattleStates.PLAYER_POKEMON_DIED:
-                if self._player.all_dead():
-                    self._handle_state_change(BattleStates.DEFEAT)
-                else:
-                    self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.PLAYER_FEINT, BattleStates.CHOOSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
-                    self._active_string = self._player.active_pokemon.name.capitalize() + " fainted!"
-                    self._handle_state_change(self._state_queue.pop(0))
-
-            # Opponent chooses a pokemon that is eligible to be sent out into the battle
-            elif self._state == BattleStates.OPPONENT_CHOOSING_POKEMON:
-                while self._opponent.active_pokemon.stats["Current HP"] <= 0:
-                    self._opponent.set_active_pokemon(random.randint(0, 4))
-                self._handle_state_change(self._state_queue.pop(0))
-
-            # Check to make sure the player's pokemon can move. This means checking for statuses like paralysis.
-            elif self._state == BattleStates.CHECK_PLAYER_CAN_MOVE or self._state == BattleStates.CHECK_OPPONENT_CAN_MOVE:
-                can_move = self._player.active_pokemon.can_move() if self._state == BattleStates.CHECK_PLAYER_CAN_MOVE else self._opponent.active_pokemon.can_move()
-                # If the player can not move then remove all the states pertaining to the player from the battle queue
-                if can_move != True:
-                    while True:
-                        print(self._state_queue)
-                        self._state_queue.pop(0)
-                        if self._state_queue == [] or self._state_queue[0] == BattleStates.CHECK_PLAYER_CAN_MOVE or self._state_queue[0] == BattleStates.CHECK_OPPONENT_CAN_MOVE:
-                            break
-
-                    # If the player could not move then specify why. Right now only paralysis is implemented.
-                    self._state_queue.insert(0, BattleStates.PARALYZED_CANT_MOVE)
-
-                # If there is a chance that the pokmeon could not move but did move state why (if a pokemon is paralyzed it prints this out in the battle text box each turn).
-                if "paralyze" in (self._player.active_pokemon.status if self._state == BattleStates.CHECK_PLAYER_CAN_MOVE else self._opponent.active_pokemon.status):
-                    self._state_queue.insert(0, BattleStates.PARALYZED)
-                    self._active_string = (self._player.active_pokemon.name.upper() if self._state == BattleStates.CHECK_PLAYER_CAN_MOVE else self._opponent.active_pokemon.name).upper() + " is paralyzed!"
-
-                # After the above state has been added to the queue go to said state.
-                self._handle_state_change(self._state_queue.pop(0))
-
-
-        # An event is an auto event if the event consists of an animation that needs to play.
-        elif self._state.value[0] == "auto":
-
-            # If the active animation is None then grab the correct animation based on what the current state is.
-            if self._active_animation == None:
-
-                # If the opponent is tossing out a pokemon then grab the TossPokemon animation and which pokemon they are sending out to the battle text box.
-                if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
-                    self._active_string = self._opponent.name.upper() + " sent out " + self._opponent.active_pokemon.name.upper() + "!"
-                    self._wrap_text(20)
-                    if self._initial_stage_over:
-                        self._draw_list[3] = None
-                        self._draw_list[5] = None
-                        trainer_toss = TossPokemon(self._opponent.active_pokemon.name, self._player, lead_off=False, enemy=True)
-
-                    # If this is the toss at the beginning of the battle grab the toss animation from the last spot in the draw list. This was
-                    # added there in the BATTLE_NOT_STARTED state. We must do this differently because we need the trainer to be standing still at
-                    # the start of the battle and we achieve this effect by drawing the animation and simply not starting it.
-                    else:
-                        trainer_toss = self._draw_list.pop()
-                    self._active_animation = trainer_toss
-
-                # If the player is tossing out a pokemon then grab the TossPokemon animation and which pokemon they are sending out to the battle text box.
-                # Operates in the same manner as the OPPONENT_TOSSING_POKEMON state which is more thourougly commented.
-                if self._state == BattleStates.PLAYER_TOSSING_POKEMON:
-                    self._active_string = "Go! " + self._player.active_pokemon.nick_name.upper() + "!"
-                    self._wrap_text(20)
-                    if self._initial_stage_over:
-                        self._draw_list[2] = None
-                        self._draw_list[4] = None
-                        trainer_toss = TossPokemon(self._player.active_pokemon.name, self._player, lead_off=False, enemy=False)
-                    else:
-                        trainer_toss = self._draw_list.pop()
-                        # After the player has tossed their pokemon the initial animation phase of the battle is over.
-                        self._initial_stage_over = True
-                    self._active_animation = trainer_toss
-
-                # This state attempts to play the animation for the player's currently selected move. If said animation does not exist then
-                # it simply skips displaying the animation.
-                if self._state == BattleStates.PLAYER_MOVE_ANIMATION:
-                    try:
-                        self._active_animation = getattr(sys.modules[__name__], self._player_move_queued.move_name.replace(" ", ""))(self._player.active_pokemon, self._opponent.active_pokemon)
-                    except:
-                        self._handle_state_change(self._state_queue.pop(0))
-
-                # This state attempts to play the animation for the opponent's currently selected move. If said animation does not exist then
-                # it simply skips displaying the animation.
-                if self._state == BattleStates.ENEMY_MOVE_ANIMATION:
-                    #self._active_animation = IcePunch(self._opponent.active_pokemon, self._player.active_pokemon, True)
-                    try:
-                        self._active_animation = getattr(sys.modules[__name__], self._enemy_move_queued.move_name.replace(" ", ""))(self._opponent.active_pokemon, self._player.active_pokemon, enemy=True)
-                    except:
-                        self._handle_state_change(self._state_queue.pop(0))
-
-                # This state calculates the damage done by the move and if it is greater than zero it animates the hp change and the player being hit
-                if self._state == BattleStates.UPDATE_PLAYER_STATUS:
-                    calc = DamageCalculator((self._opponent.active_pokemon, self._enemy_move_queued), self._player.active_pokemon)
-                    dmg = calc.get_damage()
-                    if dmg > 0:
-                        self._active_animation = [ChangeHP(self._player.active_pokemon, dmg, calc.get_effectiveness_sound()), Hit(self._player.active_pokemon)]
-                    else:
-                        self._active_animation = []
-
-                    # This is how effective the move was (super effective, not very effective, no effect ...)
-                    self._active_string = calc.get_effectiveness()
-
-                # This state calculates the damage done by the move and if it is greater than zero it animates the hp change and the opponent being hit
-                if self._state == BattleStates.UPDATE_ENEMY_STATUS:
-                    calc = DamageCalculator((self._player.active_pokemon, self._player_move_queued), self._opponent.active_pokemon)
-                    dmg = calc.get_damage()
-                    if dmg > 0:
-                        self._active_animation = [ChangeHP(self._opponent.active_pokemon, dmg, calc.get_effectiveness_sound()), Hit(self._opponent.active_pokemon)]
-                    else:
-                        self._active_animation = []
-                    self._active_string = calc.get_effectiveness()
-
-                # These states set the active animation to the active pokemon's death animation.
-                if self._state == BattleStates.OPPONENT_FEINT:
-                    self._active_animation = PokeDeath(self._opponent.active_pokemon)
-
-                if self._state == BattleStates.PLAYER_FEINT:
-                    self._active_animation = PokeDeath(self._player.active_pokemon)
-
-            # This code block controls auto states once the active animation for the state has been set.
+            # Otherwise populate the state queue with the sequence of states that play when a pokemon dies.
             else:
-                # If the active animation is a list then we need to handle all of the animations in the list.
-                if type(self._active_animation) == list:
-                    all_done = True
-                    # Check to see if all the animations are done.
-                    for anim in self._active_animation:
-                        if not anim.is_dead(): all_done = False
-                    # If all of the animations are done then go to the next state.
-                    if all_done:
-                        self._active_animation = None
-                        if len(self._state_queue) > 0:
-                            self._handle_state_change(self._state_queue.pop(0))
-                        else:
-                            self._handle_state_change(BattleStates.CHOOSE_OPPONENT_ACTION)
+                self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.OPPONENT_FEINT, BattleStates.OPPONENT_CHOOSING_POKEMON, BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
+                self._active_string = "Foe " + self._opponent.active_pokemon.name.capitalize() + " fainted!"
+                self._handle_state_change(self._state_queue.pop(0))
 
-                # If the active animation is only one animation and that animation is done do the following.
-                elif self._active_animation.is_dead():
+        # Does the exact same as the OPPONENT_POKEMON_DIED except for the player
+        elif self._state == BattleStates.PLAYER_POKEMON_DIED:
+            if self._player.all_dead():
+                self._handle_state_change(BattleStates.DEFEAT)
+            else:
+                self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.PLAYER_FEINT, BattleStates.CHOOSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
+                self._active_string = self._player.active_pokemon.name.capitalize() + " fainted!"
+                self._handle_state_change(self._state_queue.pop(0))
+
+        # Opponent chooses a pokemon that is eligible to be sent out into the battle
+        elif self._state == BattleStates.OPPONENT_CHOOSING_POKEMON:
+            while self._opponent.active_pokemon.stats["Current HP"] <= 0:
+                self._opponent.set_active_pokemon(random.randint(0, 4))
+            self._handle_state_change(self._state_queue.pop(0))
+
+        # Check to make sure the player's pokemon can move. This means checking for statuses like paralysis.
+        elif self._state == BattleStates.CHECK_PLAYER_CAN_MOVE or self._state == BattleStates.CHECK_OPPONENT_CAN_MOVE:
+            can_move = self._player.active_pokemon.can_move() if self._state == BattleStates.CHECK_PLAYER_CAN_MOVE else self._opponent.active_pokemon.can_move()
+            # If the player can not move then remove all the states pertaining to the player from the battle queue
+            if can_move != True:
+                while True:
+                    print(self._state_queue)
+                    self._state_queue.pop(0)
+                    if self._state_queue == [] or self._state_queue[0] == BattleStates.CHECK_PLAYER_CAN_MOVE or self._state_queue[0] == BattleStates.CHECK_OPPONENT_CAN_MOVE:
+                        break
+
+                # If the player could not move then specify why. Right now only paralysis is implemented.
+                self._state_queue.insert(0, BattleStates.PARALYZED_CANT_MOVE)
+
+            # If there is a chance that the pokmeon could not move but did move state why (if a pokemon is paralyzed it prints this out in the battle text box each turn).
+            if "paralyze" in (self._player.active_pokemon.status if self._state == BattleStates.CHECK_PLAYER_CAN_MOVE else self._opponent.active_pokemon.status):
+                self._state_queue.insert(0, BattleStates.PARALYZED)
+                self._active_string = (self._player.active_pokemon.name.upper() if self._state == BattleStates.CHECK_PLAYER_CAN_MOVE else self._opponent.active_pokemon.name).upper() + " is paralyzed!"
+
+            # After the above state has been added to the queue go to said state.
+            self._handle_state_change(self._state_queue.pop(0))
+
+    def _update_auto(self, ticks):
+        # If the active animation is None then grab the correct animation based on what the current state is.
+        if self._active_animation == None:
+
+            # If the opponent is tossing out a pokemon then grab the TossPokemon animation and which pokemon they are sending out to the battle text box.
+            if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
+                self._active_string = self._opponent.name.upper() + " sent out " + self._opponent.active_pokemon.name.upper() + "!"
+                self._wrap_text(20)
+                if self._initial_stage_over:
+                    self._draw_list[3] = None
+                    self._draw_list[5] = None
+                    trainer_toss = TossPokemon(self._opponent.active_pokemon.name, self._player, lead_off=False, enemy=True)
+
+                # If this is the toss at the beginning of the battle grab the toss animation from the last spot in the draw list. This was
+                # added there in the BATTLE_NOT_STARTED state. We must do this differently because we need the trainer to be standing still at
+                # the start of the battle and we achieve this effect by drawing the animation and simply not starting it.
+                else:
+                    trainer_toss = self._draw_list.pop()
+                self._active_animation = trainer_toss
+
+            # If the player is tossing out a pokemon then grab the TossPokemon animation and which pokemon they are sending out to the battle text box.
+            # Operates in the same manner as the OPPONENT_TOSSING_POKEMON state which is more thourougly commented.
+            if self._state == BattleStates.PLAYER_TOSSING_POKEMON:
+                self._active_string = "Go! " + self._player.active_pokemon.nick_name.upper() + "!"
+                self._wrap_text(20)
+                if self._initial_stage_over:
+                    self._draw_list[2] = None
+                    self._draw_list[4] = None
+                    trainer_toss = TossPokemon(self._player.active_pokemon.name, self._player, lead_off=False, enemy=False)
+                else:
+                    trainer_toss = self._draw_list.pop()
+                    # After the player has tossed their pokemon the initial animation phase of the battle is over.
+                    self._initial_stage_over = True
+                self._active_animation = trainer_toss
+
+            # This state attempts to play the animation for the player's currently selected move. If said animation does not exist then
+            # it simply skips displaying the animation.
+            if self._state == BattleStates.PLAYER_MOVE_ANIMATION:
+                try:
+                    self._active_animation = getattr(sys.modules[__name__], self._player_move_queued.move_name.replace(" ", ""))(self._player.active_pokemon, self._opponent.active_pokemon)
+                except:
+                    self._handle_state_change(self._state_queue.pop(0))
+
+            # This state attempts to play the animation for the opponent's currently selected move. If said animation does not exist then
+            # it simply skips displaying the animation.
+            if self._state == BattleStates.ENEMY_MOVE_ANIMATION:
+                #self._active_animation = IcePunch(self._opponent.active_pokemon, self._player.active_pokemon, True)
+                try:
+                    self._active_animation = getattr(sys.modules[__name__], self._enemy_move_queued.move_name.replace(" ", ""))(self._opponent.active_pokemon, self._player.active_pokemon, enemy=True)
+                except:
+                    self._handle_state_change(self._state_queue.pop(0))
+
+            # This state calculates the damage done by the move and if it is greater than zero it animates the hp change and the player being hit
+            if self._state == BattleStates.UPDATE_PLAYER_STATUS:
+                calc = DamageCalculator((self._opponent.active_pokemon, self._enemy_move_queued), self._player.active_pokemon)
+                dmg = calc.get_damage()
+                if dmg > 0:
+                    self._active_animation = [ChangeHP(self._player.active_pokemon, dmg, calc.get_effectiveness_sound()), Hit(self._player.active_pokemon)]
+                else:
+                    self._active_animation = []
+
+                # This is how effective the move was (super effective, not very effective, no effect ...)
+                self._active_string = calc.get_effectiveness()
+
+            # This state calculates the damage done by the move and if it is greater than zero it animates the hp change and the opponent being hit
+            if self._state == BattleStates.UPDATE_ENEMY_STATUS:
+                calc = DamageCalculator((self._player.active_pokemon, self._player_move_queued), self._opponent.active_pokemon)
+                dmg = calc.get_damage()
+                if dmg > 0:
+                    self._active_animation = [ChangeHP(self._opponent.active_pokemon, dmg, calc.get_effectiveness_sound()), Hit(self._opponent.active_pokemon)]
+                else:
+                    self._active_animation = []
+                self._active_string = calc.get_effectiveness()
+
+            # These states set the active animation to the active pokemon's death animation.
+            if self._state == BattleStates.OPPONENT_FEINT:
+                self._active_animation = PokeDeath(self._opponent.active_pokemon)
+
+            if self._state == BattleStates.PLAYER_FEINT:
+                self._active_animation = PokeDeath(self._player.active_pokemon)
+
+        # This code block controls auto states once the active animation for the state has been set.
+        else:
+            # If the active animation is a list then we need to handle all of the animations in the list.
+            if type(self._active_animation) == list:
+                all_done = True
+                # Check to see if all the animations are done.
+                for anim in self._active_animation:
+                    if not anim.is_dead(): all_done = False
+                # If all of the animations are done then go to the next state.
+                if all_done:
                     self._active_animation = None
-
-                    # After the opponent has finished tossing a pokemon we need to add that pokemon its corresponding poke info to the draw/update list
-                    if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
-                        self._draw_list[3] = self._opponent.active_pokemon
-                        op_poke_info = PokeInfo(self._opponent.active_pokemon, enemy=True)
-                        self._draw_list[5] = op_poke_info
-                        self._update_list[1] = op_poke_info
-
-                    # After the player has finished tossing a pokemon we need to add that pokemon and its corresponding poke info to the draw/update list
-                    if self._state == BattleStates.PLAYER_TOSSING_POKEMON:
-                        self._draw_list[2] = self._player.active_pokemon
-                        self._player_poke_info = PokeInfo(self._player.active_pokemon)
-                        self._draw_list[4] = self._player_poke_info
-                        self._update_list[0] = self._player_poke_info
-
-                    # Go to the next state.
                     if len(self._state_queue) > 0:
                         self._handle_state_change(self._state_queue.pop(0))
                     else:
                         self._handle_state_change(BattleStates.CHOOSE_OPPONENT_ACTION)
+
+            # If the active animation is only one animation and that animation is done do the following.
+            elif self._active_animation.is_dead():
+                self._active_animation = None
+
+                # After the opponent has finished tossing a pokemon we need to add that pokemon its corresponding poke info to the draw/update list
+                if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
+                    self._draw_list[3] = self._opponent.active_pokemon
+                    op_poke_info = PokeInfo(self._opponent.active_pokemon, enemy=True)
+                    self._draw_list[5] = op_poke_info
+                    self._update_list[1] = op_poke_info
+
+                # After the player has finished tossing a pokemon we need to add that pokemon and its corresponding poke info to the draw/update list
+                if self._state == BattleStates.PLAYER_TOSSING_POKEMON:
+                    self._draw_list[2] = self._player.active_pokemon
+                    self._player_poke_info = PokeInfo(self._player.active_pokemon)
+                    self._draw_list[4] = self._player_poke_info
+                    self._update_list[0] = self._player_poke_info
+
+                # Go to the next state.
+                if len(self._state_queue) > 0:
+                    self._handle_state_change(self._state_queue.pop(0))
+                else:
+                    self._handle_state_change(BattleStates.CHOOSE_OPPONENT_ACTION)
 
     def handle_action(self, action):
         """Handles the actions that a user provides. Calls helper methods."""
@@ -607,7 +626,6 @@ class BattleFSM:
 
         self._state = new_state
 
-
     def _wrap_text(self, width):
         """Helper method that renders and blits text to the text box. Wraps the text if its width exceeds the provided width parameter."""
         self._battle_text_background.reload()
@@ -618,6 +636,7 @@ class BattleFSM:
             self._battle_text_background._image.blit(rendered, (10, height))
             height += 15
         return (rendered.get_width(), height)
+
 
 class Cursor(Drawable):
     """Small Cursor class that keeps track of the in battle cursor. The below dictionaries hold the positions of the cursor depending on the
