@@ -11,13 +11,13 @@ class StatCalculator:
         new_stat={}
         with open(join("jsons", "pokemon.json"), "r") as pokemonfile:
             pokemon_j = json.load(pokemonfile)
-            print(pokemon._name)
-            base_hp=pokemon_j[pokemon._name.capitalize()]["base"]["HP"]
-            base_attack=pokemon_j[pokemon._name.capitalize()]["base"]["Attack"]
-            base_defense=pokemon_j[pokemon._name.capitalize()]["base"]["Defense"]
-            base_sp_attack=pokemon_j[pokemon._name.capitalize()]["base"]["Sp. Attack"]
-            base_sp_defense=pokemon_j[pokemon._name.capitalize()]["base"]["Sp. Defense"]
-            base_speed=pokemon_j[pokemon._name.capitalize()]["base"]["Speed"]
+            print(pokemon.name)
+            base_hp=pokemon_j[pokemon.name.capitalize()]["base"]["HP"]
+            base_attack=pokemon_j[pokemon.name.capitalize()]["base"]["Attack"]
+            base_defense=pokemon_j[pokemon.name.capitalize()]["base"]["Defense"]
+            base_sp_attack=pokemon_j[pokemon.name.capitalize()]["base"]["Sp. Attack"]
+            base_sp_defense=pokemon_j[pokemon.name.capitalize()]["base"]["Sp. Defense"]
+            base_speed=pokemon_j[pokemon.name.capitalize()]["base"]["Speed"]
             
             hp = self.calculate_hp(base_hp, lvl)
             attack = self.calculate_stat_other(base_attack, lvl)

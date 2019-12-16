@@ -18,16 +18,17 @@ class Pokemon(Drawable):
             _lookup = tuple(pokemon_lookup[pokemon_name])
         _pos = self.PLAYER_POKE_POS if not enemy else self.ENEMY_POKE_POS
         _offset = _lookup if enemy else (_lookup[0] + 1, _lookup[1])
-        self._name = pokemon_name
-        self._nick_name = self._name
-        self._gender = gender
-        self._moves = []
-        self._held_item = None
-        self._ability = None
+        self.name = pokemon_name
+        self.nick_name = self.name
+        self.gender = gender
+        self.moves = []
+        self.held_item = None
+        self.ability = None
+
         # Keeps track of the status effects currently on the pokemon.
-        self._status = []
-        self._enemy = enemy     
-        self._stats = {
+        self.status = []
+        self.enemy = enemy     
+        self.stats = {
             "LVL" : 62,
             "HP": 147,
             "Current HP" : 147,
@@ -43,7 +44,7 @@ class Pokemon(Drawable):
             pokemon = json.load(pokemon_json)
             pokemon_data = pokemon[pokemon_name.capitalize()]
 
-        self._type = pokemon_data["type"]
+        self.type = pokemon_data["type"]
 
         # Determines whether or not to draw the pokemon.
         self._draw = True
@@ -61,48 +62,48 @@ class Pokemon(Drawable):
     def add_move_list(self, lyst):
         """Adds the move list to the pokemon."""
         for move in lyst:
-            self._moves.append(Move(move))
+            self.moves.append(Move(move))
     
     def add_status(self, status):
         """Adds a status effect to a pokemon."""
-        self._status.append(status)
+        self.status.append(status)
 
     def get_nick_name(self):
         """Gets the pokemon's nickname."""
-        return self._nick_name
+        return self.nick_name
     
     def get_name(self):
         """Gets the pokemon's actual name."""
-        return self._name
+        return self.name
     
     def get_ability(self):
         """Gets the pokemon's ability."""
-        return self._ability
+        return self.ability
     
     def get_status(self):
         """Gets the status of the pokemon."""
-        return self._status
+        return self.status
     
     def get_gender(self):
         """Gets the gender of the pokemon."""
-        return self._gender
+        return self.gender
     
     def get_moves(self):
         """Gets the moveset of the pokemon."""
-        return self._moves
+        return self.moves
     
     def is_alive(self):
         """Returns if the pokmeon is alive."""
-        return self._stats["Current HP"] != 0
+        return self.stats["Current HP"] != 0
     
     def add_move(self, move):
         """Adds a single move to the pokemon's moveset."""
-        if len(self._moves) < 4:
-            self._moves.append(move)
+        if len(self.moves) < 4:
+            self.moves.append(move)
     
     def can_move(self):
         """Determines whether a pokemon's status ailments will allow it to move."""
-        if "paralyze" in self._status:
+        if "paralyze" in self.status:
             prob = random.randint(0, 100)
             if prob < 25:
                 return "paralyze"
@@ -110,20 +111,12 @@ class Pokemon(Drawable):
     
     def get_lvl(self):
         """Get the level of the pokemon."""
-        return self._stats["LVL"]
-    
-    def get_type(self):
-        """Get the type of the pokemon."""
-        return self._type
-    
-    def get_held_item(self):
-        """Get the pokemon's held item."""
-        return self._held_item
+        return self.stats["LVL"]
 
     def __str__(self):
         """Allows a pokemon object to be printed."""
-        return self._name
+        return self.name
     
     def __repr__(self):
         """Used for debugging purposes primarily."""
-        return self._name
+        return self.name

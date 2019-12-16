@@ -56,7 +56,7 @@ class Battle:
         """Return whether or not the battle is over. If it is over it gets the end event from the opponent."""
         if self._battle_fsm.is_over():
             pygame.mixer.music.pause()
-            self._event = self._opponent._event
+            self._event = self._opponent.event
         return self._battle_fsm.is_over()
 
     def get_end_event(self):

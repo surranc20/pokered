@@ -140,13 +140,13 @@ class BattleFSM:
         # This only occurs at the very start of the battle. Handles all of the intro animations.
         if self._state == BattleStates.NOT_STARTED:
             self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.PLAYER_TOSSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
-            self._active_string = self._opponent.get_name().upper() + " would like to battle!"
+            self._active_string = self._opponent.name.upper() + " would like to battle!"
             self._state = self._state_queue.pop(0)
             self._player.set_active_pokemon(0)
             self._opponent.set_active_pokemon(0)
 
-            self._draw_list.append(TossPokemon(self._player.get_active_pokemon().get_name(), self._player, lead_off=True, enemy=False))
-            self._draw_list.append(TossPokemon(self._opponent.get_active_pokemon().get_name(), self._opponent, lead_off=True, enemy=True))
+            self._draw_list.append(TossPokemon(self._player.active_pokemon.name, self._player, lead_off=True, enemy=False))
+            self._draw_list.append(TossPokemon(self._opponent.active_pokemon.name, self._opponent, lead_off=True, enemy=True))
 
         # Handles updates if the battle is over
         if self._state == BattleStates.BATTLE_OVER:
@@ -186,7 +186,7 @@ class BattleFSM:
             # The opponent chooses the move to use and then the current state is set to Deciding Battle Order
             elif self._state == BattleStates.OPPONENT_CHOOSING_MOVE:
                 while True:
-                    self._enemy_move_queued = self._opponent.get_active_pokemon().get_moves()[random.randint(0, 3)]
+                    self._enemy_move_queued = self._opponent.active_pokemon.get_moves()[random.randint(0, 3)]
                     if self._enemy_move_queued.category in ["Physical", "Special"]:
                         print(self._enemy_move_queued.move_name)
                         break
@@ -195,14 +195,14 @@ class BattleFSM:
             # The player has won. Triggers the series of events that happens after the player wins
             elif self._state == BattleStates.VICTORY:
                 self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.BATTLE_OVER]
-                self._active_string = "Player defeated " + self._opponent.get_name().upper() + "!"
+                self._active_string = "Player defeated " + self._opponent.name.upper() + "!"
                 self._handle_state_change(self._state_queue.pop(0))
             
             # The player has lost. Triggers the series of events that happens after the player has lost.
             elif self._state == BattleStates.DEFEAT:
                 self._player_lost = True
                 self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.BATTLE_OVER]
-                self._active_string = "Player was defeated by " + self._opponent.get_name().upper() + "!"
+                self._active_string = "Player was defeated by " + self._opponent.name.upper() + "!"
                 self._handle_state_change(self._state_queue.pop(0))
 
             # Decides the battle order. Depends on whether or not each player has queued an action and the speeds of the pokemon.
@@ -214,7 +214,7 @@ class BattleFSM:
                 elif self._player_move_queued != None and self._enemy_move_queued == None:
                     self._turn_order.append(self._player)
                 else:
-                    if self._player.get_active_pokemon()._stats["Speed"] >= self._opponent.get_active_pokemon()._stats["Speed"]:
+                    if self._player.active_pokemon.stats["Speed"] >= self._opponent.active_pokemon.stats["Speed"]:
                         self._turn_order.append(self._player)
                         self._turn_order.append(self._opponent)
                     else:
@@ -265,9 +265,9 @@ class BattleFSM:
             
             # Checks the health of a pokemon after it has taken damage to see if it is still alive and handle accordingly.
             elif self._state == BattleStates.CHECK_HEALTH:
-                if self._player.get_active_pokemon()._stats["Current HP"] <= 0:
+                if self._player.active_pokemon.stats["Current HP"] <= 0:
                     self._handle_state_change(BattleStates.PLAYER_POKEMON_DIED)
-                elif self._opponent.get_active_pokemon()._stats["Current HP"] <= 0:
+                elif self._opponent.active_pokemon.stats["Current HP"] <= 0:
                     self._handle_state_change(BattleStates.OPPONENT_POKEMON_DIED)
                 else:
                     if self._state_queue == []:
@@ -284,7 +284,7 @@ class BattleFSM:
                 # Otherwise populate the state queue with the sequence of states that play when a pokemon dies.
                 else:
                     self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.OPPONENT_FEINT, BattleStates.OPPONENT_CHOOSING_POKEMON, BattleStates.OPPONENT_TOSSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
-                    self._active_string = "Foe " + self._opponent.get_active_pokemon().get_name().capitalize() + " fainted!"
+                    self._active_string = "Foe " + self._opponent.active_pokemon.name.capitalize() + " fainted!"
                     self._handle_state_change(self._state_queue.pop(0))
 
             # Does the exact same as the OPPONENT_POKEMON_DIED except for the player
@@ -293,18 +293,18 @@ class BattleFSM:
                     self._handle_state_change(BattleStates.DEFEAT)
                 else:
                     self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.PLAYER_FEINT, BattleStates.CHOOSING_POKEMON, BattleStates.CHOOSING_FIGHT_OR_RUN]
-                    self._active_string = self._player.get_active_pokemon().get_name().capitalize() + " fainted!"
+                    self._active_string = self._player.active_pokemon.name.capitalize() + " fainted!"
                     self._handle_state_change(self._state_queue.pop(0))
 
             # Opponent chooses a pokemon that is eligible to be sent out into the battle
             elif self._state == BattleStates.OPPONENT_CHOOSING_POKEMON:
-                while self._opponent.get_active_pokemon()._stats["Current HP"] <= 0:
+                while self._opponent.active_pokemon.stats["Current HP"] <= 0:
                     self._opponent.set_active_pokemon(random.randint(0, 4))
                 self._handle_state_change(self._state_queue.pop(0))
             
             # Check to make sure the player's pokemon can move. This means checking for statuses like paralysis.
             elif self._state == BattleStates.CHECK_PLAYER_CAN_MOVE or self._state == BattleStates.CHECK_OPPONENT_CAN_MOVE:
-                can_move = self._player.get_active_pokemon().can_move() if self._state == BattleStates.CHECK_PLAYER_CAN_MOVE else self._opponent.get_active_pokemon().can_move()
+                can_move = self._player.active_pokemon.can_move() if self._state == BattleStates.CHECK_PLAYER_CAN_MOVE else self._opponent.active_pokemon.can_move()
                 # If the player can not move then remove all the states pertaining to the player from the battle queue
                 if can_move != True:
                     while True:
@@ -317,9 +317,9 @@ class BattleFSM:
                     self._state_queue.insert(0, BattleStates.PARALYZED_CANT_MOVE)
                 
                 # If there is a chance that the pokmeon could not move but did move state why (if a pokemon is paralyzed it prints this out in the battle text box each turn).
-                if "paralyze" in (self._player.get_active_pokemon()._status if self._state == BattleStates.CHECK_PLAYER_CAN_MOVE else self._opponent.get_active_pokemon()._status):
+                if "paralyze" in (self._player.active_pokemon.status if self._state == BattleStates.CHECK_PLAYER_CAN_MOVE else self._opponent.active_pokemon.status):
                     self._state_queue.insert(0, BattleStates.PARALYZED)
-                    self._active_string = (self._player.get_active_pokemon().get_name().upper() if self._state == BattleStates.CHECK_PLAYER_CAN_MOVE else self._opponent.get_active_pokemon().get_name()).upper() + " is paralyzed!"
+                    self._active_string = (self._player.active_pokemon.name.upper() if self._state == BattleStates.CHECK_PLAYER_CAN_MOVE else self._opponent.active_pokemon.name).upper() + " is paralyzed!"
                 
                 # After the above state has been added to the queue go to said state.
                 self._handle_state_change(self._state_queue.pop(0))
@@ -333,12 +333,12 @@ class BattleFSM:
 
                 # If the opponent is tossing out a pokemon then grab the TossPokemon animation and which pokemon they are sending out to the battle text box.
                 if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
-                    self._active_string = self._opponent.get_name().upper() + " sent out " + self._opponent.get_active_pokemon().get_name().upper() + "!"
+                    self._active_string = self._opponent.name.upper() + " sent out " + self._opponent.active_pokemon.name.upper() + "!"
                     self._wrap_text(20)
                     if self._initial_stage_over:
                         self._draw_list[3] = None
                         self._draw_list[5] = None
-                        trainer_toss = TossPokemon(self._opponent.get_active_pokemon().get_name(), self._player, lead_off=False, enemy=True)
+                        trainer_toss = TossPokemon(self._opponent.active_pokemon.name, self._player, lead_off=False, enemy=True)
                     
                     # If this is the toss at the beginning of the battle grab the toss animation from the last spot in the draw list. This was 
                     # added there in the BATTLE_NOT_STARTED state. We must do this differently because we need the trainer to be standing still at
@@ -350,12 +350,12 @@ class BattleFSM:
                 # If the player is tossing out a pokemon then grab the TossPokemon animation and which pokemon they are sending out to the battle text box.
                 # Operates in the same manner as the OPPONENT_TOSSING_POKEMON state which is more thourougly commented.
                 if self._state == BattleStates.PLAYER_TOSSING_POKEMON:
-                    self._active_string = "Go! " + self._player.get_active_pokemon().get_nick_name().upper() + "!"
+                    self._active_string = "Go! " + self._player.active_pokemon.get_nick_name().upper() + "!"
                     self._wrap_text(20)
                     if self._initial_stage_over:
                         self._draw_list[2] = None
                         self._draw_list[4] = None
-                        trainer_toss = TossPokemon(self._player.get_active_pokemon().get_name(), self._player, lead_off=False, enemy=False)
+                        trainer_toss = TossPokemon(self._player.active_pokemon.name, self._player, lead_off=False, enemy=False)
                     else:
                         trainer_toss = self._draw_list.pop()
                         # After the player has tossed their pokemon the initial animation phase of the battle is over.
@@ -366,25 +366,25 @@ class BattleFSM:
                 # it simply skips displaying the animation.
                 if self._state == BattleStates.PLAYER_MOVE_ANIMATION:
                     try:
-                        self._active_animation = getattr(sys.modules[__name__], self._player_move_queued.move_name.replace(" ", ""))(self._player.get_active_pokemon(), self._opponent.get_active_pokemon())
+                        self._active_animation = getattr(sys.modules[__name__], self._player_move_queued.move_name.replace(" ", ""))(self._player.active_pokemon, self._opponent.active_pokemon)
                     except:
                         self._handle_state_change(self._state_queue.pop(0))
                 
                 # This state attempts to play the animation for the opponent's currently selected move. If said animation does not exist then
                 # it simply skips displaying the animation.
                 if self._state == BattleStates.ENEMY_MOVE_ANIMATION:
-                    #self._active_animation = IcePunch(self._opponent.get_active_pokemon(), self._player.get_active_pokemon(), True)
+                    #self._active_animation = IcePunch(self._opponent.active_pokemon, self._player.active_pokemon, True)
                     try:
-                        self._active_animation = getattr(sys.modules[__name__], self._enemy_move_queued.move_name.replace(" ", ""))(self._opponent.get_active_pokemon(), self._player.get_active_pokemon(), enemy=True)
+                        self._active_animation = getattr(sys.modules[__name__], self._enemy_move_queued.move_name.replace(" ", ""))(self._opponent.active_pokemon, self._player.active_pokemon, enemy=True)
                     except:
                         self._handle_state_change(self._state_queue.pop(0))
                 
                 # This state calculates the damage done by the move and if it is greater than zero it animates the hp change and the player being hit
                 if self._state == BattleStates.UPDATE_PLAYER_STATUS:
-                    calc = DamageCalculator((self._opponent.get_active_pokemon(), self._enemy_move_queued), self._player.get_active_pokemon())
+                    calc = DamageCalculator((self._opponent.active_pokemon, self._enemy_move_queued), self._player.active_pokemon)
                     dmg = calc.get_damage()
                     if dmg > 0:
-                        self._active_animation = [ChangeHP(self._player.get_active_pokemon(), dmg, calc.get_effectiveness_sound()), Hit(self._player.get_active_pokemon())]
+                        self._active_animation = [ChangeHP(self._player.active_pokemon, dmg, calc.get_effectiveness_sound()), Hit(self._player.active_pokemon)]
                     else:
                         self._active_animation = []
 
@@ -393,20 +393,20 @@ class BattleFSM:
                 
                 # This state calculates the damage done by the move and if it is greater than zero it animates the hp change and the opponent being hit
                 if self._state == BattleStates.UPDATE_ENEMY_STATUS:
-                    calc = DamageCalculator((self._player.get_active_pokemon(), self._player_move_queued), self._opponent.get_active_pokemon())
+                    calc = DamageCalculator((self._player.active_pokemon, self._player_move_queued), self._opponent.active_pokemon)
                     dmg = calc.get_damage()
                     if dmg > 0:
-                        self._active_animation = [ChangeHP(self._opponent.get_active_pokemon(), dmg, calc.get_effectiveness_sound()), Hit(self._opponent.get_active_pokemon())]
+                        self._active_animation = [ChangeHP(self._opponent.active_pokemon, dmg, calc.get_effectiveness_sound()), Hit(self._opponent.active_pokemon)]
                     else:
                         self._active_animation = []
                     self._active_string = calc.get_effectiveness()
 
                 # These states set the active animation to the active pokemon's death animation.
                 if self._state == BattleStates.OPPONENT_FEINT:
-                    self._active_animation = PokeDeath(self._opponent.get_active_pokemon())
+                    self._active_animation = PokeDeath(self._opponent.active_pokemon)
                 
                 if self._state == BattleStates.PLAYER_FEINT:
-                    self._active_animation = PokeDeath(self._player.get_active_pokemon())
+                    self._active_animation = PokeDeath(self._player.active_pokemon)
                 
             # This code block controls auto states once the active animation for the state has been set.
             else:
@@ -430,15 +430,15 @@ class BattleFSM:
 
                     # After the opponent has finished tossing a pokemon we need to add that pokemon its corresponding poke info to the draw/update list
                     if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
-                        self._draw_list[3] = self._opponent.get_active_pokemon()
-                        op_poke_info = PokeInfo(self._opponent.get_active_pokemon(), enemy=True)
+                        self._draw_list[3] = self._opponent.active_pokemon
+                        op_poke_info = PokeInfo(self._opponent.active_pokemon, enemy=True)
                         self._draw_list[5] = op_poke_info
                         self._update_list[1] = op_poke_info
 
                     # After the player has finished tossing a pokemon we need to add that pokemon and its corresponding poke info to the draw/update list
                     if self._state == BattleStates.PLAYER_TOSSING_POKEMON:
-                        self._draw_list[2] = self._player.get_active_pokemon()
-                        self._player_poke_info = PokeInfo(self._player.get_active_pokemon())
+                        self._draw_list[2] = self._player.active_pokemon
+                        self._player_poke_info = PokeInfo(self._player.active_pokemon)
                         self._draw_list[4] = self._player_poke_info
                         self._update_list[0] = self._player_poke_info
                     
@@ -485,7 +485,7 @@ class BattleFSM:
                 else:
                     SoundManager.getInstance().playSound("firered_0005.wav")
                     if self._state == BattleStates.CHOOSING_MOVE:
-                        self._player_move_queued = self._player.get_active_pokemon().get_moves()[self._cursor.get_move_corrected_value()]
+                        self._player_move_queued = self._player.active_pokemon.get_moves()[self._cursor.get_move_corrected_value()]
                         self._handle_state_change(self.TRANSITIONS[self._state])
                     else:
                         self._handle_state_change(self.TRANSITIONS[(self._state), self._cursor.get_value()])
@@ -538,7 +538,7 @@ class BattleFSM:
             self._turn_order = []
             self._player_move_queued = None
             self._enemy_move_queued = None
-            self._active_string = str("What will " + self._player.get_active_pokemon().get_name().upper() + " do?")
+            self._active_string = str("What will " + self._player.active_pokemon.name.upper() + " do?")
             self._wrap_text(16)
             self._draw_list.append(self._fight_run)
             self._draw_list.append(self._cursor)
@@ -550,8 +550,8 @@ class BattleFSM:
             self._cursor.set_positions(new_state)
             self._cursor.reset()
             self._draw_list.append(self._move_select)
-            self._moves_surface = MovesSurface(self._player.get_active_pokemon())
-            self._pp_surface = PPSurface(self._player.get_active_pokemon())
+            self._moves_surface = MovesSurface(self._player.active_pokemon)
+            self._pp_surface = PPSurface(self._player.active_pokemon)
             self._draw_list.append(self._moves_surface)
             self._draw_list.append(self._pp_surface)
             self._draw_list.append(self._cursor)
@@ -569,11 +569,11 @@ class BattleFSM:
         
         elif new_state == BattleStates.OPPONENT_MOVE_TEXT:
             self._enemy_move_queued.current_pp -=1
-            self._active_string = self._active_string = self._opponent.get_active_pokemon().get_name().upper() + " used " +  self._enemy_move_queued.move_name + "!"
+            self._active_string = self._active_string = self._opponent.active_pokemon.name.upper() + " used " +  self._enemy_move_queued.move_name + "!"
 
         elif new_state == BattleStates.PLAYER_MOVE_TEXT:
             self._player_move_queued.current_pp -= 1
-            self._active_string = self._active_string = self._player.get_active_pokemon().get_name().upper() + " used " +  self._player_move_queued.move_name + "!"
+            self._active_string = self._active_string = self._player.active_pokemon.name.upper() + " used " +  self._player_move_queued.move_name + "!"
 
         elif new_state == BattleStates.MOVE_MISSED:
             self._active_string = "Its move missed!"
@@ -583,13 +583,13 @@ class BattleFSM:
             self._num_hits = 1
         
         elif new_state == BattleStates.UPDATE_ENEMY_STATUS_EFFECT:
-            calc = DamageCalculator((self._player.get_active_pokemon(), self._player_move_queued), self._opponent.get_active_pokemon())
+            calc = DamageCalculator((self._player.active_pokemon, self._player_move_queued), self._opponent.active_pokemon)
             effect = calc.get_effect()
             print(effect)
             if effect != None:
-                self._opponent.get_active_pokemon().add_status(effect)
+                self._opponent.active_pokemon.add_status(effect)
                 if effect == "paralyze":
-                    self._active_string = self._opponent.get_name().upper() + "'s " + self._opponent.get_active_pokemon().get_name().upper() + " became paralyzd! It may not be able to move!"
+                    self._active_string = self._opponent.name.upper() + "'s " + self._opponent.active_pokemon.name.upper() + " became paralyzd! It may not be able to move!"
             else: self._active_string = ""
         
         elif new_state == BattleStates.PARALYZED_CANT_MOVE:
@@ -597,12 +597,12 @@ class BattleFSM:
                     
                 
         elif new_state == BattleStates.UPDATE_PLAYER_STATUS_EFFECT:
-            calc = DamageCalculator((self._opponent.get_active_pokemon(), self._enemy_move_queued), self._player.get_active_pokemon())
+            calc = DamageCalculator((self._opponent.active_pokemon, self._enemy_move_queued), self._player.active_pokemon)
             effect = calc.get_effect()
             if effect != None:
                 self._player.get_active_pokemon.add_status(effect)
                 if effect == "paralyze":
-                    self._active_string = "Your " + self._player.get_active_pokemon().get_name().upper() + " became paralyzd! It may not be able to move!"
+                    self._active_string = "Your " + self._player.active_pokemon.name.upper() + " became paralyzd! It may not be able to move!"
             else: self._active_string = ""
 
         self._state = new_state

@@ -6,8 +6,8 @@ class ChangeHP(PokeInfo):
     This is necessary becuase the health bar does not simply drop all at once. It slowly
     goes down."""
     def __init__(self, pokemon, damage, sound, enemy=False):
-        super().__init__(pokemon, pokemon._enemy)
-        self._start_hp = pokemon._stats["Current HP"]
+        super().__init__(pokemon, pokemon.enemy)
+        self._start_hp = pokemon.stats["Current HP"]
         self._current_hp = self._start_hp
         self._new_hp = max(self._start_hp - damage, 0)
         if sound == "super":
@@ -24,7 +24,7 @@ class ChangeHP(PokeInfo):
         if int(self._current_hp) != int(self._new_hp):
             super().__init__(self._pokemon, self._enemy, self._current_hp - 1)
         else:
-            self._pokemon._stats["Current HP"] = self._new_hp
+            self._pokemon.stats["Current HP"] = self._new_hp
             self.kill()
     
     def is_dead(self):
