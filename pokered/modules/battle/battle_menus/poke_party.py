@@ -24,7 +24,7 @@ class PokeParty(Drawable):
         self._cursor = 0
         self._selected_pokemon = False
         self._pokemon_selected_menu = None
-        self._party_size = len(self._player.get_pokemon_team())
+        self._party_size = len(self._player.pokemon_team)
     
     def _blit_active_pokemon(self):
         """Creates the active pokemon object. This is the pokemon that appears on the left in the party screen."""
@@ -34,7 +34,7 @@ class PokeParty(Drawable):
     def _blit_secondary_pokemon(self):
         """Creates the other display objects. These are the pokemon that are not in position one."""
         position = (88,9)
-        for pokemon in self._player.get_pokemon_team()[1:]:
+        for pokemon in self._player.pokemon_team[1:]:
             self._selectable_items.append(SecondaryPokemon(pokemon, position))
             position = (88, position[1] + 24)
     
@@ -103,7 +103,7 @@ class PokeParty(Drawable):
             self._selected_pokemon = False
             self._pokemon_selected_menu = None
             self._text_bar.blit_string("Choose a POKeMON.")
-        elif self._player.get_active_pokemon()._stats["Current HP"] == 0:
+        elif self._player.get_active_pokemon().stats["Current HP"] == 0:
             SoundManager.getInstance().playSound("firered_0016.wav")
         else: return "change"
 
@@ -113,7 +113,7 @@ class PokeParty(Drawable):
         a variety of checks are performed to perform the correct action."""
         if self._cursor == 6: 
             # If the pokemon is dead the screen can not be canceled
-            if self._player.get_active_pokemon()._stats["Current HP"] == 0:
+            if self._player.get_active_pokemon().stats["Current HP"] == 0:
                 SoundManager.getInstance().playSound("firered_0016.wav")
             else:return (BattleStates.CHOOSING_FIGHT_OR_RUN, 0)
         else:
@@ -187,12 +187,12 @@ class PokemonSelectedMenu(Drawable):
                 if self._selected_pos != 0:
 
                     # Make sure the pokmeon is not dead
-                    if not self._player._pokemon_team[self._selected_pos].is_alive():
+                    if not self._player.pokemon_team[self._selected_pos].is_alive():
                         return "PKMN is in no shape to battle!"
-                    self._player._pokemon_team[0], self._player._pokemon_team[self._selected_pos] = \
-                        self._player._pokemon_team[self._selected_pos], self._player._pokemon_team[0]
+                    self._player.pokemon_team[0], self._player.pokemon_team[self._selected_pos] = \
+                        self._player.pokemon_team[self._selected_pos], self._player.pokemon_team[0]
                     self._player.set_active_pokemon(0)
-                    print(self._player._pokemon_team)
+                    print(self._player.pokemon_team)
                     return BattleStates.PLAYER_TOSSING_POKEMON
                 else:
                     return "PKMN is already in battle!"
@@ -314,8 +314,8 @@ class PokemonMenuPokemon(Drawable):
         yellow = (248, 224, 56)
         red = (241, 14, 14)
 
-        current_hp = self._pokemon._stats["Current HP"]
-        max_hp = self._pokemon._stats["HP"]
+        current_hp = self._pokemon.stats["Current HP"]
+        max_hp = self._pokemon.stats["HP"]
         percentage = (current_hp / max_hp)
         
         self._hp = pygame.Surface((int(percentage * 48), 3))
@@ -331,7 +331,7 @@ class PokemonMenuPokemon(Drawable):
         self._hp_remaining = pygame.Surface((35, 8))
         self._hp_remaining.fill((255, 255, 255))
         self._hp_remaining.set_colorkey((255, 255, 255))
-        current_hp = self._pokemon._stats["Current HP"]
+        current_hp = self._pokemon.stats["Current HP"]
 
         # This ensures that hp displays correctly even if it is less than three digits
         while len(str(current_hp)) < 3:
@@ -339,7 +339,7 @@ class PokemonMenuPokemon(Drawable):
 
         start_pos = Vector2(0,0)
         current_pos = start_pos
-        for char in str(str(current_hp) + " " + str(self._pokemon._stats["HP"])):
+        for char in str(str(current_hp) + " " + str(self._pokemon.stats["HP"])):
             font_index = int(ord(char)) - 48
             font_char = FRAMES.getFrame("party_font.png", offset=(font_index, 1))
             font_char.set_colorkey((0,128,0))

@@ -75,16 +75,16 @@ class Level():
 
         # Add the rest of the trainers to the level. Get's data from the level's meta data.
         for trainer_args in self._level_meta[2]:
-            train = Trainer(self.correct_border_and_height_pos(trainer_args[0]), trainer_args[1], trainer_args[2], enemy=True, dialogue_id=trainer_args[2], gender=trainer_args[5])
+            train = Trainer(self.correct_border_and_height_pos(trainer_args[0]), trainer_args[1], trainer_args[2], enemy=True, dialogue_id=trainer_args[2], battle_dialogue_id= trainer_args[3], post_battle_dialogue_id=trainer_args[4], gender=trainer_args[7])
             # If the trainer has an event specified in the meta data then add that event.
             if len(trainer_args) > 4:
-                train._event = trainer_args[4]
+                train.event = trainer_args[6]
             # Calculates the stats of each of the trainer's pokemon.
             stat_calc = StatCalculator()
-            for pokemon in trainer_args[3]:
+            for pokemon in trainer_args[5]:
                 new_pokemon = Pokemon(pokemon[0], enemy=True, move_set=pokemon[1])
-                new_pokemon._stats = stat_calc.calculate_main(new_pokemon, pokemon[2])
-                train._pokemon_team.append(new_pokemon)
+                new_pokemon.stats = stat_calc.calculate_main(new_pokemon, pokemon[2])
+                train.pokemon_team.append(new_pokemon)
             # Add the trainer to the tile.
             self._tiles[trainer_args[0][1]][trainer_args[0][0]].add_obj(train)
             #TODO: Will also need to set the trainers active tile

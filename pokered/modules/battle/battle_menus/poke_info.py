@@ -77,8 +77,8 @@ class PokeInfo(Drawable):
 
         if self._current_hp != None:
             current_hp = self._current_hp
-        else: current_hp = self._pokemon._stats["Current HP"]
-        max_hp = self._pokemon._stats["HP"]
+        else: current_hp = self._pokemon.stats["Current HP"]
+        max_hp = self._pokemon.stats["HP"]
         percentage = (current_hp / max_hp)
         
         self._hp = pygame.Surface((math.ceil(percentage * 48), 3))
@@ -95,10 +95,10 @@ class PokeInfo(Drawable):
         self._hp_remaining.fill((255, 255, 255))
         self._hp_remaining.set_colorkey((255, 255, 255))
         if self._current_hp != None: current_hp = self._current_hp
-        else: current_hp = self._pokemon._stats["Current HP"]
+        else: current_hp = self._pokemon.stats["Current HP"]
         start_pos = Vector2(0,0)
         current_pos = start_pos
-        for char in str(str(current_hp) + "/" + str(self._pokemon._stats["HP"])):
+        for char in str(str(current_hp) + "/" + str(self._pokemon.stats["HP"])):
             font_index = int(ord(char)) - 48
             font_char = FRAMES.getFrame("pokemon_fire_red_battle_font.png", offset=(font_index, 2))
             if char == "/": font_char = FRAMES.getFrame("pokemon_fire_red_battle_font.png", offset=(4, 3))
@@ -111,7 +111,7 @@ class PokeInfo(Drawable):
         self._status = pygame.Surface((22, 8))
         self._status.fill((255,255,255))
         self._status.set_colorkey((255,255,255))
-        for status in self._pokemon._status:
+        for status in self._pokemon.status:
             if status in ["paralyze"]:
                 status_char = FRAMES.getFrame("status.png", offset=(1, 0))
                 self._status.blit(status_char, (0,0))
