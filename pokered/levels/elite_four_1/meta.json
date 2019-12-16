@@ -4,10 +4,11 @@
     [
         [[6,5],"lorelei", 1, 5, 6,
             [
-                ["dewgong", ["Surf", "Ice Beam", "Hail", "Safeguard"], 52]
-                
-                
-                
+                ["dewgong", ["Surf", "Ice Beam", "Hail", "Safeguard"], 52],
+                ["cloyster", ["Dive", "Spikes", "Hail", "Protect"], 51],
+                ["slowbro", ["Ice Beam", "Surf", "Amnesia", "Yawn"], 52],
+                ["jynx", ["Double Slap", "Ice Punch", "Sweet Kiss", "Attract"], 54],
+                ["lapras", ["Body Slam", "Confuse Ray", "Surf", "Ice Beam"], 54]
             ],
             "defeat_script.json",
             "female"
