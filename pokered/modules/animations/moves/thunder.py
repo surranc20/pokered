@@ -1,7 +1,7 @@
 import pygame
 from os.path import join
-from ...utils.frameManager import FRAMES
-from ...utils.soundManager import SoundManager
+from ...utils.managers.frameManager import FRAMES
+from ...utils.managers.soundManager import SoundManager
 from ...utils.UI.drawable import Drawable
 from .scrolling_move import ScrollingMove
 

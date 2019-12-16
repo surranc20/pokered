@@ -1,7 +1,7 @@
 import pygame
 from os.path import join
 from .move_base import MoveBase
-from ...utils.soundManager import SoundManager
+from ...utils.managers.soundManager import SoundManager
 from ...utils.UI.drawable import Drawable
 
 #TODO: animate the actual wave like it appears in the game

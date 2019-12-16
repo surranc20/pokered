@@ -1,7 +1,7 @@
 import random
 from os.path import join
 from ..move_base import MoveBase
-from ....utils.soundManager import SoundManager
+from ....utils.managers.soundManager import SoundManager
 
 class IceShards(MoveBase):
     FRAME_LIST = []
@@ -9,8 +9,8 @@ class IceShards(MoveBase):
         """This animation displays the shards that appear after some ice moves."""
 
         # We need to reset the frame list here because the FRAME_LIST
-        # will increase each time a new IceShard animation is created. 
-        # This happens becuase the ice shard animation is generated dynamically. 
+        # will increase each time a new IceShard animation is created.
+        # This happens becuase the ice shard animation is generated dynamically.
         # and then added to the class variable FRAME_LIST to leverage the move
         # base framework.
         self.FRAME_LIST = []

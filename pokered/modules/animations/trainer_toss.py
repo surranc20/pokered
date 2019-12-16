@@ -1,6 +1,6 @@
 from os.path import join
 from ..utils.UI.animated import AnimatedGroupPart
-from ..utils.frameManager import FRAMES
+from ..utils.managers.frameManager import FRAMES
 from ..utils.vector2D import Vector2
 
 

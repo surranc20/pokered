@@ -7,7 +7,7 @@ from .pokemon import Pokemon
 from .utils.UI.drawable import Drawable
 from .utils.vector2D import Vector2
 from .utils.stat_calc import StatCalculator
-from .utils.soundManager import SoundManager
+from .utils.managers.soundManager import SoundManager
 from .enumerated.cardinality import Cardinality
 
 class Level():

@@ -1,7 +1,7 @@
 import pygame
 from .trainer import Trainer
 from .utils.UI.mobile import Mobile
-from .utils.soundManager import SoundManager
+from .utils.managers.soundManager import SoundManager
 from .enumerated.cardinality import Cardinality
 from .enumerated.battle_actions import BattleActions
 

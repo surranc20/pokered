@@ -4,7 +4,7 @@ from modules.player import Player
 from modules.pokemon import Pokemon
 from modules.move import Move
 from modules.utils.stat_calc import StatCalculator
-from modules.utils.game_manager import GameManager
+from modules.utils.managers.game_manager import GameManager
 
 # Two different sizes now! Screen size is the amount we show the player,
 #  and world size is the size of the interactable world.

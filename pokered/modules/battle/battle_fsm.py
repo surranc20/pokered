@@ -14,8 +14,8 @@ from ..animations.change_hp import ChangeHP
 from ..animations.poke_death import PokeDeath
 from ..animations.moves import *
 from ..animations.moves.generic.hit import Hit
-from ..utils.frameManager import FRAMES
-from ..utils.soundManager import SoundManager
+from ..utils.managers.frameManager import FRAMES
+from ..utils.managers.soundManager import SoundManager
 from ..enumerated.battle_actions import BattleActions
 from ..enumerated.battle_states import BattleStates
 from ..pokemon import Pokemon

@@ -1,6 +1,6 @@
 import pygame
 from ..utils.UI.animated import Animated
-from ..utils.soundManager import SoundManager
+from ..utils.managers.soundManager import SoundManager
 
 class PokeDeath(Animated):
     def __init__(self, poke):

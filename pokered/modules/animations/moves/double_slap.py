@@ -1,6 +1,6 @@
 from os.path import join
 from .move_base import MoveBase
-from ...utils.soundManager import SoundManager
+from ...utils.managers.soundManager import SoundManager
 
 class DoubleSlap(MoveBase):
     FRAME_LIST = [

@@ -1,7 +1,7 @@
 import pygame
 from os.path import join
 from .move_base import MoveBase
-from ...utils.frameManager import FRAMES
+from ...utils.managers.frameManager import FRAMES
 from ...utils.UI.drawable import Drawable
 
 class ScrollingMove(MoveBase):

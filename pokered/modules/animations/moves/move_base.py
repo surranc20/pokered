@@ -1,6 +1,6 @@
 import pygame
 from os.path import join
-from ...utils.frameManager import FRAMES
+from ...utils.managers.frameManager import FRAMES
 from ...utils.UI.drawable import Drawable
 
 

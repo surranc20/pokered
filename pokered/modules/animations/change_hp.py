@@ -1,8 +1,8 @@
 from ..battle.battle_menus.poke_info import PokeInfo
-from ..utils.soundManager import SoundManager
+from ..utils.managers.soundManager import SoundManager
 
 class ChangeHP(PokeInfo):
-    """This is the animation that plays while the pokemon's health bar slowly goes down. 
+    """This is the animation that plays while the pokemon's health bar slowly goes down.
     This is necessary becuase the health bar does not simply drop all at once. It slowly
     goes down."""
     def __init__(self, pokemon, damage, sound, enemy=False):
@@ -17,7 +17,7 @@ class ChangeHP(PokeInfo):
         if sound == "normal":
             SoundManager.getInstance().playSound("firered_000D.wav")
 
-    
+
     def update(self, ticks):
         """Achieves the animation effect by decrementing a counter by one and creating a new poke info
         with hp set to that counter. Once all damage has been accounted for the animation is over."""
@@ -26,11 +26,11 @@ class ChangeHP(PokeInfo):
         else:
             self._pokemon.stats["Current HP"] = self._new_hp
             self.kill()
-    
+
     def is_dead(self):
         """Returns whether or not the animation is over"""
         return self._is_dead
-    
 
 
-        
+
+
