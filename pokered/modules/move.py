@@ -2,6 +2,7 @@ from os.path import join
 import json
 import random
 
+
 class Move:
     def __init__(self, move_name):
         """Creates an instance of a pokemon move."""
@@ -18,10 +19,11 @@ class Move:
         self.current_pp = move["PP"]
         self.effect_accuracy = move["Effect Accuracy"]
         self.effects = move["Effects"]
-    
+
     def get_num_hits(self):
-        """If the move is a multi hit move then return the total number of hits the move will make in the current
-        turn. Otherwise just return 1."""
+        """If the move is a multi hit move then return the total number of
+        hits the move will make in the current turn. Otherwise just
+        return 1."""
         with open(join("jsons", "moves.json"), "r") as moves_json:
             moves = json.load(moves_json)
             multi = moves["Multi"]
@@ -35,14 +37,14 @@ class Move:
                     return x
                 else:
                     prob -= prob_dict[str(x)]
-            raise Exception 
-    
+            raise Exception
+
     def reset_pp(self):
         """Refills the move's pp."""
         self.current_pp = self.max_pp
 
 
 
-    
+
 
 

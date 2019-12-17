@@ -1,9 +1,11 @@
 from enum import Enum
 
+
 class BattleStates(Enum):
     """Simple Enumeration of battle states. The value corresponds to what type
-    of state the battle state is. There are numbers in the tuple just so that the 
-    states are not viewed as synonyms for eachother. The actual numbers have no meaning."""
+    of state the battle state is. There are numbers in the tuple just so that
+    the states are not viewed as synonyms for eachother. The actual numbers
+    have no meaning."""
     NOT_STARTED = ("auto", 1)
     OPENING_ANIMS = ("wait", 2)
     OPPONENT_TOSSING_POKEMON = ("auto", 3)

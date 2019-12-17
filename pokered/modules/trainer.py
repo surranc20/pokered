@@ -1,19 +1,23 @@
-import pygame
 from os.path import join
-from .battle.battle import Battle
 from .events.dialogue import Dialogue
 from .utils.UI.mobile import Mobile
 from .enumerated.cardinality import Cardinality
 
+
 class Trainer(Mobile):
-    def __init__(self, position, name, facing, enemy=True, dialogue_id=None, battle_dialogue_id=None, post_battle_dialogue_id=None, event=None, gender="male"):
-        """Creates a trainer instance. Expects the trainer's position, orientation in the world. Optionally expects
-        whether or not the trainer is an enemy, the dialouge id associated with the trainer, the event that happens
-        when interacting with the trainer, and the gender of the trainer."""
+    def __init__(self, position, name, facing, enemy=True, dialogue_id=None,
+                 battle_dialogue_id=None, post_battle_dialogue_id=None,
+                 event=None, gender="male"):
+        """Creates a trainer instance. Expects the trainer's position,
+        orientation in the world. Optionally expects whether or not the
+        trainer is an enemy, the dialouge id associated with the trainer, the
+        event that happens when interacting with the trainer, and the gender
+        of the trainer."""
         if not enemy:
             super().__init__("trainer.png", position, facing)
         else:
-            super().__init__(join("trainers", name + ".png"), position,  Cardinality.NORTH)
+            super().__init__(join("trainers", name + ".png"), position,
+                             Cardinality.NORTH)
 
         self._nFrames = 1
         self._framesPerSecond = 6
@@ -53,7 +57,8 @@ class Trainer(Mobile):
         return self.active_pokemon
 
     def set_active_pokemon(self, index):
-        """Sets the trainer's active pokemon to the pokmeon at the provided index."""
+        """Sets the trainer's active pokemon to the pokmeon at the provided
+        index."""
         self.active_pokemon = self.get_pokemon_team()[index]
 
     def get_pokemon_by_index(self, index):
@@ -70,11 +75,17 @@ class Trainer(Mobile):
 
     def talk_event(self, player):
         """Returns the talke event associated with the trainer."""
-        #TODO: Turn to face the player
+        # TODO: Turn to face the player
         if not self.defeated:
-            return Dialogue(str(self._dialogue_id), player, self, gender=self.gender)
+            return Dialogue(str(self._dialogue_id),
+                            player,
+                            self,
+                            gender=self.gender)
         else:
-            return Dialogue(str(self._post_battle_dialogue_id), player, self, gender=self.gender)
+            return Dialogue(str(self._post_battle_dialogue_id),
+                            player,
+                            self,
+                            gender=self.gender)
 
     def heal_all(self):
         """Heals all of the trainer's pokemon."""

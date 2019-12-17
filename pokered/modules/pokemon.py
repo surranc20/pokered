@@ -5,13 +5,15 @@ from .utils.UI.drawable import Drawable
 from .utils.vector2D import Vector2
 from .move import Move
 
+
 class Pokemon(Drawable):
     PLAYER_POKE_POS = Vector2(36, 48)
     ENEMY_POKE_POS = Vector2(148, 6)
 
     def __init__(self, pokemon_name, enemy=False, gender="male", move_set=None):
-        """Creates an instance of a pokemon. Requires the pokemon name in all lowercase as well as if the
-        pokemon belongs to an enemy. Also requires the gender of the pokemon. Can provide a list of the pokemon's
+        """Creates an instance of a pokemon. Requires the pokemon name in all
+        lowercase as well as if the pokemon belongs to an enemy. Also requires
+        the gender of the pokemon. Can provide a list of the pokemon's
         moves right in the constructor as well."""
         with open(join("jsons", "pokemon_lookup.json"), "r") as pokemon_lookup_json:
             pokemon_lookup = json.load(pokemon_lookup_json)
@@ -54,7 +56,8 @@ class Pokemon(Drawable):
             self.add_move_list(move_set)
 
         # Create drawable portion of the pokemon
-        super().__init__(join("pokemon", "pokemon_big.png"), Vector2(_pos.x, _pos.y), offset =_offset)
+        super().__init__(join("pokemon", "pokemon_big.png"),
+                         Vector2(_pos.x, _pos.y), offset=_offset)
 
     def draw(self, draw_surface):
         """Draws the pokemon."""
@@ -80,7 +83,8 @@ class Pokemon(Drawable):
             self.moves.append(move)
 
     def can_move(self):
-        """Determines whether a pokemon's status ailments will allow it to move."""
+        """Determines whether a pokemon's status ailments will allow it to
+        move."""
         if "paralyze" in self.status:
             prob = random.randint(0, 100)
             if prob < 25:

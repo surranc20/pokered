@@ -1,6 +1,7 @@
 from enum import Enum
 import pygame
 
+
 class BattleActions(Enum):
     """Simple Enumeration of battle actions"""
     SELECT = pygame.K_RETURN
