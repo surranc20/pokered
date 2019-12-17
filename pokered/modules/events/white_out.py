@@ -5,11 +5,11 @@ from ..enumerated.battle_actions import BattleActions
 from ..utils.managers.soundManager import SoundManager
 
 
-
 class WhiteOut():
     def __init__(self, player):
-        """Creates a white out event. This is the screen that plays when the player loses. Right now
-        it will restart the game when the player presses enter."""
+        """Creates a white out event. This is the screen that plays when the
+        player loses. Right now it will restart the game when the player
+        presses enter."""
         self._player = player
         self._white_out_surface = pygame.Surface((240, 160))
         self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"), 15)
@@ -20,14 +20,14 @@ class WhiteOut():
         """Draws the event"""
         draw_surface.blit(self._white_out_surface, (0, 0))
 
-
     def update(self, ticks):
         """This event does not need to do anything in update."""
-        pass
+        return
 
     def handle_event(self, event):
         """If the player presses enter the event is ended."""
-        if event.type == pygame.KEYDOWN and event.key == BattleActions.SELECT.value:
+        if event.type == pygame.KEYDOWN and \
+                event.key == BattleActions.SELECT.value:
             SoundManager.getInstance().playSound("firered_0005.wav")
             self._is_over = True
 
@@ -36,16 +36,18 @@ class WhiteOut():
         return self._is_over
 
     def get_end_event(self):
-        """Tells the level manager to tell the game manager to restart the game."""
+        """Tells the level manager to tell the game manager to restart the
+        game."""
         return "RESTART"
 
     def _blit_line(self):
         """Blits the text that displays to the white out surface."""
-        string = "Your were defeated by the Elite Four! Thanks for playing the demo of POKeRED. Press enter to restart the game!"
+        string = "Your were defeated by the Elite Four! Thanks for" + \
+            "playing the demo of POKeRED. Press enter to restart the game!"
         self._white_out_surface.fill((0, 0, 0))
         string_lyst = textwrap.wrap(string, width=41)
         height = 50
         for string in string_lyst:
-            rendered = self._font.render(string, False, (255,255,255))
+            rendered = self._font.render(string, False, (255, 255, 255))
             self._white_out_surface.blit(rendered, (20, height))
             height += 15
