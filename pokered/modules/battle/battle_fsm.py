@@ -500,125 +500,202 @@ class BattleFSM:
         self._handle_state_change(BattleStates.DECIDING_BATTLE_ORDER)
 
     def _update_auto(self, ticks):
-        # If the active animation is None then grab the correct animation based on what the current state is.
-        if self._active_animation == None:
+        # If the active animation is None then grab the correct animation
+        # based on what the current state is.
+        if self._active_animation is None:
 
-            # If the opponent is tossing out a pokemon then grab the TossPokemon animation and which pokemon they are sending out to the battle text box.
+            # If the opponent is tossing out a pokemon then grab the
+            # TossPokemon animation and which pokemon they are sending out to
+            # the battle text box.
             if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
-                self._active_string = self._opponent.name.upper() + " sent out " + self._opponent.active_pokemon.name.upper() + "!"
-                self._wrap_text(20)
-                if self._initial_stage_over:
-                    self._draw_list[3] = None
-                    self._draw_list[5] = None
-                    trainer_toss = TossPokemon(self._opponent.active_pokemon.name, self._player, lead_off=False, enemy=True)
+                self._update_opponent_tossing_pokemon()
 
-                # If this is the toss at the beginning of the battle grab the toss animation from the last spot in the draw list. This was
-                # added there in the BATTLE_NOT_STARTED state. We must do this differently because we need the trainer to be standing still at
-                # the start of the battle and we achieve this effect by drawing the animation and simply not starting it.
-                else:
-                    trainer_toss = self._draw_list.pop()
-                self._active_animation = trainer_toss
-
-            # If the player is tossing out a pokemon then grab the TossPokemon animation and which pokemon they are sending out to the battle text box.
-            # Operates in the same manner as the OPPONENT_TOSSING_POKEMON state which is more thourougly commented.
+            # If the player is tossing out a pokemon then grab the TossPokemon
+            # animation and which pokemon they are sending out to the battle
+            # text box. Operates in the same manner as the
+            # OPPONENT_TOSSING_POKEMON state which is more thourougly
+            # commented.
             if self._state == BattleStates.PLAYER_TOSSING_POKEMON:
-                self._active_string = "Go! " + self._player.active_pokemon.nick_name.upper() + "!"
-                self._wrap_text(20)
-                if self._initial_stage_over:
-                    self._draw_list[2] = None
-                    self._draw_list[4] = None
-                    trainer_toss = TossPokemon(self._player.active_pokemon.name, self._player, lead_off=False, enemy=False)
-                else:
-                    trainer_toss = self._draw_list.pop()
-                    # After the player has tossed their pokemon the initial animation phase of the battle is over.
-                    self._initial_stage_over = True
-                self._active_animation = trainer_toss
+                self._update_player_tossing_pokemon()
 
-            # This state attempts to play the animation for the player's currently selected move. If said animation does not exist then
+            # This state attempts to play the animation for the player's
+            # currently selected move. If said animation does not exist then
             # it simply skips displaying the animation.
             if self._state == BattleStates.PLAYER_MOVE_ANIMATION:
-                try:
-                    self._active_animation = getattr(sys.modules[__name__], self._player_move_queued.move_name.replace(" ", ""))(self._player.active_pokemon, self._opponent.active_pokemon)
-                except:
-                    self._handle_state_change(self._state_queue.pop(0))
+                self._update_player_move_animation()
 
-            # This state attempts to play the animation for the opponent's currently selected move. If said animation does not exist then
+            # This state attempts to play the animation for the opponent's
+            # currently selected move. If said animation does not exist then
             # it simply skips displaying the animation.
             if self._state == BattleStates.ENEMY_MOVE_ANIMATION:
-                #self._active_animation = IcePunch(self._opponent.active_pokemon, self._player.active_pokemon, True)
-                try:
-                    self._active_animation = getattr(sys.modules[__name__], self._enemy_move_queued.move_name.replace(" ", ""))(self._opponent.active_pokemon, self._player.active_pokemon, enemy=True)
-                except:
-                    self._handle_state_change(self._state_queue.pop(0))
+                self._update_enemy_move_animation()
 
-            # This state calculates the damage done by the move and if it is greater than zero it animates the hp change and the player being hit
+            # This state calculates the damage done by the move and if it is
+            # greater than zero it animates the hp change and the player being
+            # hit.
             if self._state == BattleStates.UPDATE_PLAYER_STATUS:
-                calc = DamageCalculator((self._opponent.active_pokemon, self._enemy_move_queued), self._player.active_pokemon)
-                dmg = calc.get_damage()
-                if dmg > 0:
-                    self._active_animation = [ChangeHP(self._player.active_pokemon, dmg, calc.get_effectiveness_sound()), Hit(self._player.active_pokemon)]
-                else:
-                    self._active_animation = []
+                self._update_player_status()
 
-                # This is how effective the move was (super effective, not very effective, no effect ...)
-                self._active_string = calc.get_effectiveness()
-
-            # This state calculates the damage done by the move and if it is greater than zero it animates the hp change and the opponent being hit
+            # This state calculates the damage done by the move and if it is
+            # greater than zero it animates the hp change and the opponent
+            # being hit.
             if self._state == BattleStates.UPDATE_ENEMY_STATUS:
-                calc = DamageCalculator((self._player.active_pokemon, self._player_move_queued), self._opponent.active_pokemon)
-                dmg = calc.get_damage()
-                if dmg > 0:
-                    self._active_animation = [ChangeHP(self._opponent.active_pokemon, dmg, calc.get_effectiveness_sound()), Hit(self._opponent.active_pokemon)]
-                else:
-                    self._active_animation = []
-                self._active_string = calc.get_effectiveness()
+                self._update_enemy_status()
 
-            # These states set the active animation to the active pokemon's death animation.
+            # These states set the active animation to the active pokemon's
+            # death animation.
             if self._state == BattleStates.OPPONENT_FEINT:
-                self._active_animation = PokeDeath(self._opponent.active_pokemon)
+                self._active_animation = \
+                    PokeDeath(self._opponent.active_pokemon)
 
             if self._state == BattleStates.PLAYER_FEINT:
                 self._active_animation = PokeDeath(self._player.active_pokemon)
 
-        # This code block controls auto states once the active animation for the state has been set.
+        # This code block controls auto states once the active animation for
+        # the state has been set.
         else:
-            # If the active animation is a list then we need to handle all of the animations in the list.
-            if type(self._active_animation) == list:
-                all_done = True
-                # Check to see if all the animations are done.
-                for anim in self._active_animation:
-                    if not anim.is_dead(): all_done = False
-                # If all of the animations are done then go to the next state.
-                if all_done:
-                    self._active_animation = None
-                    if len(self._state_queue) > 0:
-                        self._handle_state_change(self._state_queue.pop(0))
-                    else:
-                        self._handle_state_change(BattleStates.CHOOSE_OPPONENT_ACTION)
+            # If the active animation is a list then we need to handle all of
+            # the animations in the list.
+            self._update_anim_done()
 
-            # If the active animation is only one animation and that animation is done do the following.
-            elif self._active_animation.is_dead():
+    def _update_anim_done(self):
+        # If the active animation is a list then we need to handle all of
+        # the animations in the list.
+        if type(self._active_animation) == list:
+            all_done = True
+            # Check to see if all the animations are done.
+            for anim in self._active_animation:
+                if not anim.is_dead():
+                    all_done = False
+            # If all of the animations are done then go to the next state.
+            if all_done:
                 self._active_animation = None
-
-                # After the opponent has finished tossing a pokemon we need to add that pokemon its corresponding poke info to the draw/update list
-                if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
-                    self._draw_list[3] = self._opponent.active_pokemon
-                    op_poke_info = PokeInfo(self._opponent.active_pokemon, enemy=True)
-                    self._draw_list[5] = op_poke_info
-                    self._update_list[1] = op_poke_info
-
-                # After the player has finished tossing a pokemon we need to add that pokemon and its corresponding poke info to the draw/update list
-                if self._state == BattleStates.PLAYER_TOSSING_POKEMON:
-                    self._draw_list[2] = self._player.active_pokemon
-                    self._player_poke_info = PokeInfo(self._player.active_pokemon)
-                    self._draw_list[4] = self._player_poke_info
-                    self._update_list[0] = self._player_poke_info
-
-                # Go to the next state.
                 if len(self._state_queue) > 0:
                     self._handle_state_change(self._state_queue.pop(0))
                 else:
                     self._handle_state_change(BattleStates.CHOOSE_OPPONENT_ACTION)
+
+        # If the active animation is only one animation and that animation
+        # is done do the following.
+        elif self._active_animation.is_dead():
+            self._active_animation = None
+
+            # After the opponent has finished tossing a pokemon we need to
+            # add that pokemon its corresponding poke info to the
+            # draw/update list.
+            if self._state == BattleStates.OPPONENT_TOSSING_POKEMON:
+                self._draw_list[3] = self._opponent.active_pokemon
+                op_poke_info = PokeInfo(self._opponent.active_pokemon,
+                                        enemy=True)
+                self._draw_list[5] = op_poke_info
+                self._update_list[1] = op_poke_info
+
+            # After the player has finished tossing a pokemon we need to
+            # add that pokemon and its corresponding poke info to the
+            # draw/update list.
+            if self._state == BattleStates.PLAYER_TOSSING_POKEMON:
+                self._draw_list[2] = self._player.active_pokemon
+                self._player_poke_info = \
+                    PokeInfo(self._player.active_pokemon)
+                self._draw_list[4] = self._player_poke_info
+                self._update_list[0] = self._player_poke_info
+
+            # Go to the next state.
+            if len(self._state_queue) > 0:
+                self._handle_state_change(self._state_queue.pop(0))
+            else:
+                self._handle_state_change(BattleStates.CHOOSE_OPPONENT_ACTION)
+
+    def _update_enemy_status(self):
+        calc = DamageCalculator((self._player.active_pokemon,
+                                 self._player_move_queued),
+                                self._opponent.active_pokemon)
+        dmg = calc.get_damage()
+        if dmg > 0:
+            self._active_animation = [ChangeHP(self._opponent.active_pokemon,
+                                               dmg,
+                                               calc.get_effectiveness_sound()),
+                                      Hit(self._opponent.active_pokemon)]
+        else:
+            self._active_animation = []
+        self._active_string = calc.get_effectiveness()
+
+    def _update_player_status(self):
+        calc = DamageCalculator((self._opponent.active_pokemon,
+                                 self._enemy_move_queued),
+                                self._player.active_pokemon)
+        dmg = calc.get_damage()
+        if dmg > 0:
+            self._active_animation = [ChangeHP(self._player.active_pokemon,
+                                      dmg,
+                                      calc.get_effectiveness_sound()),
+                                      Hit(self._player.active_pokemon)]
+        else:
+            self._active_animation = []
+
+        # This is how effective the move was (super effective, not
+        # very effective, no effect ...)
+        self._active_string = calc.get_effectiveness()
+
+    def _update_enemy_move_animation(self):
+        try:
+            self._active_animation = \
+                getattr(sys.modules[__name__],
+                        self._enemy_move_queued.move_name.replace(" ", ""))(self._opponent.active_pokemon,
+                                                                            self._player.active_pokemon,
+                                                                            enemy=True)
+        except Exception:
+            self._handle_state_change(self._state_queue.pop(0))
+
+    def _update_player_move_animation(self):
+        try:
+            self._active_animation = \
+                getattr(sys.modules[__name__],
+                        self._player_move_queued.move_name.replace(" ", ""))(self._player.active_pokemon,
+                                                                             self._opponent.active_pokemon)
+        except Exception:
+            self._handle_state_change(self._state_queue.pop(0))
+
+    def _update_player_tossing_pokemon(self):
+        self._active_string = "Go! " + \
+            self._player.active_pokemon.nick_name.upper() + "!"
+        self._wrap_text(20)
+        if self._initial_stage_over:
+            self._draw_list[2] = None
+            self._draw_list[4] = None
+            trainer_toss = TossPokemon(self._player.active_pokemon.name,
+                                       self._player,
+                                       lead_off=False,
+                                       enemy=False)
+        else:
+            trainer_toss = self._draw_list.pop()
+            # After the player has tossed their pokemon the initial
+            # animation phase of the battle is over.
+            self._initial_stage_over = True
+        self._active_animation = trainer_toss
+
+    def _update_opponent_tossing_pokemon(self):
+        self._active_string = self._opponent.name.upper() + \
+            " sent out " + self._opponent.active_pokemon.name.upper() \
+            + "!"
+        self._wrap_text(20)
+        if self._initial_stage_over:
+            self._draw_list[3] = None
+            self._draw_list[5] = None
+            trainer_toss = TossPokemon(self._opponent.active_pokemon.name,
+                                       self._player,
+                                       lead_off=False,
+                                       enemy=True)
+
+        # If this is the toss at the beginning of the battle grab the
+        # toss animation from the last spot in the draw list. This was
+        # added there in the BATTLE_NOT_STARTED state. We must do this
+        # differently because we need the trainer to be standing still
+        # at the start of the battle and we achieve this effect by
+        # drawing the animation and simply not starting it.
+        else:
+            trainer_toss = self._draw_list.pop()
+        self._active_animation = trainer_toss
 
     def handle_action(self, action):
         """Handles the actions that a user provides. Calls helper methods."""
