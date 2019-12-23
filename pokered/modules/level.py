@@ -49,7 +49,7 @@ class Level():
 
         # Get the list of scripts for the level.
         self._scripts = self._level_meta[4]
-        self._current_script = None
+        self.current_script = None
 
         # If the level has an entry script that activate the script at the
         # start of the level.
@@ -120,7 +120,7 @@ class Level():
     def update(self, ticks):
         """Updates the level. Updates each of the tiles in the level. If there
         is a current script active, then also update that script."""
-        if self._current_script is not None:
+        if self.current_script is not None:
             self.execute_script_line()
         for y, row in enumerate(self._tiles):
             for x, tile in enumerate(row):
@@ -137,16 +137,16 @@ class Level():
         to develop the game further this will have to be changed. I am well
         aware of the risks of usign eval and exec."""
         try:
-            if eval(str(self._current_script[0][self._current_script[1]])) is not False:
-                self._current_script[1] += 1
-                if self._current_script[1] + 1 > len(self._current_script[0]):
-                    self._current_script = None
+            if eval(str(self.current_script[0][self.current_script[1]])) is not False:
+                self.current_script[1] += 1
+                if self.current_script[1] + 1 > len(self.current_script[0]):
+                    self.current_script = None
         except Exception as e:
             print(e)
-            exec(str(self._current_script[0][self._current_script[1]]))
-            self._current_script[1] += 1
-            if self._current_script[1] + 1 > len(self._current_script[0]):
-                self._current_script = None
+            exec(str(self.current_script[0][self.current_script[1]]))
+            self.current_script[1] += 1
+            if self.current_script[1] + 1 > len(self.current_script[0]):
+                self.current_script = None
 
     def get_nearby_tiles(self, pos):
         """Returns a dictionary of tiles adjacent to a tile."""
@@ -188,7 +188,7 @@ class Level():
 
         elif script_name != "None":
             with open(join("levels", self._level_name, script_name), "r") as script:
-                self._current_script = [json.load(script), 0]
+                self.current_script = [json.load(script), 0]
 
 
 class Tile:
