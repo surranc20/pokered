@@ -3,7 +3,9 @@ from os.path import join
 
 
 class ScriptingEngine():
-    SCRIPTING_COMMANDS = ["MOVE", "DIALOG", "BATTLE", "TURN"]
+    SCRIPTING_COMMANDS = ["MOVE", "DIALOG", "BATTLE", "TURN", "PLAY_MUSIC"
+                          "FOREGROUND_CHANGE", "BACKGROUND_CHANGE", "LOCK",
+                          "RELEASE"]
 
     def __init__(self, script, level):
         """Creates the scripting engine for a given script"""
@@ -50,6 +52,28 @@ class ScriptingEngine():
 
     def turn(self, args):
         """Turns a trainer to the given direction."""
+        pass
+
+    def lock(self, args):
+        """Locks in the player so that they can not move."""
+        pass
+
+    def release(self, args):
+        """Releases the player so that they can move again"""
+        pass
+
+    def play_music(self, args):
+        """Plays the level's music"""
+        pass
+
+    def foreground_change(self, args):
+        """Changes the foreground image to the one specefied in
+        args"""
+        pass
+
+    def background_change(self, args):
+        """Changes the background image to the one specified in
+        args"""
         pass
 
 
