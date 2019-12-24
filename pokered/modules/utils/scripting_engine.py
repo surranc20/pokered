@@ -64,7 +64,11 @@ class ScriptingEngine():
         target_pos = make_tuple(args[1])
 
         if args[0] == "PLAYER":
-            response = self._level.player.move_forward_to_tile(target_pos)
+            response = self._level.player.move_to_tile(target_pos)
+        else:
+            response = \
+                self._level.trainers[args[0]].move_to_tile(target_pos)
+
         return response is True
 
     def dialogue(self, args):
