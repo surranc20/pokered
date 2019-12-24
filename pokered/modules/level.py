@@ -81,7 +81,7 @@ class Level():
         """Adds the level's trainers to the level (including the player)."""
         # Add the player to the level by getting the player's start position
         # from the level's meta data.
-        self.player.setPosition(self.correct_border_and_height_pos(self._level_meta[1]))
+        self.player.setPosition(self.correct_border_and_heightpos(self._level_meta[1]))
         self._tiles[self._level_meta[1][1]][self._level_meta[1][0]].add_obj(self.player)
         self.player.current_tile = self._tiles[self._level_meta[1][1]][self._level_meta[1][0]]
 
@@ -89,31 +89,35 @@ class Level():
         # level's meta data.
         for trainer_args in self._level_meta[2]:
             train = \
-                Trainer(self.correct_border_and_height_pos(trainer_args[0]),
+                Trainer(self.correct_border_and_heightpos(trainer_args[0]),
                         trainer_args[1],
                         trainer_args[2],
                         enemy=True,
-                        dialogue_id=trainer_args[2],
-                        battle_dialogue_id=trainer_args[3],
-                        post_battle_dialogue_id=trainer_args[4],
-                        gender=trainer_args[7])
+                        dialogue_id=trainer_args[3],
+                        battle_dialogue_id=trainer_args[4],
+                        post_battle_dialogue_id=trainer_args[5],
+                        gender=trainer_args[8])
+
             # If the trainer has an event specified in the meta data then add
             # that event.
             if len(trainer_args) > 4:
-                train.event = trainer_args[6]
+                train.event = trainer_args[7]
+
             # Calculates the stats of each of the trainer's pokemon.
             stat_calc = StatCalculator()
-            for pokemon in trainer_args[5]:
+            for pokemon in trainer_args[6]:
                 new_pokemon = Pokemon(pokemon[0],
                                       enemy=True,
                                       move_set=pokemon[1])
                 new_pokemon.stats = stat_calc.calculate_main(new_pokemon,
                                                              pokemon[2])
                 train.pokemon_team.append(new_pokemon)
+
             # Add the trainer to the tile.
             self._tiles[trainer_args[0][1]][trainer_args[0][0]].add_obj(train)
             train.current_tile = \
                 self._tiles[trainer_args[0][1]][trainer_args[0][0]]
+            self.trainers[train.name] = train
 
     def draw(self, draw_surface):
         """Draws the level. Calls draw on each of the tiles in the level."""
@@ -163,7 +167,7 @@ class Level():
         else:
             return True
 
-    def correct_border_and_height_pos(self, pos):
+    def correct_border_and_heightpos(self, pos):
         """The player is 22 pixels high so we need to adjust his position down
         a little when first loading the level. """
         return Vector2(pos[0] * self.TILE_SIZE + self.foreground._x_off,
@@ -174,7 +178,7 @@ class Tile:
     def __init__(self, pos, colidable, obj):
         """Simple class representing a tile on the map. While commenting this
         I realized that I spelt collidable wrong. I will fix this later."""
-        self._pos = pos
+        self.pos = pos
         self._obj = obj
         # We need to keep track of what the tiles colidability was at the
         # start of the level so that we can set it back to the correct state
@@ -233,5 +237,5 @@ class Tile:
 
     def __repr__(self):
         """Allows the tile to be printed in a nice format."""
-        string = str(self._pos) + "is clear: " + str(self.is_clear())
+        string = str(self.pos) + "is clear: " + str(self.is_clear())
         return string
