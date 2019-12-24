@@ -3,6 +3,7 @@ from os.path import join
 from .trainer import Trainer
 from .player import Player
 from .pokemon import Pokemon
+from .utils.scripting_engine import ScriptingEngine
 from .utils.UI.drawable import Drawable
 from .utils.vector2D import Vector2
 from .utils.stat_calc import StatCalculator
@@ -16,15 +17,15 @@ class Level():
     def __init__(self, level_name, player, screen_size):
         """Creates a level instance. Expects the level's name, the player, and
         the screen size"""
-        self._player = player
-        self._screen_size = screen_size
-        self._level_name = level_name
+        self.player = player
+        self.screen_size = screen_size
+        self.level_name = level_name
 
         # We need a foreground and background to add a 3d effect to the game.
-        self._foreground = Drawable(join(level_name, "level_foreground.png"),
-                                        (0, 0))
-        self._background = Drawable(join(level_name, "level_background.png"),
-                                        (0, 0))
+        self.foreground = Drawable(join(level_name, "level_foreground.png"),
+                                   (0, 0))
+        self.background = Drawable(join(level_name, "level_background.png"),
+                                   (0, 0))
 
         # Load the data for the level.
         with open(join("levels", level_name, "meta.json"), "r") as level_json:
@@ -38,8 +39,8 @@ class Level():
 
         # Add borders to the foreground and background if the level is smaller
         # than the screen size.
-        self._foreground.center_with_border(screen_size)
-        self._background.center_with_border(screen_size)
+        self.foreground.center_with_border(screen_size)
+        self.background.center_with_border(screen_size)
 
         # Populate the level with its trainers.
         self.populate_trainers()
@@ -49,12 +50,13 @@ class Level():
 
         # Get the list of scripts for the level.
         self._scripts = self._level_meta[4]
-        self.current_script = None
+        self.current_scripting_engine = None
 
         # If the level has an entry script that activate the script at the
         # start of the level.
         if "entry_script.json" in self._scripts:
-            self.load_script("entry_script.json")
+            self.current_scripting_engine = \
+                ScriptingEngine("entry_script.json", self)
 
     def _tile(self):
         """Returns the level's 2d array of tiles."""
@@ -76,9 +78,9 @@ class Level():
         """Adds the level's trainers to the level (including the player)."""
         # Add the player to the level by getting the player's start position
         # from the level's meta data.
-        self._player.setPosition(self.correct_border_and_height_pos(self._level_meta[1]))
-        self._tiles[self._level_meta[1][1]][self._level_meta[1][0]].add_obj(self._player)
-        self._player._current_tile = self._tiles[self._level_meta[1][1]][self._level_meta[1][0]]
+        self.player.setPosition(self.correct_border_and_height_pos(self._level_meta[1]))
+        self._tiles[self._level_meta[1][1]][self._level_meta[1][0]].add_obj(self.player)
+        self.player._current_tile = self._tiles[self._level_meta[1][1]][self._level_meta[1][0]]
 
         # Add the rest of the trainers to the level. Get's data from the
         # level's meta data.
@@ -111,42 +113,25 @@ class Level():
 
     def draw(self, draw_surface):
         """Draws the level. Calls draw on each of the tiles in the level."""
-        self._background.draw(draw_surface)
+        self.background.draw(draw_surface)
         for row in self._tiles:
             for tile in row:
                 tile.draw(draw_surface)
-        self._foreground.draw(draw_surface)
+        self.foreground.draw(draw_surface)
 
     def update(self, ticks):
         """Updates the level. Updates each of the tiles in the level. If there
         is a current script active, then also update that script."""
-        if self.current_script is not None:
-            self.execute_script_line()
+        if self.current_scripting_engine is not None:
+            self.current_scripting_engine.execute_script_line()
         for y, row in enumerate(self._tiles):
             for x, tile in enumerate(row):
                 tile.update(ticks, self.get_nearby_tiles((x, y)))
                 if tile.warp_triggered():
                     return tile.get_warp_level()
 
-        Drawable.updateWindowOffset(self._player,
-                                    self._screen_size,
+        Drawable.updateWindowOffset(self.player, self.screen_size,
                                     self._level_size)
-
-    def execute_script_line(self):
-        """This is a super temporary and simple scripting engine. If I decide
-        to develop the game further this will have to be changed. I am well
-        aware of the risks of usign eval and exec."""
-        try:
-            if eval(str(self.current_script[0][self.current_script[1]])) is not False:
-                self.current_script[1] += 1
-                if self.current_script[1] + 1 > len(self.current_script[0]):
-                    self.current_script = None
-        except Exception as e:
-            print(e)
-            exec(str(self.current_script[0][self.current_script[1]]))
-            self.current_script[1] += 1
-            if self.current_script[1] + 1 > len(self.current_script[0]):
-                self.current_script = None
 
     def get_nearby_tiles(self, pos):
         """Returns a dictionary of tiles adjacent to a tile."""
@@ -177,18 +162,8 @@ class Level():
     def correct_border_and_height_pos(self, pos):
         """The player is 22 pixels high so we need to adjust his position down
         a little when first loading the level. """
-        return Vector2(pos[0] * self.TILE_SIZE + self._foreground._x_off,
+        return Vector2(pos[0] * self.TILE_SIZE + self.foreground._x_off,
                        pos[1] * self.TILE_SIZE - 6)
-
-    def load_script(self, script_name):
-        """Loads a script."""
-        if script_name != "None" and script_name not in self._scripts:
-            print(script_name)
-            raise Exception
-
-        elif script_name != "None":
-            with open(join("levels", self._level_name, script_name), "r") as script:
-                self.current_script = [json.load(script), 0]
 
 
 class Tile:
