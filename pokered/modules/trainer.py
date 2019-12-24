@@ -36,6 +36,7 @@ class Trainer(Mobile):
         self._post_battle_dialogue_id = post_battle_dialogue_id
         self.gender = gender
         self.defeated = False
+        self.current_tile = 0
 
     def all_dead(self):
         """Returns if all of the trainers pokemon are dead."""

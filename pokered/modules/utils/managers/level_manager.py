@@ -39,7 +39,7 @@ class LevelManager(object):
             self._active_event = \
                 self._player.handle_event(event,
                                           self._level.get_nearby_tiles(
-                                              self._player._current_tile._pos))
+                                              self._player.current_tile._pos))
         else:
             self._active_event.handle_event(event)
 
