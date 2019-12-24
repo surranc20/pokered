@@ -23,6 +23,7 @@ class Dialogue():
                                              self._dialogue_frame.getSize()[1]))
         self._player = player
         self._npc = npc
+        self._npc.turn(self._npc.determine_direction_to_tile(player.current_tile.pos))
         self._color = (232, 81, 78) if gender == "female" else (55, 88, 193)
         self._text_cursor = TextCursor((0, 0))
         self._text_cursor.activate()
@@ -65,6 +66,9 @@ class Dialogue():
 
     def draw(self, draw_surface):
         """Draw the dialogue frame, text cursor, and line surface."""
+        self._npc.draw(draw_surface)
+        self._player.draw(draw_surface)
+
         self._dialogue_frame.draw(draw_surface)
         draw_surface.blit(self._line_surface, (6, 111))
         self._text_cursor.draw(draw_surface)

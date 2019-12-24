@@ -40,6 +40,7 @@ class Trainer(Mobile):
         self.current_tile = 0
         self._move_script_active = None
         self._last_wall_bump = 0
+        self._talk_queued = False
 
     def all_dead(self):
         """Returns if all of the trainers pokemon are dead."""
@@ -138,11 +139,17 @@ class Trainer(Mobile):
         self._move_script_active = tile_pos
         return self.current_tile.pos == tile_pos
 
+    def turn(self, direction):
+        self._orientation = direction
+        self._row = abs(self._orientation.value)
+        self._flip = True if self._orientation == Cardinality.EAST else False
+        self.get_current_frame()
+
     def _move_to_tile(self, tile_pos):
         """Helper function that implements the above functionality. Helps
         determine whether or not the script is over."""
         if self.current_tile.pos != tile_pos:
-            self._orientation = self._determine_direction_to_tile(tile_pos)
+            self._orientation = self.determine_direction_to_tile(tile_pos)
             self._moving = True
             return False
         else:
@@ -150,7 +157,7 @@ class Trainer(Mobile):
             self._move_script_active = None
             return True
 
-    def _determine_direction_to_tile(self, tile_pos):
+    def determine_direction_to_tile(self, tile_pos):
         """Helper method to determine the cardinal direction to a tile."""
         if self.current_tile.pos == tile_pos:
             return self._orientation
@@ -170,7 +177,7 @@ class Trainer(Mobile):
 
     def talk_event(self, player):
         """Returns the talke event associated with the trainer."""
-        # TODO: Turn to face the player
+        # Create the talk event
         if not self.defeated:
             return Dialogue(str(self._dialogue_id),
                             player,
