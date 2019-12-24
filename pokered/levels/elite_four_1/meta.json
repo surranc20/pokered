@@ -2,7 +2,7 @@
     [13,13],
     [6,11],
     [
-        [[6,5],"lorelei", 1, 5, 6,
+        [[6,5],"lorelei", "south", 1, 5, 6,
             [
                 ["dewgong", ["Surf", "Ice Beam", "Hail", "Safeguard"], 52],
                 ["cloyster", ["Dive", "Spikes", "Hail", "Protect"], 51],

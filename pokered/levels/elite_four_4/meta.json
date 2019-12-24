@@ -2,14 +2,14 @@
     [28,24],
     [23,13],
     [
-        [[6,8],"lance", 4, 
+        [[6,8],"lance", "south", 4,
             [
                 ["gyarados", ["Hyper Beam", "Dragon Rage", "Bite", "Twister"], 56],
                 ["dragonair", ["Dragon Rage", "Outrage", "Hyper Beam", "Safeguard"], 54],
                 ["dragonair", ["Hyper Beam", "Safeguard", "Thunder Wave", "Outrage"], 54],
                 ["aerodactyl", ["Hyper Beam", "Wing Attack", "Ancient Power", "Scary Face"], 58],
                 ["dragonite", ["Hyper Beam", "Safeguard", "Outrage", "Wing Attack"], 60]
-                
+
             ],
             "None",
             "male"
