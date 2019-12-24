@@ -27,7 +27,7 @@ class Player(Trainer):
                 self.move(event)
             elif event.type == pygame.KEYDOWN and event.key == BattleActions.SELECT.value:
                 if nearby_tiles[self._orientation]._obj is not None and \
-                    nearby_tiles[self._orientation]._obj is not self:
+                        nearby_tiles[self._orientation]._obj is not self:
                     return nearby_tiles[self._orientation]._obj.talk_event(self)
         else:
             return
