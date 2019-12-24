@@ -1,14 +1,24 @@
 import json
 import pygame
+import logging
 from ast import literal_eval as make_tuple
 from os.path import join
+from .managers.soundManager import SoundManager
 from .UI.drawable import Drawable
+
+# Create logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(levelname)s:%(name)s:%(message)s')
+file_handler = logging.FileHandler('log.log')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 
 class ScriptingEngine():
     SCRIPTING_COMMANDS = ["MOVE", "DIALOG", "BATTLE", "TURN", "PLAY_MUSIC",
                           "FOREGROUND_CHANGE", "BACKGROUND_CHANGE", "LOCK",
-                          "RELEASE"]
+                          "RELEASE", "PLAY_SOUND"]
 
     def __init__(self, script_name, level):
         """Creates the scripting engine for a given script"""
@@ -49,12 +59,11 @@ class ScriptingEngine():
         """Moves the trainer to a given tile. Trainers can only move
         in one direction at a time"""
         if len(args) != 2:
-            raise Exception("Unexpected args length: ", args)
+            raise Exception("Expected args of len 2:", args)
 
         target_pos = make_tuple(args[1])
 
         if args[0] == "PLAYER":
-            print(args[1])
             response = self._level.player.move_forward_to_tile(target_pos)
         return response is True
 
@@ -81,6 +90,14 @@ class ScriptingEngine():
     def play_music(self, args):
         """Plays the level's music"""
         pass
+
+    def play_sound(self, args):
+        """Plays a sound effect"""
+        if len(args) != 1:
+            raise Exception("Expected args of len 1:", args)
+
+        SoundManager.getInstance().playSound(args[0], sound=1)
+        return True
 
     def foreground_change(self, args):
         """Changes the foreground image to the one specefied in args"""
