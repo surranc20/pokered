@@ -9,7 +9,7 @@ class Mobile(Animated):
       from my player class and move it here."""
       super().__init__(imageName, position)
       self._orientation = cardinality
-      self._row = self._orientation.value
+      self._row = abs(self._orientation.value)
 
    def update(self, ticks):
       """Updates"""

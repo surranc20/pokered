@@ -39,7 +39,6 @@ class Animated(Drawable):
    def startAnimation(self):
       self._animate = True
 
-
    def stopAnimation(self):
       self._animate = False
       self._image = FRAMES.getFrame(self._imageName, (self._frame, self._row))
