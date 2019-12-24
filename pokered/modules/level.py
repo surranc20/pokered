@@ -21,6 +21,9 @@ class Level():
         self.screen_size = screen_size
         self.level_name = level_name
 
+        # Dictionary to track all trainers on the map
+        self.trainers = {}
+
         # We need a foreground and background to add a 3d effect to the game.
         self.foreground = Drawable(join(level_name, "level_foreground.png"),
                                    (0, 0))
@@ -80,7 +83,7 @@ class Level():
         # from the level's meta data.
         self.player.setPosition(self.correct_border_and_height_pos(self._level_meta[1]))
         self._tiles[self._level_meta[1][1]][self._level_meta[1][0]].add_obj(self.player)
-        self.player._current_tile = self._tiles[self._level_meta[1][1]][self._level_meta[1][0]]
+        self.player.current_tile = self._tiles[self._level_meta[1][1]][self._level_meta[1][0]]
 
         # Add the rest of the trainers to the level. Get's data from the
         # level's meta data.
@@ -109,7 +112,8 @@ class Level():
                 train.pokemon_team.append(new_pokemon)
             # Add the trainer to the tile.
             self._tiles[trainer_args[0][1]][trainer_args[0][0]].add_obj(train)
-            # TODO: Will also need to set the trainers active tile
+            train.current_tile = \
+                self._tiles[trainer_args[0][1]][trainer_args[0][0]]
 
     def draw(self, draw_surface):
         """Draws the level. Calls draw on each of the tiles in the level."""

@@ -13,7 +13,7 @@ class Player(Trainer):
         super().__init__(position, name, Cardinality.NORTH, enemy=False)
         self._nFrames = 4
         self._last_wall_bump = 0
-        self._current_tile = 0
+
         self._move_script_active = None
         self._hidden_inventory = []
 
@@ -36,12 +36,12 @@ class Player(Trainer):
         """Allows the implementation of movement scripting. The player will
         move until they reach the tile provided."""
         self._move_script_active = tile
-        return self._current_tile._pos == tile
+        return self.current_tile._pos == tile
 
     def _move_forward_to_tile(self, tile):
         """Helper function that implements the above functionality. Helps
         determine whether or not the script is over."""
-        if self._current_tile._pos != tile:
+        if self.current_tile._pos != tile:
             self._orientation = Cardinality.NORTH
             self._moving = True
             return False
@@ -110,8 +110,8 @@ class Player(Trainer):
 
     def update(self, ticks, nearby_tiles, current_tile):
         """Updates the player class's position"""
-        self._current_tile = current_tile
-        print(self._current_tile._pos)
+        self.current_tile = current_tile
+        print(self.current_tile._pos)
         if self._move_script_active is not None:
             self._move_forward_to_tile(self._move_script_active)
         if self._moving:
