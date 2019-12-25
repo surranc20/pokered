@@ -5,6 +5,7 @@ from ast import literal_eval as make_tuple
 from os.path import join
 from .managers.soundManager import SoundManager
 from .UI.drawable import Drawable
+from ..events.dialogue import Dialogue
 
 # Create logger
 logger = logging.getLogger(__name__)
@@ -16,13 +17,13 @@ logger.addHandler(file_handler)
 
 
 class ScriptingEngine():
-    SCRIPTING_COMMANDS = ["MOVE", "DIALOG", "BATTLE", "TURN", "PLAY_MUSIC",
+    SCRIPTING_COMMANDS = ["MOVE", "DIALOGUE", "BATTLE", "TURN", "PLAY_MUSIC",
                           "FOREGROUND_CHANGE", "BACKGROUND_CHANGE", "LOCK",
-                          "RELEASE", "PLAY_SOUND"]
+                          "RELEASE", "PLAY_SOUND", "SET_WARP"]
 
     def __init__(self, script_name, level):
         """Creates the scripting engine for a given script"""
-        self._script = Script(script_name, level.level_name)
+        self._script = Script(script_name, level)
         self._level = level
 
     def execute_script_line(self):
@@ -34,12 +35,14 @@ class ScriptingEngine():
         # Execute the method associated with the given command.
         # If the method does not return False (i.e. is done executing)
         # then increment the scripts line.
-        if (getattr(self, command.lower())(args)):
+        response = getattr(self, command.lower())(args)
+        if response is not False:
             # Increment the script line. If all lines have been executed
             # then set the level's current script to None.
             # The current script is now over.
             if not self._script.increment_script_line():
                 self._level.current_scripting_engine = None
+            return response
 
     def _parse_current_line(self):
         """Parses current line to determine what action needs to be taken.
@@ -73,7 +76,9 @@ class ScriptingEngine():
 
     def dialogue(self, args):
         """Creates a dialogue event between the player and the trainer."""
-        pass
+        print(args)
+        npc = self._level.trainers[args[0]]
+        return Dialogue(args[1], self._level.player, npc)
 
     def battle(self, args):
         """Creates a battle event between the player and the trainer."""
@@ -116,25 +121,39 @@ class ScriptingEngine():
     def background_change(self, args):
         """Changes the background image to the one specified in
         args"""
-        pass
+        try:
+            self._level.background = \
+                Drawable(join(self._level.level_name, args[0]), (0, 0))
+            self._level.background.center_with_border(self._level.screen_size)
+        except pygame.error as e:
+            print(e)
+        return True
+
+    def set_warp(self, args):
+        """Sets a tile position to warp to a given location."""
+        self._level.tiles[int(args[1])][int(args[0])].set_warp(args[2])
 
 
 class Script():
-    def __init__(self, script_name, level_name):
+    def __init__(self, script_name, level):
         """Creates the script object"""
         self._current_line = 0
-        self._script = self._load_script(script_name, level_name)
+        self._level = level
+        self._script = self._load_script(script_name, level.level_name)
 
     def _load_script(self, script_name, level_name):
         """Loads a script."""
-        try:
-            # Generate the script path and then load the script.
-            script_path = join("levels", level_name, script_name)
-            with open(script_path, "r") as script:
-                return json.load(script)
-        except Exception as e:
-            print("Error loading script")
-            print(e)
+        if script_name.split()[0] == "after_battle_dialog":
+            return self._after_battle_dialog(script_name)
+        else:
+            try:
+                # Generate the script path and then load the script.
+                script_path = join("levels", level_name, script_name)
+                with open(script_path, "r") as script:
+                    return json.load(script)
+            except Exception as e:
+                print("Error loading script")
+                print(e)
 
     def increment_script_line(self):
         """Adds 1 to the current script line and return True. If there
@@ -149,3 +168,9 @@ class Script():
     def current_line(self):
         """Gets the current line of the script."""
         return self._script[self._current_line]
+
+    def _after_battle_dialog(self, script_name):
+        script = script_name.split(" ")
+        return [
+            "DIALOGUE " + script[1] + " " + script[2]
+        ]

@@ -38,7 +38,7 @@ class Level():
             self._colide_list = self._level_meta[3]
 
         # Tile the level up into 16x16 tiles.
-        self._tiles = self._tile()
+        self.tiles = self._tile()
 
         # Add borders to the foreground and background if the level is smaller
         # than the screen size.
@@ -82,8 +82,8 @@ class Level():
         # Add the player to the level by getting the player's start position
         # from the level's meta data.
         self.player.setPosition(self.correct_border_and_heightpos(self._level_meta[1]))
-        self._tiles[self._level_meta[1][1]][self._level_meta[1][0]].add_obj(self.player)
-        self.player.current_tile = self._tiles[self._level_meta[1][1]][self._level_meta[1][0]]
+        self.tiles[self._level_meta[1][1]][self._level_meta[1][0]].add_obj(self.player)
+        self.player.current_tile = self.tiles[self._level_meta[1][1]][self._level_meta[1][0]]
 
         # Add the rest of the trainers to the level. Get's data from the
         # level's meta data.
@@ -114,15 +114,15 @@ class Level():
                 train.pokemon_team.append(new_pokemon)
 
             # Add the trainer to the tile.
-            self._tiles[trainer_args[0][1]][trainer_args[0][0]].add_obj(train)
+            self.tiles[trainer_args[0][1]][trainer_args[0][0]].add_obj(train)
             train.current_tile = \
-                self._tiles[trainer_args[0][1]][trainer_args[0][0]]
+                self.tiles[trainer_args[0][1]][trainer_args[0][0]]
             self.trainers[train.name] = train
 
     def draw(self, draw_surface):
         """Draws the level. Calls draw on each of the tiles in the level."""
         self.background.draw(draw_surface)
-        for row in self._tiles:
+        for row in self.tiles:
             for tile in row:
                 tile.draw(draw_surface)
         self.foreground.draw(draw_surface)
@@ -131,8 +131,10 @@ class Level():
         """Updates the level. Updates each of the tiles in the level. If there
         is a current script active, then also update that script."""
         if self.current_scripting_engine is not None:
-            self.current_scripting_engine.execute_script_line()
-        for y, row in enumerate(self._tiles):
+            response = self.current_scripting_engine.execute_script_line()
+            if hasattr(response, "handle_event"):
+                return response
+        for y, row in enumerate(self.tiles):
             for x, tile in enumerate(row):
                 tile.update(ticks, self.get_nearby_tiles((x, y)))
                 if tile.warp_triggered():
@@ -146,13 +148,13 @@ class Level():
         nearby_tiles = {}
 
         if self.tile_within_map((pos[0], pos[1] - 1)):
-            nearby_tiles[Cardinality.NORTH] = self._tiles[pos[1] - 1][pos[0]]
+            nearby_tiles[Cardinality.NORTH] = self.tiles[pos[1] - 1][pos[0]]
         if self.tile_within_map((pos[0], pos[1] + 1)):
-            nearby_tiles[Cardinality.SOUTH] = self._tiles[pos[1] + 1][pos[0]]
+            nearby_tiles[Cardinality.SOUTH] = self.tiles[pos[1] + 1][pos[0]]
         if self.tile_within_map((pos[0] - 1, pos[1])):
-            nearby_tiles[Cardinality.WEST] = self._tiles[pos[1]][pos[0] - 1]
+            nearby_tiles[Cardinality.WEST] = self.tiles[pos[1]][pos[0] - 1]
         if self.tile_within_map((pos[0] + 1, pos[1])):
-            nearby_tiles[Cardinality.EAST] = self._tiles[pos[1]][pos[0] + 1]
+            nearby_tiles[Cardinality.EAST] = self.tiles[pos[1]][pos[0] + 1]
 
         return nearby_tiles
 
