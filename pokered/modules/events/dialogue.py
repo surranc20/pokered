@@ -24,7 +24,7 @@ class Dialogue():
         self._player = player
         self._npc = npc
         self._npc.turn(self._npc.determine_direction_to_tile(player.current_tile.pos))
-        self._color = (232, 81, 78) if gender == "female" else (55, 88, 193)
+        self._color = (232, 81, 78) if npc.gender == "female" else (55, 88, 193)
         self._text_cursor = TextCursor((0, 0))
         self._text_cursor.activate()
 
@@ -95,3 +95,4 @@ class Dialogue():
             return Battle(self._player, self._npc)
         else:
             return "Level"
+

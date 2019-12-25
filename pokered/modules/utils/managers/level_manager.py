@@ -1,7 +1,9 @@
 from ...level import Level
 from ...events.white_out import WhiteOut
 from ...battle.battle import Battle
+from ...events.dialogue import Dialogue
 from ...events.movie import Movie
+from ..scripting_engine import ScriptingEngine
 
 
 class LevelManager(object):
@@ -47,41 +49,47 @@ class LevelManager(object):
         """If an event is active update the event, otherwise update the
         level."""
         if self._active_event is None:
-            warped = self._level.update(ticks)
+            response = self._level.update(ticks)
+            if type(response) == Dialogue:
+                self._active_event = response
             # Warped will be some non None value when it is time to change
             # levels.
-            if warped is not None:
-                return warped
+
+            elif response is not None:
+                return response
 
         # Update the current event.
         else:
             self._active_event.update(ticks)
             if self._active_event.is_over():
-                if self._active_event.get_end_event() is not None:
+                end_event = self._active_event.get_end_event()
+                if end_event is not None:
                     # This response means it is time for the game to restart.
-                    if self._active_event.get_end_event() == "RESTART":
+                    if end_event == "RESTART":
                         return "RESTART"
                     # This response means the intro video is over and it is
                     # time to load the first level.
-                    elif self._active_event.get_end_event() == "INTRO OVER":
+                    elif end_event == "INTRO OVER":
                         self._active_event = None
                         self._level.play_music()
-                    elif self._active_event.get_end_event() == "Level":
+                    elif end_event == "Level":
                         self._active_event = None
                     # This response means a dialogue event has ended and it is
                     # time to start a battle.
-                    elif type(self._active_event.get_end_event()) == Battle:
-                        self._active_event = self._active_event.get_end_event()
+                    elif type(end_event) == Battle:
+                        self._active_event = end_event
                     # This response means the player lost a battle and it is
                     # time to start the white out event.
-                    elif type(self._active_event.get_end_event()) == WhiteOut:
-                        self._active_event = self._active_event.get_end_event()
+                    elif type(end_event) == WhiteOut:
+                        self._active_event = end_event
                     # This response means it is time to play a movie.
-                    elif type(self._active_event.get_end_event()) == Movie:
-                        self._active_event = self._active_event.get_end_event()
+                    elif type(end_event) == Movie:
+                        self._active_event = end_event
                     # This means the response was nothing and its time to
                     # return to the over world.
                     else:
-                        self._level.load_script(self._active_event.get_end_event())
+                        self._level.current_scripting_engine = \
+                            ScriptingEngine(end_event,
+                                            self._level)
                         self._active_event = None
                         self._level.play_music()

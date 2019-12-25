@@ -5,7 +5,6 @@ from ..utils.managers.soundManager import SoundManager
 from ..animations.moves.scrolling_move import ScrollingMove
 from .battle_fsm import BattleFSM
 from ..events.white_out import WhiteOut
-from ..events.movie import Movie
 
 
 class Battle:
@@ -14,6 +13,8 @@ class Battle:
         # Since nothing in the battle is world bound we can simply set
         # WINDOW_OFFSET to 0 here and it will not update again until the
         # battle is over.
+        self._old_offset = (Drawable.WINDOW_OFFSET[0],
+                            Drawable.WINDOW_OFFSET[1])
         Drawable.WINDOW_OFFSET = Vector2(0, 0)
         self._player = player
         self._opponent = opponent
@@ -56,11 +57,16 @@ class Battle:
 
     def get_end_event(self):
         """Returns the end event that will happen after the battle is over."""
+        Drawable.WINDOW_OFFSET = Vector2(self._old_offset[0],
+                                         self._old_offset[1])
         if not self._battle_fsm._player_lost:
             self._opponent.defeated = True
+            if self._event is not None:
+                return self._event
+            else:
+                return "after_battle_dialog " + self._opponent.name + " " + \
+                        str(self._opponent.post_battle_dialogue_id)
         if self._battle_fsm._player_lost:
             return WhiteOut(self._player)
-        elif self._opponent.get_name().lower() == "lance":
-            return Movie("outro_folder")
         else:
             return self._event
