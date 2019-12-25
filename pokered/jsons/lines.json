@@ -6,5 +6,7 @@
     "5": ["..Things shouldn't be this way!", "False"],
     "6": ["You're better than I thought.\nGo on ahead.\nYou only got a taste of the Pokémon League's power.", "False"],
     "7": ["Why? How could I lose?", "False"],
-    "8": ["My job is done. Go face your next challenge.", "False"]
+    "8": ["My job is done. Go face your next challenge.", "False"],
+    "9": ["Oh, my! You're something special, child!", "False"],
+    "10": ["You win!\nI see what the old duff sees in you now.\nI've nothing else to say.\nRun along now, child!", "False"]
 }
