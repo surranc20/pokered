@@ -1,5 +1,6 @@
 [
-    "self._background = Drawable(join(self._level_name, 'level_background_open.png'), (0,0))\nself._background.center_with_border(self._screen_size)",
-    "SoundManager.getInstance().playSound('firered_0012.wav', sound=1)",
-    "self._tiles[2][6].set_warp('elite_four_3')" 
+    "DIALOGUE BRUNO 8",
+    "BACKGROUND_CHANGE level_background_open.png",
+    "PLAY_SOUND firered_0012.wav",
+    "SET_WARP 6 2 elite_four_3"
 ]
