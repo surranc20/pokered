@@ -373,7 +373,9 @@ class BattleFSM:
         # If all the opponent's pokemon are dead then the player has won
         # the battle.
         if self._opponent.all_dead():
-            self._handle_state_change(BattleStates.VICTORY)
+            self._state_queue = [BattleStates.OPPONENT_FEINT,
+                                 BattleStates.VICTORY]
+            self._handle_state_change(self._state_queue.pop(0))
 
         # Otherwise populate the state queue with the sequence of states that
         # play when a pokemon dies.
