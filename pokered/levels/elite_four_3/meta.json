@@ -2,7 +2,7 @@
     [13,13],
     [6,11],
     [
-        [[6,5],"agatha", "south", 3,
+        [[6,5],"agatha", "south", 3, 9, 10,
             [
                 ["gengar", ["Shadow Punch", "Double Team", "Toxic", "Confuse Ray"], 54],
                 ["golbat", ["Air Cutter", "Poison Fang", "Bite", "Confuse Ray"], 54],
