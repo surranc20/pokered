@@ -8,5 +8,7 @@
     "7": ["Why? How could I lose?", "False"],
     "8": ["My job is done. Go face your next challenge.", "False"],
     "9": ["Oh, my! You're something special, child!", "False"],
-    "10": ["You win!\nI see what the old duff sees in you now.\nI've nothing else to say.\nRun along now, child!", "False"]
+    "10": ["You win!\nI see what the old duff sees in you now.\nI've nothing else to say.\nRun along now, child!", "False"],
+    "11": ["That’s it! I hate to admit it, but you are a Pokémon master!", "False"],
+    "12": ["I still can’t believe my dragons lost to you.\nYou are now the Pokémon League Champion!\n...Or, you would have been, but you have one more challenge left.\nThere is one more Trainer to face!\nHe beat the Elite Four before you.\nHe is the real Pokémon League Champion.", "False"]
 }

@@ -61,7 +61,9 @@ class Battle:
                                          self._old_offset[1])
         if not self._battle_fsm._player_lost:
             self._opponent.defeated = True
-            if self._event is not None:
+            print(self._event)
+            if self._event is not None and self._event != "None":
+                print(type(self._event))
                 return self._event
             else:
                 return "after_battle_dialog " + self._opponent.name + " " + \

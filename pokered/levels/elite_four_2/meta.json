@@ -4,6 +4,10 @@
     [
         [[6,5],"bruno", "south", 2, 7, 8,
             [
+                ["onix", ["Earthquake", "Rock Tomb", "Iron Tail", "Roar"], 51],
+                ["hitmonchan", ["Sky Uppercut", "Mach Punch", "Rock Tomb", "Counter"], 53],
+                ["hitmonlee", ["Mega Kick", "Foresight", "Brick Break", "Facade"], 53],
+                ["onix", ["Double-Edge", "Iron Tail", "Earthquake", "Sand Tomb"], 54],
                 ["machamp", ["Bulk Up", "Cross Chop", "Scary Face", "Rock Tomb"], 56]
             ],
             "defeat_script.json",

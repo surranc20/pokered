@@ -177,7 +177,7 @@ class Level():
 
 
 class Tile:
-    def __init__(self, pos, colidable, obj):
+    def __init__(self, pos, collidable, obj):
         """Simple class representing a tile on the map. While commenting this
         I realized that I spelt collidable wrong. I will fix this later."""
         self.pos = pos
@@ -187,17 +187,17 @@ class Tile:
         # once an object leaves the tile. Also the player can sometimes begin
         # a level in a colidable tile and the tile will resume normal
         # functionallity after the player has left said tile.
-        self._base_colidable = colidable
+        self._base_colidable = collidable
         # A tile is a warp if occupying it sends the player to another level.
         self._is_warp = False
-        self._colidable = True if colidable == 1 else False
+        self.collidable = True if collidable == 1 else False
 
     def add_obj(self, obj):
         """Adds an object to a tile. Usually a player or a trainer. If a tile
         has an object than it becomes colidable."""
         if self._obj is None:
             self._obj = obj
-            self._colidable = True
+            self.collidable = True
         else:
             raise Exception
 
@@ -205,12 +205,12 @@ class Tile:
         """Removes a tiles object and sets its colidability back to what it
         was at the start of the level."""
         self._obj = None
-        self._colidable = self._base_colidable
+        self.collidable = self._base_colidable
 
     def is_clear(self):
         """Returns whether or not a tile has nothing on it and is not
         collidable."""
-        return not self._colidable
+        return not self.collidable
 
     def draw(self, draw_surface):
         """Draws the tile's obj if one exists."""
@@ -225,7 +225,7 @@ class Tile:
     def set_warp(self, level_name):
         """Sets a tile as a warp tile, requires being passed in a level name
         that the player will warp into."""
-        self._colidable = False
+        self.collidable = False
         self._is_warp = True
         self._warp_level = level_name
 

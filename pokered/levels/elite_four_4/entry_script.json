@@ -1,0 +1,14 @@
+[
+    "MOVE PLAYER (23,11)",
+    "MOVE PLAYER (17,11)",
+    "MOVE PLAYER (17,18)",
+    "MOVE PLAYER (6,18)",
+    "MOVE PLAYER (6,11)",
+    "SET_COLLIDE_STATUS 6 14 True",
+    "SET_COLLIDE_STATUS 6 15 True",
+    "FOREGROUND_CHANGE level_foreground_closed.png",
+    "BACKGROUND_CHANGE level_background_closed.png",
+    "PLAY_SOUND firered_0026.wav"
+
+
+]

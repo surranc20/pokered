@@ -2,7 +2,7 @@
     [28,24],
     [23,13],
     [
-        [[6,8],"lance", "south", 4,
+        [[6,8],"lance", "south", 4, 11, 12,
             [
                 ["gyarados", ["Hyper Beam", "Dragon Rage", "Bite", "Twister"], 56],
                 ["dragonair", ["Dragon Rage", "Outrage", "Hyper Beam", "Safeguard"], 54],
@@ -41,5 +41,5 @@
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
     ],
-    []
+    ["entry_script.json"]
 ]
