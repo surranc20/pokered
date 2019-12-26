@@ -487,7 +487,8 @@ class BattleFSM:
         self._handle_state_change(self._state_queue.pop(0))
 
     def _update_victory(self):
-        self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.BATTLE_OVER]
+        self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.VICTORY_TEXT,
+                             BattleStates.BATTLE_OVER]
         self._active_string = "Player defeated " + \
             self._opponent.name.upper() + "!"
         self._handle_state_change(self._state_queue.pop(0))
@@ -892,6 +893,9 @@ class BattleFSM:
                          " became paralyzd! It may not be able to move!")
             else:
                 self._active_string = ""
+
+        elif new_state == BattleStates.VICTORY_TEXT:
+            self._active_string = self._opponent.battle_dialogue
 
         self._state = new_state
 
