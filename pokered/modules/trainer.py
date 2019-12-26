@@ -1,3 +1,4 @@
+import json
 from os.path import join
 from .events.dialogue import Dialogue
 from .utils.UI.mobile import Mobile
@@ -31,11 +32,7 @@ class Trainer(Mobile):
         self._key_down_timer = 0
         self._wait_till_next_update = 0
         self._walk_event = None
-        print(type(event))
         self.event = None if event == "None" else event
-        print(type(self.event))
-        self._dialogue_id = dialogue_id
-        self._battle_dialogue_id = battle_dialogue_id
         self.post_battle_dialogue_id = post_battle_dialogue_id
         self.gender = gender
         self.defeated = False
@@ -43,6 +40,15 @@ class Trainer(Mobile):
         self._move_script_active = None
         self._last_wall_bump = 0
         self._talk_queued = False
+
+        if enemy:
+            # Get battle dialogues lines/ids
+            with open(join("jsons", "lines.json"), "r") as lines_json:
+                lines = json.load(lines_json)
+                self.battle_dialogue = lines[str(battle_dialogue_id)][0]
+
+            self.post_battle_dialogue_id = post_battle_dialogue_id
+            self._dialogue_id = dialogue_id
 
     def all_dead(self):
         """Returns if all of the trainers pokemon are dead."""
