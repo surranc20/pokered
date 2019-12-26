@@ -19,7 +19,8 @@ logger.addHandler(file_handler)
 class ScriptingEngine():
     SCRIPTING_COMMANDS = ["MOVE", "DIALOGUE", "BATTLE", "TURN", "PLAY_MUSIC",
                           "FOREGROUND_CHANGE", "BACKGROUND_CHANGE", "LOCK",
-                          "RELEASE", "PLAY_SOUND", "SET_WARP"]
+                          "RELEASE", "PLAY_SOUND", "SET_WARP",
+                          "SET_COLLIDE_STATUS"]
 
     def __init__(self, script_name, level):
         """Creates the scripting engine for a given script"""
@@ -132,6 +133,15 @@ class ScriptingEngine():
     def set_warp(self, args):
         """Sets a tile position to warp to a given location."""
         self._level.tiles[int(args[1])][int(args[0])].set_warp(args[2])
+
+    def set_collide_status(self, args):
+        """Changes the collidable status of a tile. If arg[2] is true than
+        the tile will be a collidable tile, otherwise the tile will not be
+        collidable."""
+        if len(args) != 3:
+            raise Exception("Expected args of len 2:", args)
+        self._level.tiles[int(args[1])][int(args[0])].collidable = \
+            True if args[2] == "True" else False
 
 
 class Script():

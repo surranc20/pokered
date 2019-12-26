@@ -31,7 +31,9 @@ class Trainer(Mobile):
         self._key_down_timer = 0
         self._wait_till_next_update = 0
         self._walk_event = None
-        self.event = event
+        print(type(event))
+        self.event = None if event == "None" else event
+        print(type(self.event))
         self._dialogue_id = dialogue_id
         self._battle_dialogue_id = battle_dialogue_id
         self.post_battle_dialogue_id = post_battle_dialogue_id
@@ -76,6 +78,7 @@ class Trainer(Mobile):
 
     def update(self, ticks, nearby_tiles, current_tile):
         """Updates the trainer class's position"""
+        #print(current_tile)
         self.current_tile = current_tile
         if self._move_script_active is not None:
             self._move_to_tile(self._move_script_active)
