@@ -14,7 +14,7 @@ class BallToss(AnimatedGroupPart):
         self._first_update = True
         if not self._enemy:
             super().__init__(join("battle", "pokeball_anim.png"), position,
-                             anim_sequence_pos)
+                             anim_sequence_pos, offset=(0,0))
             self._nFrames = 4
             self._framesPerSecond = 20
 
@@ -34,7 +34,7 @@ class BallToss(AnimatedGroupPart):
         else:
             # The enemy is tossing the ball.
             super().__init__(join("battle", "pokeball_open_anim.png"),
-                             position, anim_sequence_pos)
+                             position, anim_sequence_pos, offset=(0,0))
             self._nFrames = 3
             self._framesPerSecond = 10
             self._animate = False

@@ -8,6 +8,7 @@ from ..utils.vector2D import Vector2
 from ..animations.toss_pokemon import TossPokemon
 from ..animations.change_hp import ChangeHP
 from ..animations.poke_death import PokeDeath
+from ..animations.trainer_slide import TrainerSlide
 from ..animations.moves import *
 from ..animations.moves.generic.hit import Hit
 from ..utils.managers.soundManager import SoundManager
@@ -487,7 +488,9 @@ class BattleFSM:
         self._handle_state_change(self._state_queue.pop(0))
 
     def _update_victory(self):
-        self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.VICTORY_TEXT,
+        self._state_queue = [BattleStates.OPPONENT_SLIDE_IN,
+                             BattleStates.TEXT_WAIT,
+                             BattleStates.VICTORY_TEXT,
                              BattleStates.BATTLE_OVER]
         self._active_string = "Player defeated " + \
             self._opponent.name.upper() + "!"
@@ -553,6 +556,11 @@ class BattleFSM:
 
             if self._state == BattleStates.PLAYER_FEINT:
                 self._active_animation = PokeDeath(self._player.active_pokemon)
+
+            if self._state == BattleStates.OPPONENT_SLIDE_IN:
+                self._active_animation = \
+                    TrainerSlide(self._opponent.battle_image, dx=-50)
+                self._draw_list.append(self._opponent.battle_image)
 
         # This code block controls auto states once the active animation for
         # the state has been set.

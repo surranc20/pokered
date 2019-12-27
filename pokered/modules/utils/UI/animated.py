@@ -94,9 +94,11 @@ class AnimatedGroup():
             anim.draw(draw_surface)
 
 class AnimatedGroupPart(Animated):
-   def __init__(self, imageName, location, anim_sequence_pos, offset=(0,0)):
+   def __init__(self, imageName, location, anim_sequence_pos, offset=None):
       """Small class that combines an animated object with its position in the animated group."""
-      super().__init__(imageName, location, offset= offset)
+      change = offset
+      print(change)
+      super().__init__(imageName, location, offset=change)
       self._anim_sequence_pos = anim_sequence_pos
 
 

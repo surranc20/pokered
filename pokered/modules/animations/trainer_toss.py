@@ -11,7 +11,7 @@ class TrainerToss(AnimatedGroupPart):
         to the left and once its position reaches a certain threshold it
         begins its animation."""
         super().__init__(join("battle", "trainer_toss_anim.png"), position,
-                         anim_sequence_pos)
+                         anim_sequence_pos, offset=(0,0))
         self._nFrames = 5
         self._framesPerSecond = 12
 

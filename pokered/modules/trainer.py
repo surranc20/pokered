@@ -2,6 +2,8 @@ import json
 from os.path import join
 from .events.dialogue import Dialogue
 from .utils.UI.mobile import Mobile
+from .utils.UI.drawable import Drawable
+from .utils.vector2D import Vector2
 from .enumerated.cardinality import Cardinality
 from .utils.managers.soundManager import SoundManager
 
@@ -46,9 +48,16 @@ class Trainer(Mobile):
             with open(join("jsons", "lines.json"), "r") as lines_json:
                 lines = json.load(lines_json)
                 self.battle_dialogue = lines[str(battle_dialogue_id)][0]
-
             self.post_battle_dialogue_id = post_battle_dialogue_id
             self._dialogue_id = dialogue_id
+
+            self.battle_image = \
+                Drawable(join("trainers", self.name.lower() + "_b.png"),
+                         Vector2(240, 10))
+        else:
+            self.battle_image = \
+                Drawable(join("battle", "trainer_toss_anim.png"),
+                         Vector2(240, 80), (0, 0))
 
     def all_dead(self):
         """Returns if all of the trainers pokemon are dead."""
@@ -84,7 +93,7 @@ class Trainer(Mobile):
 
     def update(self, ticks, nearby_tiles, current_tile):
         """Updates the trainer class's position"""
-        #print(current_tile)
+        # print(current_tile)
         self.current_tile = current_tile
         if self._move_script_active is not None:
             self._move_to_tile(self._move_script_active)
@@ -109,8 +118,10 @@ class Trainer(Mobile):
                     # Play the wall bump sound based on timer if player
                     # continously walks into wall.
                     if self._last_wall_bump > .7:
-                        SoundManager.getInstance().playSound("firered_0007.wav",
-                                                             sound=1)
+                        SoundManager.getInstance().playSound(
+                            "firered_0007.wav",
+                            sound=1
+                            )
                         self._last_wall_bump = self._last_wall_bump - .7
 
         # This ensures the player travels a full tile once they have begun
