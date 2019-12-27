@@ -1,6 +1,7 @@
 import pygame
 from modules.utils.vector2D import Vector2
 from modules.player import Player
+from modules.trainer import Trainer
 from modules.pokemon import Pokemon
 from modules.move import Move
 from modules.utils.stat_calc import StatCalculator
@@ -58,7 +59,7 @@ def main():
     poke6.add_move(Move("Thunder Wave"))
 
     stat_calc = StatCalculator()
-    poke.stats = stat_calc.calculate_main(poke, 65)
+    poke.stats = stat_calc.calculate_main(poke, 99)
     poke2.stats = stat_calc.calculate_main(poke2, 60)
     poke3.stats = stat_calc.calculate_main(poke3, 51)
     poke4.stats = stat_calc.calculate_main(poke4, 58)
@@ -71,6 +72,7 @@ def main():
     player.pokemon_team.append(poke4)
     player.pokemon_team.append(poke5)
     player.pokemon_team.append(poke6)
+
 
     # Make game variable
     game = GameManager(SCREEN_SIZE, player)
