@@ -49,3 +49,4 @@ class BattleStates(Enum):
     PARALYZED_CANT_MOVE = ("text wait", 45)
     DEFEAT = ("compute", 46)
     VICTORY_TEXT = ("text wait", 47)
+    OPPONENT_SLIDE_IN = ("auto", 48)
