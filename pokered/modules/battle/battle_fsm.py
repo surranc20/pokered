@@ -248,7 +248,8 @@ class BattleFSM:
     def _handle_text_wait_active_string_update(self):
         if self._state == BattleStates.UPDATE_PLAYER_STATUS_EFFECT \
                 or self._state == BattleStates.UPDATE_ENEMY_STATUS_EFFECT \
-                or self._state == BattleStates.PARALYZED_CANT_MOVE:
+                or self._state == BattleStates.PARALYZED_CANT_MOVE \
+                or self._state == BattleStates.PAYOUT:
             self._text_cursor.set_pos(self._wrap_text(40))
         else:
             self._text_cursor.set_pos(self._wrap_text(25))
@@ -482,15 +483,17 @@ class BattleFSM:
 
     def _update_defeat(self):
         self._player_lost = True
-        self._state_queue = [BattleStates.TEXT_WAIT, BattleStates.BATTLE_OVER]
-        self._active_string = "Player was defeated by " + \
-            self._opponent.name.upper() + "!"
+        self._state_queue = [BattleStates.PLAYER_FEINT, BattleStates.TEXT_WAIT,
+                             BattleStates.PAYOUT, BattleStates.BATTLE_OVER]
+        self._active_string = \
+            self._player.name.upper() + " is out of usable POKéMON!"
         self._handle_state_change(self._state_queue.pop(0))
 
     def _update_victory(self):
         self._state_queue = [BattleStates.OPPONENT_SLIDE_IN,
                              BattleStates.TEXT_WAIT,
                              BattleStates.VICTORY_TEXT,
+                             BattleStates.PAYOUT_WIN,
                              BattleStates.BATTLE_OVER]
         self._active_string = "Player defeated " + \
             self._opponent.name.upper() + "!"
@@ -904,6 +907,15 @@ class BattleFSM:
 
         elif new_state == BattleStates.VICTORY_TEXT:
             self._active_string = self._opponent.battle_dialogue
+
+        elif new_state == BattleStates.PAYOUT:
+            self._active_string = self._player.name.upper() + " payed out " + \
+                str(self._player.payout()) + " as the prize money..."
+
+        elif new_state == BattleStates.PAYOUT_WIN:
+            self._active_string = self._player.name.upper() + " got " + \
+                str(self._opponent.payout()) + " for winning!"
+            self._player.money += self._opponent.payout()
 
         self._state = new_state
 

@@ -9,9 +9,77 @@ from .utils.managers.soundManager import SoundManager
 
 
 class Trainer(Mobile):
+    BASE_PAYOUT = {
+        "Beauty": 80,
+        "Biker": 20,
+        "Bird Keeper": 24,
+        "Black Belt": 24,
+        "Boss": 80,
+        "Bug Catcher": 12,
+        "Burglar": 12,
+        "Channeler": 88,
+        "Ace Trainer": 48,
+        "Roughneck": 32,
+        "Engineer": 48,
+        "Fisher": 40,
+        "Gambler": 72,
+        "Gentleman": 72,
+        "Grunt": 20,
+        "Hiker": 36,
+        "Camper": 20,
+        "Picnicker": 40,
+        "Juggler": 40,
+        "Lass": 16,
+        "Poké Maniac": 48,
+        "Psychic": 24,
+        "Rocker": 24,
+        "Super Nerd": 24,
+        "Swimmer": 4,
+        "Sailor": 40,
+        "Scientist": 48,
+        "Tamer": 40,
+        "Youngster": 16,
+        "Guitarist": 32,
+        "Poké Fan": 80,
+        "School Kid": 32,
+        "Twins": 20,
+        "Admin": 32,
+        "Aroma Lady": 40,
+        "Battle Girl": 24,
+        "Bug Maniac": 60,
+        "Collector": 60,
+        "Cool Couple": 48,
+        "Crush Girl": 24,
+        "Crush Kin": 48,
+        "Dragon Tamer": 48,
+        "Expert": 48,
+        "Hex Maniac": 24,
+        "Interviewer": 96,
+        "Kindler": 32,
+        "Lady": 200,
+        "Ninja Boy": 12,
+        "Old Couple": 80,
+        "Painter": 16,
+        "Parasol Lady": 40,
+        "Pokémon Breeder": 40,
+        "Pokémon Ranger": 36,
+        "Rich Boy": 200,
+        "Ruin Maniac": 48,
+        "Sis and Bro": 8,
+        "Teammates": 32,
+        "Triathlete": 40,
+        "Tuber": 4,
+        "Young Couple": 64,
+        "Leader": 100,
+        "Elite Four": 100,
+        "Champion": 200,
+        "Pokémon Trainer": 200,
+        "Rival": 36
+        }
+
     def __init__(self, position, name, facing, enemy=True, dialogue_id=None,
                  battle_dialogue_id=None, post_battle_dialogue_id=None,
-                 event=None, gender="male"):
+                 event=None, gender="male", type="Pokémon Trainer"):
         """Creates a trainer instance. Expects the trainer's position,
         orientation in the world. Optionally expects whether or not the
         trainer is an enemy, the dialouge id associated with the trainer, the
@@ -42,6 +110,7 @@ class Trainer(Mobile):
         self._move_script_active = None
         self._last_wall_bump = 0
         self._talk_queued = False
+        self.trainer_type = type
 
         if enemy:
             # Get battle dialogues lines/ids
@@ -215,6 +284,11 @@ class Trainer(Mobile):
             pokemon.stats["Current HP"] = pokemon.stats["HP"]
             for move in pokemon.get_moves():
                 move.reset_pp()
+
+    def payout(self):
+        """Returns the amount of money that the trainer type pays out after a
+        loss."""
+        return self.pokemon_team[-1].lvl * self.BASE_PAYOUT[self.trainer_type]
 
     def _parse_cardinality(self, card_string):
         if card_string == "north":

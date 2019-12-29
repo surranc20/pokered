@@ -50,3 +50,5 @@ class BattleStates(Enum):
     DEFEAT = ("compute", 46)
     VICTORY_TEXT = ("text wait", 47)
     OPPONENT_SLIDE_IN = ("auto", 48)
+    PAYOUT = ("text wait", 49)
+    PAYOUT_WIN = ("text wait", 50)
