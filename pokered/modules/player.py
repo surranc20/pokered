@@ -1,18 +1,33 @@
 import pygame
 from .trainer import Trainer
-from .utils.UI.mobile import Mobile
-from .utils.managers.soundManager import SoundManager
 from .enumerated.cardinality import Cardinality
 from .enumerated.battle_actions import BattleActions
 
 
 class Player(Trainer):
+    # Create the base payout dict which gives the base price a trainer
+    # must pay after losing a battle based on the number of gym badges
+    # that the player has.
+    BASE_PAYOUT = {
+        0: 8,
+        1: 16,
+        2: 24,
+        3: 36,
+        4: 48,
+        5: 60,
+        6: 80,
+        7: 100,
+        8: 120
+    }
+
     def __init__(self, position, name, enemy=False):
         """Creates an instance of a player. Requires the player's start
         position, and name."""
         super().__init__(position, name, Cardinality.NORTH, enemy=False)
         self._nFrames = 4
-        self._hidden_inventory = []
+        self.badges = []
+        self.money = 600
+        self.hidden_inventory = []
 
     def handle_event(self, event, nearby_tiles):
         """Handles the events from the level manager. Is capable of taking
@@ -87,6 +102,20 @@ class Player(Trainer):
         # the correct row we simply take the absolute value.
         self._row = abs(self._orientation.value)
 
+    def payout(self):
+        """Calculates and then pays the payout incurred after losing a
+        battle. Returns the amount payed."""
+        base_payout = self.BASE_PAYOUT[len(self.badges)]
+        money_lost = base_payout * self.highest_level
+
+        # The player can not lose more money than they have
+        if money_lost - self.money > 0:
+            payout = self.money
+        else:
+            payout = money_lost
+        self.money -= payout
+        return payout
+
     def start_running(self):
         """Player starts running."""
         self._running = True
@@ -97,3 +126,8 @@ class Player(Trainer):
         self._runnign = False
         self._framesPerSecond = 4
 
+    @property
+    def highest_level(self):
+        """Returns the level of the player's highest level pokemon (that
+        is in their current party)."""
+        return max(pokemon.lvl for pokemon in self.pokemon_team)
