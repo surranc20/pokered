@@ -99,3 +99,16 @@ class Drawable(object):
 
    def reload(self):
       self._image = FRAMES.reload(self._imageName, self._offset)
+
+   def __setstate__(self, state):
+      """Reloads image from pickled save file."""
+      self.__dict__.update(state)
+      state["_image"] = FRAMES.getFrame(self._imageName, self._offset)
+      self.__dict__.update(state)
+
+   def __getstate__(self):
+      """Deletes pygame images so that they are not stored in the
+      save file."""
+      state = self.__dict__.copy()
+      del state["_image"]
+      return state

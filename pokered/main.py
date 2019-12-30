@@ -1,7 +1,7 @@
 import pygame
+import pickle
 from modules.utils.vector2D import Vector2
 from modules.player import Player
-from modules.trainer import Trainer
 from modules.pokemon import Pokemon
 from modules.move import Move
 from modules.utils.stat_calc import StatCalculator
@@ -67,15 +67,21 @@ def main():
     poke6.stats = stat_calc.calculate_main(poke6, 70)
 
     player.pokemon_team.append(poke)
-    player.pokemon_team.append(poke2)
-    player.pokemon_team.append(poke3)
-    player.pokemon_team.append(poke4)
-    player.pokemon_team.append(poke5)
-    player.pokemon_team.append(poke6)
+    # player.pokemon_team.append(poke2)
+    # player.pokemon_team.append(poke3)
+    # player.pokemon_team.append(poke4)
+    # player.pokemon_team.append(poke5)
+    # player.pokemon_team.append(poke6)
 
 
     # Make game variable
-    game = GameManager(SCREEN_SIZE, player)
+    try:
+        with open("savegame", "rb") as f:
+            game = pickle.load(f)
+            game.load = True
+    except Exception as e:
+        print(e)
+        game = GameManager(SCREEN_SIZE, player)
 
     # Define a variable to control the main loop
     running = True
@@ -105,6 +111,10 @@ def main():
         if response == "RESTART" and running:
             main()
             break
+        if response == "Pickle" and running:
+            print("yooooo")
+            with open("savegame", "wb") as f:
+                pickle.dump(game, f)
 
 
 if __name__ == "__main__":
