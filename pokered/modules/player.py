@@ -1,4 +1,5 @@
 import pygame
+from .events.menu import Menu
 from .trainer import Trainer
 from .enumerated.cardinality import Cardinality
 from .enumerated.battle_actions import BattleActions
@@ -32,6 +33,9 @@ class Player(Trainer):
     def handle_event(self, event, nearby_tiles):
         """Handles the events from the level manager. Is capable of taking
         control away from the player if a movement scipt is active."""
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RSHIFT:
+            self._moving = False
+            return Menu()
         if self._move_script_active is None:
             if (event.type == pygame.KEYDOWN or
                     event.type == pygame.KEYUP) and \

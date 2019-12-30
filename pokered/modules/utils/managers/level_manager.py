@@ -60,7 +60,7 @@ class LevelManager(object):
 
         # Update the current event.
         else:
-            self._active_event.update(ticks)
+            response = self._active_event.update(ticks)
             if self._active_event.is_over():
                 end_event = self._active_event.get_end_event()
                 if end_event is not None:
@@ -93,3 +93,6 @@ class LevelManager(object):
                                             self._level)
                         self._active_event = None
                         self._level.play_music()
+
+            if response is not None:
+                return response

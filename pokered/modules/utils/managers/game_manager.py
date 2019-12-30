@@ -10,6 +10,8 @@ class GameManager(object):
         self._player = player
         self._level = LevelManager(player, "elite_four_1", movie="intro_folder")
         self._FSM = "running"
+        self.load = False
+
 
     def draw(self, surface):
         """Draws the current level."""
@@ -29,8 +31,15 @@ class GameManager(object):
             # should be changed to. For the demo day it can also be the word
             # 'RESTART' and if this is the case the GameManager tells the game
             # to restart in the main.py file.
+
+            if self.load:
+                self.load = False
+                self._level._level.reload()
+
             warped = self._level.update(ticks)
             if warped == "RESTART":
                 return "RESTART"
+            if warped == "Pickle":
+                return "Pickle"
             if warped is not None:
                 self._level = LevelManager(self._player, warped)
