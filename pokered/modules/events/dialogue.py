@@ -19,12 +19,17 @@ class Dialogue():
                                         (0, 110),
                                         offset=(0, box),
                                         world_bound=False)
-        self._line_surface = pygame.Surface((self._dialogue_frame.getSize()[0] - 10,
-                                             self._dialogue_frame.getSize()[1]))
+        self._line_surface = pygame.Surface(
+            (self._dialogue_frame.getSize()[0] - 10,
+             self._dialogue_frame.getSize()[1])
+             )
         self._player = player
         self._npc = npc
-        self._npc.turn(self._npc.determine_direction_to_tile(player.current_tile.pos))
-        self._color = (232, 81, 78) if npc.gender == "female" else (55, 88, 193)
+        self._npc.turn(
+            self._npc.determine_direction_to_tile(player.current_tile.pos)
+            )
+        self._color = (232, 81, 78) if npc.gender == "female" else \
+            (55, 88, 193)
         self._text_cursor = TextCursor((0, 0))
         self._text_cursor.activate()
 
@@ -36,7 +41,8 @@ class Dialogue():
                                 else False)
 
         self._dialogue = self._dialogue.split("\n")
-        self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"), 15)
+        self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"),
+                                      15)
         self._current_line = 0
         # Display the first line of the dialogue
         self._blit_line()
@@ -55,6 +61,7 @@ class Dialogue():
                                     width=41)
         height = 10
         for string in string_lyst:
+            string = string.replace("<player>", self._player.name.upper())
             rendered = self._font.render(string, False, self._color)
             self._line_surface.blit(rendered, (10, height))
             height += 15
@@ -95,4 +102,3 @@ class Dialogue():
             return Battle(self._player, self._npc)
         else:
             return "Level"
-
