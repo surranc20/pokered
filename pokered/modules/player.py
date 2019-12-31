@@ -27,6 +27,7 @@ class Player(Trainer):
         super().__init__(position, name, Cardinality.NORTH, enemy=False)
         self._nFrames = 4
         self.badges = []
+        self.rival_name = "Gary"
         self.money = 600
         self.hidden_inventory = []
 
