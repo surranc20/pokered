@@ -62,6 +62,7 @@ class Dialogue():
         height = 10
         for string in string_lyst:
             string = string.replace("<player>", self._player.name.upper())
+            string = string.replace("<rival>", self._player.rival_name.upper())
             rendered = self._font.render(string, False, self._color)
             self._line_surface.blit(rendered, (10, height))
             height += 15
