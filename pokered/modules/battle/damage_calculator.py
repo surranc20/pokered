@@ -22,6 +22,9 @@ class DamageCalculator:
     def get_effect(self):
         """Calculate whether a moves effect (example would be if thunder
         paralysis the hit pokemon) happens and return the effect."""
+        if type(self._move.effect_accuracy) == str:
+            self._move.effect_accuracy = 1000
+
         prob = random.randint(0, 100)
         if prob > self._move.effect_accuracy:
             return None

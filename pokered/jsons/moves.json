@@ -68,7 +68,7 @@
         "Crit":       0.0625,
         "Effect Accuracy": 10,
         "Effects": "10% chance to freeze target."
-    }, 
+    },
     "Hail" : {
         "Move type": "Ice",
         "Category":   "Weather",
@@ -78,7 +78,7 @@
         "Crit":       "--",
         "Effect Accuracy": 0,
         "Effects": "Summons a hail storm that hurts all types besides ice."
-    }, 
+    },
     "Safeguard" : {
         "Move type": "Normal",
         "Category":   "Status",
@@ -98,7 +98,7 @@
         "Crit":       "--",
         "Effect Accuracy": 100,
         "Effects": "Lays spikes on the battlefield that damage pokemon that are switched in."
-    }, 
+    },
     "Dive" : {
         "Move type": "Water",
         "Category":   "Physical",
@@ -108,7 +108,7 @@
         "Crit":       0.0625,
         "Effect Accuracy": 100,
         "Effects": "Dives underwater the first turn, then surfaces to attack the second. Pokemon cannot be hit while underwater."
-    }, 
+    },
     "Protect" : {
         "Move type": "Normal",
         "Category":   "Status",
@@ -118,7 +118,7 @@
         "Crit":       "--",
         "Effect Accuracy": 100,
         "Effects": "Negates all attacks on user when used. Successive uses degrade accuracy."
-    }, 
+    },
     "Amnesia" : {
         "Move type": "Psychic",
         "Category":   "Status",
@@ -138,7 +138,7 @@
         "Crit":       0,
         "Effect Accuracy": 100,
         "Effects": "At the end of the next turn the target will fall asleep."
-    }, 
+    },
     "Double Slap" : {
         "Move type": "Normal",
         "Category":   "Physical",
@@ -168,7 +168,7 @@
         "Crit":       0,
         "Effect Accuracy": 100,
         "Effects": "If it hits, the target is confused."
-    }, 
+    },
     "Attract" : {
         "Move type": "Normal",
         "Category":   "Status",
@@ -196,9 +196,9 @@
         "Accuracy": 100,
         "PP": 10,
         "Crit":       0,
-        "Effect Accuracy": 100, 
+        "Effect Accuracy": 100,
         "Effects": "Confuses the foe."
-    }, 
+    },
     "Earthquake" : {
         "Move type": "Ground",
         "Category":   "Physical",
@@ -218,7 +218,7 @@
         "Crit":       0.0625,
         "Effect Accuracy": 100,
         "Effects": "Lowers speed of foe."
-    }, 
+    },
     "Iron Tail" : {
         "Move type": "Steel",
         "Category":   "Physical",
@@ -228,7 +228,7 @@
         "Crit":       0.0625,
         "Effect Accuracy": 30,
         "Effects": "30% chance to lower the target's defence."
-    }, 
+    },
     "Roar" : {
         "Move type": "Normal",
         "Category":   "Status",
@@ -238,7 +238,7 @@
         "Crit":       "--",
         "Effect Accuracy": 100,
         "Effects": "Makes trainer pokemon switch out."
-    }, 
+    },
     "Sky Uppercut" : {
         "Move type": "Fighting",
         "Category":   "Physical",
@@ -278,7 +278,7 @@
         "Crit": 0.0625,
         "Effect Accuracy": 0,
         "Effects": "Deals damage with no other effect."
-    }, 
+    },
     "Mega Punch" : {
         "Move type": "Fighting",
         "Category":   "Physical",
@@ -287,7 +287,7 @@
         "PP": 20,
         "Crit":  0.0625,
         "Effect Accuracy": 0,
-        "Effects": "Deals damage with no other effect." 
+        "Effects": "Deals damage with no other effect."
     },
     "Foresight" : {
         "Move type": "Normal",
@@ -296,7 +296,7 @@
         "Accuracy": "--",
         "PP": 40,
         "Crit":       "--",
-        "Effect Accuracy": 100, 
+        "Effect Accuracy": 100,
         "Effects": "Resets opponent's Evasiveness, Normal-type and Fighting-type attacks can now hit Ghosts, and Ghost-type attacks hit Normal."
     },
     "Brick Break" : {
@@ -318,7 +318,7 @@
         "Crit":       0.0625,
         "Effect Accuracy": 100,
         "Effects": "Facade deals damage, and hits with double power (140) if the user is burned, poisoned or paralyzed."
-    }, 
+    },
     "Double-Edge" : {
         "Move type": "Normal",
         "Category":   "Physical",
@@ -328,7 +328,7 @@
         "Crit":       0.0625,
         "Effect Accuracy": 100,
         "Effects": "Double-Edge deals damage, but the user receives 1⁄3 of the damage it inflicted in recoil. In other words, if the attack does 90 HP damage to the opponent, the user will lose 30 HP."
-    }, 
+    },
     "Sand Tomb" : {
         "Move type": "Ground",
         "Category":   "Physical",
@@ -567,10 +567,188 @@
         "PP": 5,
         "Crit": 0.0625,
         "Effect Accuracy": 10,
-        "Effects":"raise all stats"
+        "Effects": "raise all stats"
     },
-    
-
+    "Aerial Ace": {
+        "Move type": "Flying",
+        "Category":   "Physical",
+        "Move power": 60,
+        "Accuracy": 100,
+        "PP": 20,
+        "Crit": 0.0625,
+        "Effect Accuracy": 10,
+        "Effects": "ignores changes to the Accuracy and Evasion stats."
+    },
+    "FeatherDance": {
+        "Move type": "Flying",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 100,
+        "PP": 15,
+        "Crit": "--",
+        "Effect Accuracy": 100,
+        "Effects": "Feather Dance lowers the target's Attack by two stages."
+    },
+    "Sand-Attack": {
+        "Move type": "Ground",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 100,
+        "PP": 15,
+        "Crit": "--",
+        "Effect Accuracy": 100,
+        "Effects": "lowers the target's Accuracy by one stage."
+    },
+    "Whirlwind": {
+        "Move type": "Normal",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 100,
+        "PP": 20,
+        "Crit": "--",
+        "Effect Accuracy": 100,
+        "Effects": "forces the target to switch out of battle (regardless of level) and is replaced with another Pokémon in the trainer's team."
+    },
+    "Psychic": {
+        "Move type": "Psychic",
+        "Category":   "Special",
+        "Move power": 90,
+        "Accuracy": 100,
+        "PP": 10,
+        "Crit": 0.0625,
+        "Effect Accuracy": 10,
+        "Effects": "lower Special Defense"
+    },
+    "Future Sight": {
+        "Move type": "Psychic",
+        "Category":   "Special",
+        "Move power": 80,
+        "Accuracy": 90,
+        "PP": 15,
+        "Crit": 0.0625,
+        "Effect Accuracy": 10,
+        "Effects": ""
+    },
+    "Recover": {
+        "Move type": "Normal",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": "--",
+        "PP": 10,
+        "Crit": "--",
+        "Effect Accuracy": 100,
+        "Effects": "Restore 50%"
+    },
+    "Reflect": {
+        "Move type": "Psychic",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": "--",
+        "PP": 20,
+        "Crit": "--",
+        "Effect Accuracy": 100,
+        "Effects": "Reflect reduces damage from Physical attacks by 50%, for 5 turns."
+    },
+    "Take Down": {
+        "Move type": "Normal",
+        "Category":   "Physical",
+        "Move power": 90,
+        "Accuracy": 85,
+        "PP": 20,
+        "Crit": 0.0625,
+        "Effect Accuracy": 100,
+        "Effects": "recoil 25%"
+    },
+    "Giga Drain": {
+        "Move type": "Grass",
+        "Category":   "Special",
+        "Move power": 75,
+        "Accuracy": 100,
+        "PP": 10,
+        "Crit": 0.0625,
+        "Effect Accuracy": 100,
+        "Effects": "siphon 50%"
+    },
+    "Egg Bomb": {
+        "Move type": "Normal",
+        "Category":   "Physical",
+        "Move power": 100,
+        "Accuracy": 75,
+        "PP": 10,
+        "Crit": 0.0625,
+        "Effect Accuracy": "--",
+        "Effects": ""
+    },
+    "Sleep Powder": {
+        "Move type": "Grass",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": 75,
+        "PP": 15,
+        "Crit": "--",
+        "Effect Accuracy": "--",
+        "Effects": "sleep"
+    },
+    "Light Screen": {
+        "Move type": "Psychic",
+        "Category":   "Status",
+        "Move power": "--",
+        "Accuracy": "--",
+        "PP": 30,
+        "Crit": "--",
+        "Effect Accuracy": "--",
+        "Effects": "reduce Special attacks by 50%, for 5 turns"
+    },
+    "Hydro Pump": {
+        "Move type": "Water",
+        "Category":   "Special",
+        "Move power": 110,
+        "Accuracy": 80,
+        "PP": 5,
+        "Crit": 0.0625,
+        "Effect Accuracy": "--",
+        "Effects": ""
+    },
+    "Thrash": {
+        "Move type": "Normal",
+        "Category":   "Physical",
+        "Move power": 120,
+        "Accuracy": 100,
+        "PP": 10,
+        "Crit": 0.0625,
+        "Effect Accuracy": "--",
+        "Effects": "The user of Thrash attacks for 2-3 turns, during which it cannot switch out, and then becomes confused."
+    },
+    "Fire Blast": {
+        "Move type": "Fire",
+        "Category":   "Special",
+        "Move power": 110,
+        "Accuracy": 85,
+        "PP": 5,
+        "Crit": 0.0625,
+        "Effect Accuracy": 10,
+        "Effects": "burn"
+    },
+    "Slash": {
+        "Move type": "Fire",
+        "Category":   "Special",
+        "Move power": 70,
+        "Accuracy": 100,
+        "PP": 20,
+        "Crit": 0.125,
+        "Effect Accuracy": "--",
+        "Effects": ""
+    },
+    "Fire Spin": {
+        "Move type": "Fire",
+        "Category":   "Special",
+        "Move power": 35,
+        "Accuracy": 85,
+        "PP": 15,
+        "Crit": 0.0625,
+        "Effect Accuracy": "100",
+        "Effects": "fire spin"
+    },
 
 
     "Multi" : {
