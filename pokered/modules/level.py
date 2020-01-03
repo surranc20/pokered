@@ -61,8 +61,6 @@ class Level():
             self.current_scripting_engine = \
                 ScriptingEngine("entry_script.json", self)
 
-
-
     def _tile(self):
         """Returns the level's 2d array of tiles."""
         tile_dims = (self._level_size[0] // self.TILE_SIZE,
@@ -83,8 +81,6 @@ class Level():
         self.foreground.center_with_border(self.screen_size)
         self.background.center_with_border(self.screen_size)
         SoundManager.getInstance().playMusic("gym_music.mp3", -1, .5)
-
-
 
     def populate_trainers(self):
         """Adds the level's trainers to the level (including the player)."""

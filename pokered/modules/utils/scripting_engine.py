@@ -77,7 +77,6 @@ class ScriptingEngine():
 
     def dialogue(self, args):
         """Creates a dialogue event between the player and the trainer."""
-        print(args)
         npc = self._level.trainers[args[0]]
         return Dialogue(args[1], self._level.player, npc)
 

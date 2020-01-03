@@ -73,7 +73,6 @@ def main():
     # player.pokemon_team.append(poke5)
     # player.pokemon_team.append(poke6)
 
-
     # Make game variable
     try:
         with open("savegame", "rb") as f:
