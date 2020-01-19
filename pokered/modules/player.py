@@ -36,7 +36,7 @@ class Player(Trainer):
         control away from the player if a movement scipt is active."""
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RSHIFT:
             self._moving = False
-            return Menu()
+            return Menu(self)
         if self._move_script_active is None:
             if (event.type == pygame.KEYDOWN or
                     event.type == pygame.KEYUP) and \

@@ -8,7 +8,7 @@ class GameManager(object):
         I ever decide to develop this project further I feel like this extra
         layer of abstraction may help."""
         self._player = player
-        self._level = LevelManager(player, "elite_four_champion", movie="intro_folder")
+        self._level = LevelManager(player, "elite_four_1", movie="intro_folder")
         self._FSM = "running"
         self.load = False
 
