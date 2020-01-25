@@ -18,7 +18,7 @@ class Menu():
         self._make_menu_text()
         self._cursor = Cursor(len(self._options))
         self._make_help_bar()
-        self._make_help_text("hello")
+        self._make_help_text("Check and organize POKeMON that are traveling with you in your party.")
 
     def draw(self, draw_surface):
         """Draws the menu."""
@@ -149,12 +149,12 @@ class Menu():
 
     def _make_help_text(self, string):
         """Create help text"""
-        text_maker = TextMaker(join("fonts", "menu_font.png"))
+        text_maker = TextMaker(join("fonts", "menu_font.png"), 240)
         self._help_text_surface = pygame.Surface((240, 48))
         self._help_text_surface.fill((190, 190, 112))
         self._help_text_surface.set_colorkey((190, 190, 112))
         word_surf = text_maker.get_surface(string)
-        self._help_text_surface.blit(word_surf, (10, 5))
+        self._help_text_surface.blit(word_surf, (2, 5))
 
 
 class Cursor(Drawable):
