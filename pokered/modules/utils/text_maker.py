@@ -4,8 +4,22 @@ from ..utils.managers.frameManager import FRAMES
 
 
 class TextMaker():
-    SPACES_DICT = {join("fonts", "menu_font.png"): 6}
-    COLOR_KEYS = {join("fonts", "menu_font.png"): (144, 184, 104)}
+
+    # The font from pokemon fire red is not monospaced so some characters
+    # require less space
+    SPACES_DICT = {
+        join("fonts", "menu_font.png"): {"default": 7},
+        join("fonts", "party_txt_font.png"): {
+                "default": 5, "Y": 4, "T": 4, "I": 4
+            }
+    }
+
+    # Sometimes the top left of a font char will be occupied so just getting
+    # color at pixel (0,0) will occasionally result in an error
+    COLOR_KEYS = {
+        join("fonts", "menu_font.png"): (144, 184, 104),
+        join("fonts", "party_txt_font.png"): (255, 255, 255)
+    }
 
     def __init__(self, font_name):
         """Creates the text maker which will be able to return text surfaces"""
@@ -17,7 +31,7 @@ class TextMaker():
         text_surface.fill((255, 255, 254))
         text_surface.set_colorkey((255, 255, 254))
         x_pos = 0
-        char_len = FRAMES.get_frame_size(self._font_name)[0]
+        default_char_len = self.SPACES_DICT[self._font_name]["default"]
         for char in string:
             if char.isalpha():
                 if char.isupper():
@@ -31,7 +45,9 @@ class TextMaker():
                                             offset=(font_index, row))
                 font_char.set_colorkey((self.COLOR_KEYS[self._font_name]))
                 text_surface.blit(font_char, (x_pos, 0))
-                x_pos += char_len
+                x_pos += self.SPACES_DICT[self._font_name].get(
+                    str(char), default_char_len)
+
         return text_surface
 
     def calculate_surface_size(self, string):

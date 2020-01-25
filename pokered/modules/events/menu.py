@@ -95,7 +95,7 @@ class Menu():
 
         menu_text = ["bag", "PLAYER", "SAVE", "OPTION", "EXIT"]
         current_pos = Vector2(0, 10)
-        text_maker = TextMaker(join("fonts", "menu_font.png"))
+        text_maker = TextMaker(join("fonts", "party_txt_font.png"))
         for text in menu_text:
             current_pos.x = 12
             word_surf = text_maker.get_surface(text)
