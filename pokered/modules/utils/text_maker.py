@@ -9,7 +9,7 @@ class TextMaker():
     # require less space
     SPACES_DICT = {
         join("fonts", "menu_font.png"): {
-            "default": 7, "l": 4
+            "default": 7, "l": 4, "i": 3, "n": 6, "r": 6
             },
         join("fonts", "party_txt_font.png"): {
                 "default": 5, "Y": 4, "T": 4, "I": 4
@@ -23,9 +23,10 @@ class TextMaker():
         join("fonts", "party_txt_font.png"): (255, 255, 255)
     }
 
-    def __init__(self, font_name):
+    def __init__(self, font_name, max=None):
         """Creates the text maker which will be able to return text surfaces"""
         self._font_name = font_name
+        self._max = max
 
     def get_surface(self, string):
         """Return a surface with the given string displayed as text"""
@@ -33,22 +34,31 @@ class TextMaker():
         text_surface.fill((255, 255, 254))
         text_surface.set_colorkey((255, 255, 254))
         x_pos = 0
+        y_pos = 0
         default_char_len = self.SPACES_DICT[self._font_name]["default"]
-        for char in string:
-            if char.isalpha():
-                if char.isupper():
-                    ascii_num = 65
-                    row = 0
-                else:
-                    ascii_num = 97
-                    row = 1
-                font_index = int(ord(char)) - ascii_num
-                font_char = FRAMES.getFrame(self._font_name,
-                                            offset=(font_index, row))
-                font_char.set_colorkey((self.COLOR_KEYS[self._font_name]))
-                text_surface.blit(font_char, (x_pos, 0))
-                x_pos += self.SPACES_DICT[self._font_name].get(
-                    str(char), default_char_len)
+        for word in string.split():
+            if self._max is not None:
+                if len(word) * default_char_len + x_pos > self._max:
+                    print(len(word) * default_char_len + x_pos)
+                    y_pos += FRAMES.get_frame_size(self._font_name)[1] + 2
+                    x_pos = 0
+                    print(word, "happeing")
+            for char in word:
+                if char.isalpha():
+                    if char.isupper():
+                        ascii_num = 65
+                        row = 0
+                    else:
+                        ascii_num = 97
+                        row = 1
+                    font_index = int(ord(char)) - ascii_num
+                    font_char = FRAMES.getFrame(self._font_name,
+                                                offset=(font_index, row))
+                    font_char.set_colorkey((self.COLOR_KEYS[self._font_name]))
+                    text_surface.blit(font_char, (x_pos, y_pos))
+                    x_pos += self.SPACES_DICT[self._font_name].get(
+                        str(char), default_char_len)
+            x_pos += 4
 
         return text_surface
 
@@ -56,6 +66,11 @@ class TextMaker():
         """Calculates the size to make a surface based on the given string"""
         height = FRAMES.get_frame_size(self._font_name)[1]
         letter_size = int(self.SPACES_DICT[self._font_name]["default"])
-        return (letter_size * len(string), height)
+        x_size = letter_size * len(string)
+        y_size = height
+        if self._max is not None:
+            while x_size > self._max:
+                x_size -= self._max
+                y_size += height + 2
 
-
+        return (letter_size * len(string), y_size)
