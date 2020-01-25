@@ -243,7 +243,7 @@ class PokemonSelectedMenu(Drawable):
             for line in lines:
                 for char in line:
                     font_index = int(ord(char)) - 65
-                    font_char = FRAMES.getFrame("party_txt_font.png",
+                    font_char = FRAMES.getFrame(join("fonts", "party_txt_font.png"),
                                                 offset=(font_index, 0))
                     font_char.set_colorkey((255, 255, 255))
                     self._txt.blit(font_char, (current_pos.x, current_pos.y))
@@ -557,7 +557,7 @@ class PartyTextBar(Drawable):
             if char.islower():
                 font_index = int(ord(char)) - 97
                 font_char = FRAMES.getFrame(
-                    "party_txt_font.png", offset=(font_index, 1))
+                    join("fonts", "party_txt_font.png"), offset=(font_index, 1))
                 font_char.set_colorkey((255, 255, 255))
                 self._txt.blit(font_char, (current_pos.x, current_pos.y))
             elif char == " ":
@@ -571,7 +571,7 @@ class PartyTextBar(Drawable):
                     font_index = ["!", "?"].index(char)
                     off = 3
                 font_char = FRAMES.getFrame(
-                    "party_txt_font.png", offset=(font_index, off))
+                    join("fonts", "party_txt_font.png"), offset=(font_index, off))
                 font_char.set_colorkey((255, 255, 255))
                 self._txt.blit(font_char, (current_pos.x, current_pos.y))
 
