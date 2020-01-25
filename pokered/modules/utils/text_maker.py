@@ -8,7 +8,9 @@ class TextMaker():
     # The font from pokemon fire red is not monospaced so some characters
     # require less space
     SPACES_DICT = {
-        join("fonts", "menu_font.png"): {"default": 7},
+        join("fonts", "menu_font.png"): {
+            "default": 7, "l": 4
+            },
         join("fonts", "party_txt_font.png"): {
                 "default": 5, "Y": 4, "T": 4, "I": 4
             }
@@ -52,5 +54,8 @@ class TextMaker():
 
     def calculate_surface_size(self, string):
         """Calculates the size to make a surface based on the given string"""
-        letter_size = FRAMES.get_frame_size(self._font_name)
-        return (letter_size[0] * len(string), letter_size[1])
+        height = FRAMES.get_frame_size(self._font_name)[1]
+        letter_size = int(self.SPACES_DICT[self._font_name]["default"])
+        return (letter_size * len(string), height)
+
+

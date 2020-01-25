@@ -40,6 +40,7 @@ class FrameManager(object):
          "party_text_box.png" : (180, 28),
          "menu.png" : (62, 46),
          "gender.png" : (5, 8),
+         join("blue_help_box.png"): (240, 38),
          join("battle", "battle_background.png") : (240, 112),
          join("battle", "battle_menus.png") : (240, 48),
          join("battle", "trainer_toss_anim.png") : (64, 64),
