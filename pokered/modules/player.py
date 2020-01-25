@@ -30,6 +30,8 @@ class Player(Trainer):
         self.rival_name = "Gary"
         self.money = 600
         self.hidden_inventory = []
+        self.pokedex = "National"
+        self.has_first_pokemon = True
 
     def handle_event(self, event, nearby_tiles):
         """Handles the events from the level manager. Is capable of taking
