@@ -7,8 +7,25 @@ from ..utils.managers.frameManager import FRAMES
 from ..utils.UI.drawable import Drawable
 from ..utils.managers.soundManager import SoundManager
 
+# TODO: Inherit pokemon selected menu and pokeparty and override appropriate
+# functions
+
 
 class Menu():
+    HELP_TEXT = {
+        "BAG": "Equiped with pockets for storing items you bought, "
+        "received, or found.",
+        "SAVE": "Save your game with a complete record of your progress to "
+        "take a break.",
+        "OPTION": "Adjust various game settings such as text, speed, game "
+        "rules, etc.",
+        "EXIT": "Close this MENU window.",
+        "POKeMON": "Check and organize POKeMON that are traveling with you in "
+        "your party.",
+        "POKeDEX": "A device that records POKeMON secrets upon meeting them "
+        "or catching them.",
+        "PLAYER": "Check your money and other game data."}
+
     def __init__(self, player):
         """Creates the pause menu for the game."""
         self._player = player
@@ -18,7 +35,8 @@ class Menu():
         self._make_menu_text()
         self._cursor = Cursor(len(self._options))
         self._make_help_bar()
-        self._make_help_text("Check and organize POKeMON that are traveling with you in your party.")
+        self._make_help_text(self._get_help_text())
+        self._active_sub_menu = False
 
     def draw(self, draw_surface):
         """Draws the menu."""
@@ -39,9 +57,20 @@ class Menu():
             # self._save_queued = True
             self._is_over = True
 
-        elif event.type == pygame.KEYDOWN:
-
+        # Up or down action.
+        elif event.type == pygame.KEYDOWN and event.key in [
+                BattleActions.UP.value, BattleActions.DOWN.value]:
+            SoundManager.getInstance().playSound("firered_0005.wav")
             self._cursor.change_cursor_pos(event)
+            self._make_help_text(self._get_help_text())
+
+        # Select action.
+        elif event.type == pygame.KEYDOWN and event.key == \
+                BattleActions.SELECT.value:
+            SoundManager.getInstance().playSound("firered_0005.wav")
+            current_selected = self._options[self._cursor.cursor]
+            if current_selected == "EXIT":
+                self._is_over = True
 
     def is_over(self):
         """Determines whether or not the menu is closed."""
@@ -50,6 +79,13 @@ class Menu():
     def get_end_event(self):
         """Returns the player back to the level."""
         return "Level"
+
+    def _get_help_text(self):
+        """Returns the appropriate help text given the selected menu item"""
+        current_selected = self._options[self._cursor.cursor]
+        if current_selected == str(self._player.name):
+            current_selected = "PLAYER"
+        return self.HELP_TEXT[current_selected]
 
     def _make_menu(self):
         """Creates the menu image."""
