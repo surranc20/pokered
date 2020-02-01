@@ -39,10 +39,8 @@ class TextMaker():
         for word in string.split():
             if self._max is not None:
                 if len(word) * default_char_len + x_pos > self._max:
-                    print(len(word) * default_char_len + x_pos)
                     y_pos += FRAMES.get_frame_size(self._font_name)[1] + 2
                     x_pos = 0
-                    print(word, "happeing")
             for char in word:
                 if char.isalpha():
                     if char.isupper():
@@ -58,6 +56,17 @@ class TextMaker():
                     text_surface.blit(font_char, (x_pos, y_pos))
                     x_pos += self.SPACES_DICT[self._font_name].get(
                         str(char), default_char_len)
+
+                elif char == ".":
+                    row = 3
+                    font_index = 6
+                    font_char = FRAMES.getFrame(self._font_name,
+                                                offset=(font_index, row))
+                    font_char.set_colorkey((self.COLOR_KEYS[self._font_name]))
+                    text_surface.blit(font_char, (x_pos, y_pos))
+                    x_pos += self.SPACES_DICT[self._font_name].get(
+                        str(char), default_char_len)
+
             x_pos += 4
 
         return text_surface
