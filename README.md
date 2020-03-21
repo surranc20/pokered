@@ -4,6 +4,7 @@ The player is controlled by using wasd and the player interacts with objects by 
 
 Current known bugs:
    - Need to add a change of direction timer to player to make them stop for a couple ticks when changing direction
+   - When switching the same pokemon twice in a row both pokemon get yellow outlines when only the first should get a yellow outline.
 
 
 
