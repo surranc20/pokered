@@ -184,7 +184,11 @@ class BattleFSM:
             self._active_string = self._opponent.name.upper() + \
                 " would like to battle!"
             self._state = self._state_queue.pop(0)
-            self._player.set_active_pokemon(0)
+            # Set the players first alive pokemon as thier active pokemon
+            for index, pokemon in enumerate(self._player.pokemon_team):
+                if pokemon.is_alive():
+                    self._player.set_active_pokemon(index)
+                    break
             self._opponent.set_active_pokemon(0)
 
             self._draw_list.append(
