@@ -61,6 +61,7 @@ def main():
     stat_calc = StatCalculator()
     poke.stats = stat_calc.calculate_main(poke, 99)
     poke2.stats = stat_calc.calculate_main(poke2, 60)
+    poke2.stats["Current HP"] = 0
     poke3.stats = stat_calc.calculate_main(poke3, 51)
     poke4.stats = stat_calc.calculate_main(poke4, 58)
     poke5.stats = stat_calc.calculate_main(poke5, 53)
@@ -71,8 +72,9 @@ def main():
     player.pokemon_team.append(poke2)
     player.pokemon_team.append(poke3)
     player.pokemon_team.append(poke4)
-    player.pokemon_team.append(poke5)
-    player.pokemon_team.append(poke6)
+    #player.pokemon_team.append(poke5)
+    #player.pokemon_team.append(poke6)
+
 
     # Make game variable
     try:
