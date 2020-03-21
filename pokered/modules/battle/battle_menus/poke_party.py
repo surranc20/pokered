@@ -283,11 +283,11 @@ class PokemonMenuPokemon(Drawable):
         self.reload()
 
 
-        if green:
+        if green and pokemon.is_alive():
             pygame.transform.threshold(self._image, self._image.copy(), (120, 208, 232), set_color=(120, 216, 128), inverse_set=True)
             pygame.transform.threshold(self._image, self._image.copy(), (168, 232, 248), set_color=(176, 248, 160), inverse_set=True)
             pygame.transform.threshold(self._image, self._image.copy(), (248, 112, 48), set_color=(248, 248, 112), inverse_set=True)
-        elif second_green:
+        elif second_green and pokemon.is_alive():
             pygame.transform.threshold(self._image, self._image.copy(), (120, 208, 232), set_color=(120, 216, 128), inverse_set=True)
             pygame.transform.threshold(self._image, self._image.copy(), (168, 232, 248), set_color=(176, 248, 160), inverse_set=True)
 
