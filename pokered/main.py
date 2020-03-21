@@ -71,8 +71,8 @@ def main():
     player.pokemon_team.append(poke2)
     player.pokemon_team.append(poke3)
     player.pokemon_team.append(poke4)
-    # player.pokemon_team.append(poke5)
-    # player.pokemon_team.append(poke6)
+    player.pokemon_team.append(poke5)
+    player.pokemon_team.append(poke6)
 
     # Make game variable
     try:
