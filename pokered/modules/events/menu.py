@@ -1,10 +1,12 @@
 import pygame
 from os.path import join
+from .menu_events.menu_party import MenuParty
 from ..enumerated.battle_actions import BattleActions
 from ..utils.vector2D import Vector2
 from ..utils.text_maker import TextMaker
 from ..utils.managers.frameManager import FRAMES
 from ..utils.UI.drawable import Drawable
+from ..utils.UI.resizable_menu import ResizableMenu
 from ..utils.managers.soundManager import SoundManager
 
 # TODO: Inherit pokemon selected menu and pokeparty and override appropriate
@@ -36,41 +38,67 @@ class Menu():
         self._cursor = Cursor(len(self._options))
         self._make_help_bar()
         self._make_help_text(self._get_help_text())
-        self._active_sub_menu = False
+        self._active_sub_menu = None
+        self._level_surface = None
+
+    def add_level_surface(self, level_surface):
+        self._level_surface = level_surface
 
     def draw(self, draw_surface):
         """Draws the menu."""
-        draw_surface.blit(self._menu_surface, (172, 10))
-        draw_surface.blit(self._text_surface, (172, 10))
-        draw_surface.blit(self._help_surface, (0, 122))
-        draw_surface.blit(self._help_text_surface, (0, 122))
-        self._cursor.draw(draw_surface)
+        if self._active_sub_menu is None:
+            self._level_surface.draw(draw_surface)
+            draw_surface.blit(self._menu_surface, (172, 10))
+            draw_surface.blit(self._text_surface, (172, 10))
+            draw_surface.blit(self._help_surface, (0, 122))
+            draw_surface.blit(self._help_text_surface, (0, 122))
+            self._cursor.draw(draw_surface)
+        else:
+            self._active_sub_menu.draw(draw_surface)
 
     def update(self, ticks):
         """Updates the menu."""
         if self._save_queued:
             return "Pickle"
 
+        if self._active_sub_menu is not None:
+            self._active_sub_menu.update(ticks)
+            if self._active_sub_menu.is_over():
+                self._active_sub_menu = None
+
     def handle_event(self, event):
         """Handles the inputs and updates menu accordingly."""
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_RSHIFT:
-            # self._save_queued = True
-            self._is_over = True
-
-        # Up or down action.
-        elif event.type == pygame.KEYDOWN and event.key in [
-                BattleActions.UP.value, BattleActions.DOWN.value]:
-            SoundManager.getInstance().playSound("firered_0005.wav")
-            self._cursor.change_cursor_pos(event)
-            self._make_help_text(self._get_help_text())
-
-        # Select action.
-        elif event.type == pygame.KEYDOWN and event.key == \
-                BattleActions.SELECT.value:
-            SoundManager.getInstance().playSound("firered_0005.wav")
-            current_selected = self._options[self._cursor.cursor]
-            if current_selected == "EXIT":
+        if self._active_sub_menu is None:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RSHIFT:
+                # self._save_queued = True
                 self._is_over = True
+
+            # Up or down action.
+            elif event.type == pygame.KEYDOWN and event.key in [
+                    BattleActions.UP.value, BattleActions.DOWN.value]:
+                SoundManager.getInstance().playSound("firered_0005.wav")
+                self._cursor.change_cursor_pos(event)
+                self._make_help_text(self._get_help_text())
+
+            # Select action.
+            elif event.type == pygame.KEYDOWN and event.key == \
+                    BattleActions.SELECT.value:
+                SoundManager.getInstance().playSound("firered_0005.wav")
+                current_selected = self._options[self._cursor.cursor]
+                if current_selected == "EXIT":
+                    self._is_over = True
+                else:
+                    self._active_sub_menu = \
+                        self.create_sub_event(current_selected)
+
+            # Back action.
+            elif event.type == pygame.KEYDOWN and \
+                    event.key == BattleActions.BACK.value:
+                self._is_over = True
+
+        else:
+            if event.type == pygame.KEYDOWN:
+                self._active_sub_menu.handle_event(event)
 
     def is_over(self):
         """Determines whether or not the menu is closed."""
@@ -79,6 +107,24 @@ class Menu():
     def get_end_event(self):
         """Returns the player back to the level."""
         return "Level"
+
+    def create_sub_event(self, event_name):
+        """Creates the menu sub event"""
+        # TODO: ADD EVENTS
+        if event_name == "BAG":
+            return None
+        elif event_name == "SAVE":
+            return None
+        elif event_name == "OPTION":
+            return None
+        elif event_name == "POKeMON":
+            return MenuParty(self._player)
+        elif event_name == "POKeDEX":
+            return None
+        elif event_name == "PLAYER":
+            return None
+        else:
+            raise AttributeError
 
     def _get_help_text(self):
         """Returns the appropriate help text given the selected menu item"""
@@ -89,68 +135,15 @@ class Menu():
 
     def _make_menu(self):
         """Creates the menu image."""
-        # Create the surface where the menu is drawn
-        self._menu_surface = pygame.Surface((64, 100))
-        self._menu_surface.fill((255, 255, 255))
-        self._menu_surface.set_colorkey((255, 255, 255))
-
-        # Create the top row of the menu
-        top_left = FRAMES.getFrame("menu_parts.png", offset=(0, 0))
-        top_mid = FRAMES.getFrame("menu_parts.png", offset=(1, 0))
-        top_right = FRAMES.getFrame("menu_parts.png", offset=(2, 0))
-        self._menu_surface.blit(top_left, (0, 0))
-        self._menu_surface.blit(top_mid, (8, 0))
-        self._menu_surface.blit(top_mid, (16, 0))
-        self._menu_surface.blit(top_mid, (24, 0))
-        self._menu_surface.blit(top_mid, (32, 0))
-        self._menu_surface.blit(top_mid, (40, 0))
-        self._menu_surface.blit(top_mid, (48, 0))
-        self._menu_surface.blit(top_right, (56, 0))
-
-        # Create the middle rows
-        white_blob = FRAMES.getFrame("menu_parts.png", offset=(1, 1))
-        mid_left = FRAMES.getFrame("menu_parts.png", offset=(0, 1))
-        mid_right = FRAMES.getFrame("menu_parts.png", offset=(2, 1))
-        white_blob.set_colorkey((30, 40, 10))
-
         # Look at the players progress and see which menu items should be
         # displayed given their progress in the game. (i.e has player received
         # their first pokemon yet...)
-        middle_rows = 7
+        size = 5
         if self._player.pokedex is not None:
-            middle_rows += 1
+            size += 1
         if self._player.has_first_pokemon:
-            middle_rows += 1
-        if middle_rows == 9:
-            middle_rows += 1
-        if middle_rows == 8:
-            middle_rows += 1
-
-        # Create the appropriated number of middle rows
-        current_y = 8
-        for i in range(middle_rows):
-            self._menu_surface.blit(mid_left, (0, current_y))
-            self._menu_surface.blit(white_blob, (8, current_y))
-            self._menu_surface.blit(white_blob, (16, current_y))
-            self._menu_surface.blit(white_blob, (24, current_y))
-            self._menu_surface.blit(white_blob, (32, current_y))
-            self._menu_surface.blit(white_blob, (40, current_y))
-            self._menu_surface.blit(white_blob, (48, current_y))
-            self._menu_surface.blit(mid_right, (56, current_y))
-            current_y += 8
-
-        # Create the bottom rows
-        bottom_right = FRAMES.getFrame("menu_parts.png", offset=(2, 2))
-        bottom_left = FRAMES.getFrame("menu_parts.png", offset=(0, 2))
-        bottom_mid = FRAMES.getFrame("menu_parts.png", offset=(1, 2))
-        self._menu_surface.blit(bottom_left, (0, current_y))
-        self._menu_surface.blit(bottom_mid, (8, current_y))
-        self._menu_surface.blit(bottom_mid, (16, current_y))
-        self._menu_surface.blit(bottom_mid, (24, current_y))
-        self._menu_surface.blit(bottom_mid, (32, current_y))
-        self._menu_surface.blit(bottom_mid, (40, current_y))
-        self._menu_surface.blit(bottom_mid, (48, current_y))
-        self._menu_surface.blit(bottom_right, (56, current_y))
+            size += 1
+        self._menu_surface = ResizableMenu(size).menu_surface
 
     def _make_menu_text(self):
         """Adds the menu text to the menu"""

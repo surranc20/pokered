@@ -3,11 +3,13 @@ import pygame
 from os.path import join
 from ...utils.UI.drawable import Drawable
 from ...utils.UI.animated import Animated
+from ...utils.UI.resizable_menu import ResizableMenu
 from ...utils.vector2D import Vector2
 from ...utils.managers.frameManager import FRAMES
 from ...utils.managers.soundManager import SoundManager
 from ...enumerated.battle_states import BattleStates
 from ...enumerated.battle_actions import BattleActions
+
 
 
 class PokeParty(Drawable):
@@ -31,7 +33,7 @@ class PokeParty(Drawable):
         """Creates the active pokemon object. This is the pokemon that appears
         on the left in the party screen."""
         self._active_pokemon = ActivePokemon(self._player.active_pokemon,
-                                             selected=True)
+                                             (2, 18), selected=True)
         self._selectable_items.append(self._active_pokemon)
 
     def _blit_secondary_pokemon(self):
@@ -161,14 +163,15 @@ class PokeParty(Drawable):
             item.update(ticks)
 
 
-class PokemonSelectedMenu(Drawable):
+class PokemonSelectedMenu():
     def __init__(self, player, selected_pos, battle=False):
         """Creates the menu that displays when a pokemon is selected."""
         self._player = player
         self._battle = battle
         self._selected_pos = selected_pos
         self._cursor = 0
-        super().__init__("menu.png", (177, 113))
+        self._menu_surface = ResizableMenu(3)
+        self._position = (177, 113)
 
         # Add the text and cursor arrow to the menu
         self.blit_text()
@@ -194,7 +197,7 @@ class PokemonSelectedMenu(Drawable):
     def _handle_select_event(self):
         """Handles a select event for the selected pokemon menu."""
         SoundManager.getInstance().playSound("firered_0005.wav")
-        # If the select button is selected then cancel
+        # If the cancel button is selected then cancel
         if self._cursor == 2:
             return "cancel"
 
@@ -226,7 +229,7 @@ class PokemonSelectedMenu(Drawable):
         """Add the cursor arrow to the menu"""
         y_pos = self._cursor * 12
         position = (5, y_pos + 5)
-        self._arrow = pygame.Surface((20, 60))
+        self._arrow = pygame.Surface((20, 120))
         self._arrow.fill((255, 255, 255))
         self._arrow.set_colorkey((255, 255, 255))
         arrow_frame = FRAMES.getFrame(join("battle", "cursor.png"))
@@ -258,31 +261,37 @@ class PokemonSelectedMenu(Drawable):
                 current_pos.x = 15
             self._num_lines = len(lines)
 
-        else:
-            # TODO: Will need to be implemented for party system to work
-            # outside of battle.
-            return
-
     def draw(self, draw_surface):
         """Draw the menu to the screen."""
-        super().draw(draw_surface)
+        draw_surface.blit(self._menu_surface.menu_surface, self._position)
         draw_surface.blit(self._txt, self._position)
         draw_surface.blit(self._arrow, self._position)
 
 
 class PokemonMenuPokemon(Drawable):
 
-    def __init__(self, pokemon, position, bar_name, selected=False):
+    def __init__(self, pokemon, position, bar_name, selected=False, green=False, second_green=False):
         """This is the base class for the pokemon objects in the menu. It
         displays the bouncing pokemon, the hp bar,  and the hp remaining."""
         self._pokemon = pokemon
         offset = (1, 0) if selected else (0, 0)
         super().__init__(bar_name, position, offset=offset)
-        self._bouncing_pokemon = BouncingPokemon(self._pokemon, (0, 21))
+        self._bouncing_pokemon = BouncingPokemon(self._pokemon, (position[0] - 2, position[1] + 3))
         self._blit_level_and_gender()
         self._blit_hp_bar()
         self._blit_hp_remaining()
         self.reload()
+
+
+        if green:
+            print("soy el problemo")
+            pygame.transform.threshold(self._image, self._image.copy(), (120, 208, 232), set_color=(120, 216, 128), inverse_set=True)
+            pygame.transform.threshold(self._image, self._image.copy(), (168, 232, 248), set_color=(176, 248, 160), inverse_set=True)
+            pygame.transform.threshold(self._image, self._image.copy(), (248, 112, 48), set_color=(248, 248, 112), inverse_set=True)
+        elif second_green:
+            pygame.transform.threshold(self._image, self._image.copy(), (120, 208, 232), set_color=(120, 216, 128), inverse_set=True)
+            pygame.transform.threshold(self._image, self._image.copy(), (168, 232, 248), set_color=(176, 248, 160), inverse_set=True)
+
 
         # If the pokemon is dead then make the box red
         if not self._pokemon.is_alive():
@@ -453,11 +462,11 @@ class PokemonMenuPokemon(Drawable):
 
 class ActivePokemon(PokemonMenuPokemon):
 
-    def __init__(self, pokemon, selected=False):
+    def __init__(self, pokemon, position, selected=False, green=False, second_green=False):
         """Creates the active pokemon object. Inherits from
         PokemonMenuPokemon."""
-        super().__init__(pokemon, (2, 18), "party_active_poke_bar.png",
-                         selected=selected)
+        super().__init__(pokemon, position, "party_active_poke_bar.png",
+                         selected=selected, green=green, second_green=second_green)
 
     def draw(self, draw_surface):
         """Place the PokemonMenuPokemon's various aspects in the correct
@@ -476,11 +485,11 @@ class ActivePokemon(PokemonMenuPokemon):
 
 class SecondaryPokemon(PokemonMenuPokemon):
 
-    def __init__(self, pokemon, position, selected=False):
+    def __init__(self, pokemon, position, selected=False, green=False, second_green=False):
         """Creates the active pokemon object. Inherits from
         PokemonMenuPokemon."""
         super().__init__(pokemon, position, "party_individual_poke_bar.png",
-                         selected=selected)
+                         selected=selected, green=green, second_green=second_green)
         self._bouncing_pokemon = BouncingPokemon(self._pokemon,
                                                  (self._position[0] - 5,
                                                   self._position[1]-8))

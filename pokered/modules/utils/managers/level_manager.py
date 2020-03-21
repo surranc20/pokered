@@ -2,6 +2,7 @@ from ...level import Level
 from ...events.white_out import WhiteOut
 from ...battle.battle import Battle
 from ...events.dialogue import Dialogue
+from ...events.menu import Menu
 from ...events.movie import Movie
 from ..scripting_engine import ScriptingEngine
 
@@ -42,6 +43,8 @@ class LevelManager(object):
                 self._player.handle_event(event,
                                           self._level.get_nearby_tiles(
                                               self._player.current_tile.pos))
+            if type(self._active_event) == Menu:
+                self._active_event.add_level_surface(self._level)
         else:
             self._active_event.handle_event(event)
 

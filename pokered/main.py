@@ -67,9 +67,10 @@ def main():
     poke6.stats = stat_calc.calculate_main(poke6, 70)
 
     player.pokemon_team.append(poke)
-    # player.pokemon_team.append(poke2)
-    # player.pokemon_team.append(poke3)
-    # player.pokemon_team.append(poke4)
+    player.set_active_pokemon(0)
+    player.pokemon_team.append(poke2)
+    player.pokemon_team.append(poke3)
+    player.pokemon_team.append(poke4)
     # player.pokemon_team.append(poke5)
     # player.pokemon_team.append(poke6)
 
