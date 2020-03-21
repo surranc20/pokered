@@ -32,7 +32,7 @@ class PokeParty(Drawable):
     def _blit_active_pokemon(self):
         """Creates the active pokemon object. This is the pokemon that appears
         on the left in the party screen."""
-        self._active_pokemon = ActivePokemon(self._player.active_pokemon,
+        self._active_pokemon = ActivePokemon(self._player.pokemon_team[0],
                                              (2, 18), selected=True)
         self._selectable_items.append(self._active_pokemon)
 
@@ -337,6 +337,7 @@ class PokemonMenuPokemon(Drawable):
 
     def set_selected(self):
         """Gets the correct frame for a selected pokemon"""
+        self.reload()
         self._image = FRAMES.getFrame(self._imageName, (1, 0))
 
         # If the pokemon is dead then make the box red
