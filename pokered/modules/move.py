@@ -19,6 +19,7 @@ class Move:
         self.current_pp = move["PP"]
         self.effect_accuracy = move["Effect Accuracy"]
         self.effects = move["Effects"]
+        self.outside_battle = False
 
     def get_num_hits(self):
         """If the move is a multi hit move then return the total number of
