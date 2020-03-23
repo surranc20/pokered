@@ -31,19 +31,31 @@ class MenuParty(PokeParty):
     def set_green_first(self, pokemon_bar):
         """Sets a pokemon bar green when their is an active switch even and
         the pokemon is the first pokemon chosen for the switch event."""
-        print("first", pokemon_bar._pokemon)
-        pygame.transform.threshold(pokemon_bar._image, pokemon_bar._image.copy(), (120, 208, 232), set_color=(120, 216, 128), inverse_set=True)
-        pygame.transform.threshold(pokemon_bar._image, pokemon_bar._image.copy(), (168, 232, 248), set_color=(176, 248, 160), inverse_set=True)
-        pygame.transform.threshold(pokemon_bar._image, pokemon_bar._image.copy(), (248, 112, 48), set_color=(248, 248, 112), inverse_set=True)
+        pygame.transform.threshold(pokemon_bar._image,
+                                   pokemon_bar._image.copy(),
+                                   (120, 208, 232),
+                                   set_color=(120, 216, 128), inverse_set=True)
+        pygame.transform.threshold(pokemon_bar._image,
+                                   pokemon_bar._image.copy(),
+                                   (168, 232, 248),
+                                   set_color=(176, 248, 160), inverse_set=True)
+        pygame.transform.threshold(pokemon_bar._image,
+                                   pokemon_bar._image.copy(),
+                                   (248, 112, 48),
+                                   set_color=(248, 248, 112), inverse_set=True)
 
     def set_green_second(self, pokemon_bar):
         """Sets a pokemon bar green but does not change the red outline. This
         happens when their is an active switch event and the pokemon being
         hovered over is not the first pokemon chosen for the switch event"""
-        print("second", pokemon_bar._pokemon)
-
-        pygame.transform.threshold(pokemon_bar._image, pokemon_bar._image.copy(), (120, 208, 232), set_color=(120, 216, 128), inverse_set=True)
-        pygame.transform.threshold(pokemon_bar._image, pokemon_bar._image.copy(), (168, 232, 248), set_color=(176, 248, 160), inverse_set=True)
+        pygame.transform.threshold(pokemon_bar._image,
+                                   pokemon_bar._image.copy(),
+                                   (120, 208, 232),
+                                   set_color=(120, 216, 128), inverse_set=True)
+        pygame.transform.threshold(pokemon_bar._image,
+                                   pokemon_bar._image.copy(),
+                                   (168, 232, 248),
+                                   set_color=(176, 248, 160), inverse_set=True)
 
     def _update_selected_pos(self, old_pos):
         """Toggles the appearance of the selectable objects (active pokmeon,
@@ -71,25 +83,25 @@ class MenuParty(PokeParty):
         """Modifies the battle party system to support pokemon switching
         animation."""
         super().update(ticks)
-
         if self._switch_triggered is not None:
             self._switch_triggered.update(ticks)
-            self._selectable_items[self._switch_triggered.slot1_index] = self._switch_triggered.slot1
-            self._selectable_items[self._switch_triggered.slot2_index] = self._switch_triggered.slot2
 
+            # Get the updated pokemon bars from the bar animation.
+            self._selectable_items[self._switch_triggered.slot1_index] = \
+                self._switch_triggered.slot1
+            self._selectable_items[self._switch_triggered.slot2_index] = \
+                self._switch_triggered.slot2
+
+            # Clean up after the animation is done.
             if self._switch_triggered.is_dead():
-
                 self._switch_triggered = None
                 # Redraw the pokemon.
                 self._selectable_items = []
                 self._blit_active_pokemon()
                 self._blit_secondary_pokemon()
                 self._selectable_items[0].set_unselected()
-
                 self._selectable_items[self._cursor].set_selected()
-
                 self._switch_queued = None
-
                 self._text_bar.blit_string("Choose a POKeMON.")
 
     def handle_event(self, event):
@@ -104,7 +116,6 @@ class MenuParty(PokeParty):
             super().change_cursor_pos(event)
 
         elif event.key == BattleActions.BACK.value:
-            # This needs to be rewritten
             if self._selected_pokemon:
                 self._selected_pokemon = False
                 self._pokemon_selected_menu = None
@@ -113,15 +124,15 @@ class MenuParty(PokeParty):
                 self._is_dead = True
 
         elif event.key == BattleActions.SELECT.value:
-            # This needs to be rewritten as well
+            # The player hit the cancel button so the menu is over.
             if self._cursor == 6:
                 self._is_dead = True
             else:
-                # Check to see if the player is in the middle of switching
+                # Check to see if the player is in the middle of switching.
                 # pokemon positions.
                 if self._switch_queued is not None:
                     if self._cursor == self._switch_queued:
-                        pass # Maybe do something here?
+                        pass  # Maybe do something here?
                     else:
                         # Switch the pokemon out.
                         poke1 = self._player.pokemon_team[self._cursor]
@@ -132,7 +143,11 @@ class MenuParty(PokeParty):
                             self._player.set_active_pokemon(0)
 
                         # Start the switch animation.
-                        self._switch_triggered = MenuSwitch(self._selectable_items[self._cursor], self._cursor, self._selectable_items[self._switch_queued], self._switch_queued)
+                        self._switch_triggered = \
+                            MenuSwitch(self._selectable_items[self._cursor],
+                                       self._cursor,
+                                       self._selectable_items[self._switch_queued],
+                                       self._switch_queued)
 
                 # If a pokemon has not been selected then select the pokmeon
                 elif not self._selected_pokemon:
@@ -158,9 +173,12 @@ class MenuParty(PokeParty):
 
 class MenuPokemonSelectedMenu(PokemonSelectedMenu):
     def __init__(self, player, selected_pos, battle=False):
+        """Overrides pokemon selected menu to include switch and the
+        possibility of HM moves."""
         super().__init__(player, selected_pos, False)
         self._menu_surface = ResizableMenu(self._num_lines)
-        self._position = (self._position[0], self._position[1] - (self._menu_surface.size - 6) * 8)
+        self._position = (self._position[0],
+                          self._position[1] - (self._menu_surface.size - 6) * 8)
 
     def _handle_select_event(self):
         """Handles a select event for the selected pokemon menu."""
@@ -216,5 +234,3 @@ class MenuPokemonSelectedMenu(PokemonSelectedMenu):
             current_pos.y += 12
             current_pos.x = 15
         self._num_lines = len(lines)
-
-
