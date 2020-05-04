@@ -1,6 +1,7 @@
 import json
 import random
 from os.path import join
+from .utils.managers.frameManager import FRAMES
 from .utils.UI.drawable import Drawable
 from .utils.vector2D import Vector2
 from .move import Move
@@ -26,6 +27,7 @@ class Pokemon(Drawable):
         self.moves = []
         self.held_item = None
         self.ability = None
+        self.nature = "Placeholder"
 
         # Keeps track of the status effects currently on the pokemon.
         self.status = []
@@ -41,18 +43,23 @@ class Pokemon(Drawable):
             "Speed": 45
         }
 
+        # Summary image
+        self.summary_image = FRAMES.getFrame(join("pokemon", "pokemon_big.png"),
+                                             offset=_lookup)
+
         # Get the type of the pokemon.
         with open(join("jsons", "pokemon.json"), "r") as pokemon_json:
             pokemon = json.load(pokemon_json)
             pokemon_data = pokemon[pokemon_name.capitalize()]
 
         self.type = pokemon_data["type"]
+        self.id_num = pokemon_data["id"]
 
         # Determines whether or not to draw the pokemon.
         self.can_draw = True
 
         # Add moves if given if passed in via constructor
-        if move_set != None:
+        if move_set is not None:
             self.add_move_list(move_set)
 
         # Create drawable portion of the pokemon
