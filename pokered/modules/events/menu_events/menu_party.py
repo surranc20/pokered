@@ -8,6 +8,7 @@ from ...utils.UI.resizable_menu import ResizableMenu
 from ...utils.vector2D import Vector2
 from ...enumerated.battle_actions import BattleActions
 from ...animations.menu_switch import MenuSwitch
+from .summary_menu import SummaryMenu
 
 
 class MenuParty(PokeParty):
@@ -17,6 +18,7 @@ class MenuParty(PokeParty):
         self._old_offset = Drawable.WINDOW_OFFSET
         self._switch_queued = None  # Has the player initiated a switch
         self._switch_triggered = None  # Is a switch animation player
+        self._summary_active = None  # Is a summary menu active?
         Drawable.WINDOW_OFFSET = Vector2(0, 0)
         super().__init__(player)
 
@@ -82,6 +84,14 @@ class MenuParty(PokeParty):
     def update(self, ticks):
         """Modifies the battle party system to support pokemon switching
         animation."""
+
+        # If the summary menu is active then update that instead.
+        if self._summary_active is not None:
+            if not self._summary_active.is_over():
+                return self._summary_active.update(ticks)
+            else:
+                self._summary_active = None
+
         super().update(ticks)
         if self._switch_triggered is not None:
             self._switch_triggered.update(ticks)
@@ -107,6 +117,10 @@ class MenuParty(PokeParty):
     def handle_event(self, event):
         """Overrides the PokeParty events handling system
         to make it compatible with normal events"""
+        # If the summary is active then let that handle the event.
+        if self._summary_active is not None:
+            return self._summary_active.handle_event(event)
+
         # The player should not be able to do anything during a switch
         # animation.
         if self._switch_triggered:
@@ -169,6 +183,14 @@ class MenuParty(PokeParty):
                         self._text_bar.blit_string("Move to where?")
                         self._switch_queued = self._cursor
                         self.set_green_first(self._selectable_items[self._switch_queued])
+                    elif response == "summary":
+                        self._summary_active = SummaryMenu(self._player, self._cursor)
+
+    def draw(self, draw_surface):
+        if self._summary_active is not None:
+            self._summary_active.draw(draw_surface)
+        else:
+            super().draw(draw_surface)
 
 
 class MenuPokemonSelectedMenu(PokemonSelectedMenu):
@@ -190,7 +212,7 @@ class MenuPokemonSelectedMenu(PokemonSelectedMenu):
         # If the summary button is selected then get summary NOTE: This is
         # not implemented yet.
         elif self._cursor == 0:
-            return  # summary
+            return "summary"
 
         # Switch button is selected
         elif self._cursor == self._num_lines - 3:
