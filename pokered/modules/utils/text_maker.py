@@ -42,13 +42,16 @@ class TextMaker():
                     y_pos += FRAMES.get_frame_size(self._font_name)[1] + 2
                     x_pos = 0
             for char in word:
-                if char.isalpha():
+                if char.isalnum():
                     if char.isupper():
                         ascii_num = 65
                         row = 0
-                    else:
+                    elif char.islower():
                         ascii_num = 97
                         row = 1
+                    else:
+                        ascii_num = 48
+                        row = 2
                     font_index = int(ord(char)) - ascii_num
                     font_char = FRAMES.getFrame(self._font_name,
                                                 offset=(font_index, row))
@@ -58,8 +61,12 @@ class TextMaker():
                         str(char), default_char_len)
 
                 elif char == ".":
-                    row = 3
-                    font_index = 6
+                    if self._font_name == join("fonts", "menu_font.png"):
+                        row = 3
+                        font_index = 6
+                    else:
+                        row = 0
+                        font_index = 26
                     font_char = FRAMES.getFrame(self._font_name,
                                                 offset=(font_index, row))
                     font_char.set_colorkey((self.COLOR_KEYS[self._font_name]))
