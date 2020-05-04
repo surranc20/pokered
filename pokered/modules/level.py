@@ -102,7 +102,7 @@ class Level():
                         battle_dialogue_id=trainer_args[4],
                         post_battle_dialogue_id=trainer_args[5],
                         gender=trainer_args[8],
-                        type=trainer_args[9]
+                        train_type=trainer_args[9]
                         )
 
             # If the trainer has an event specified in the meta data then add
