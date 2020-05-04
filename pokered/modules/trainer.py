@@ -1,4 +1,5 @@
 import json
+import random
 from os.path import join
 from .events.dialogue import Dialogue
 from .utils.UI.mobile import Mobile
@@ -79,7 +80,7 @@ class Trainer(Mobile):
 
     def __init__(self, position, name, facing, enemy=True, dialogue_id=None,
                  battle_dialogue_id=None, post_battle_dialogue_id=None,
-                 event=None, gender="male", type="Pokémon Trainer"):
+                 event=None, gender="male", train_type="Pokémon Trainer"):
         """Creates a trainer instance. Expects the trainer's position,
         orientation in the world. Optionally expects whether or not the
         trainer is an enemy, the dialouge id associated with the trainer, the
@@ -110,7 +111,8 @@ class Trainer(Mobile):
         self._move_script_active = None
         self._last_wall_bump = 0
         self._talk_queued = False
-        self.trainer_type = type
+        self.trainer_type = train_type
+        self.trainer_id = str(random.randint(0, 65535)).zfill(5)
 
         if enemy:
             # Get battle dialogues lines/ids
@@ -127,6 +129,13 @@ class Trainer(Mobile):
             self.battle_image = \
                 Drawable(join("battle", "trainer_toss_anim.png"),
                          Vector2(240, 80), (0, 0))
+
+    def add_pokemon(self, pokemon):
+        """Only used once when adding a pokemon to the trainer. Should not be
+        used after initializing player."""
+        pokemon.trainer_id = self.trainer_id
+        pokemon.original_trainer = self.name
+        self.pokemon_team.append(pokemon)
 
     def all_dead(self):
         """Returns if all of the trainers pokemon are dead."""
