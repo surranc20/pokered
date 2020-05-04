@@ -67,13 +67,13 @@ def main():
     poke5.stats = stat_calc.calculate_main(poke5, 53)
     poke6.stats = stat_calc.calculate_main(poke6, 70)
 
-    player.pokemon_team.append(poke)
+    player.add_pokemon(poke)
     player.set_active_pokemon(0)
-    player.pokemon_team.append(poke2)
-    player.pokemon_team.append(poke3)
-    player.pokemon_team.append(poke4)
-    #player.pokemon_team.append(poke5)
-    #player.pokemon_team.append(poke6)
+    player.add_pokemon(poke2)
+    player.add_pokemon(poke3)
+    player.add_pokemon(poke4)
+    #player.add_pokemon(poke5)
+    #player.add_pokemon(poke6)
 
 
     # Make game variable
