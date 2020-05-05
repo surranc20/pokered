@@ -23,6 +23,13 @@ class TextMaker():
         join("fonts", "party_txt_font.png"): (255, 255, 255)
     }
 
+    # { is a symbol for boy logo and } is a symbol for girl logo
+    LOCATION = {
+        join("fonts", "party_txt_font.png"): {".": (0, 26), "{": (3, 11),
+                                              "}": (3, 12)},
+        join("fonts", "menu_font.png"): {".": (3, 6)}
+    }
+
     def __init__(self, font_name, max=None):
         """Creates the text maker which will be able to return text surfaces"""
         self._font_name = font_name
@@ -60,13 +67,9 @@ class TextMaker():
                     x_pos += self.SPACES_DICT[self._font_name].get(
                         str(char), default_char_len)
 
-                elif char == ".":
-                    if self._font_name == join("fonts", "menu_font.png"):
-                        row = 3
-                        font_index = 6
-                    else:
-                        row = 0
-                        font_index = 26
+                elif char in [".", "{", "}"]:
+                    row, font_index = self.LOCATION[self._font_name][char]
+
                     font_char = FRAMES.getFrame(self._font_name,
                                                 offset=(font_index, row))
                     font_char.set_colorkey((self.COLOR_KEYS[self._font_name]))
