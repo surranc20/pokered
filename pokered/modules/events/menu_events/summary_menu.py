@@ -59,6 +59,7 @@ class PokemonSummaryMenu():
     def __init__(self, pokemon):
         self._pokemon = pokemon
         self._active_page = InfoPage(self._pokemon)
+        self._create_general_surface()
 
     def handle_event(self, event):
         pass
@@ -66,8 +67,33 @@ class PokemonSummaryMenu():
     def update(self, ticks):
         pass
 
+    def _create_general_surface(self):
+        """Also draws information that appears on all
+        pages i.e. pokemon pic, name and level"""
+        text_maker = TextMaker(join("fonts", "menu_font.png"))
+
+        self._general_surface = pygame.Surface((150, 100))
+        self._general_surface.fill((255, 255, 254))
+        self._general_surface.set_colorkey((255, 255, 254))
+
+        name_surface = text_maker.get_surface(self._pokemon.nick_name.upper())
+        lvl_surface = text_maker.get_surface("Lv" +
+                                             str(self._pokemon.stats["LVL"]))
+
+        font_index = 0 if self._pokemon.gender == "male" else 1
+        gender_surface = \
+            FRAMES.getFrame("gender_t.png", offset=(font_index, 0))
+
+        self._general_surface.blit(self._pokemon.summary_image, (25, 31))
+        self._general_surface.blit(lvl_surface, (4, 19))
+        self._general_surface.blit(name_surface, (45, 19))
+        self._general_surface.blit(gender_surface, (105, 18))
+
     def draw(self, draw_surface):
+        """Draws the active page. Also draws information that appears on all
+        pages i.e. pokemon pic, name and level"""
         self._active_page.draw(draw_surface)
+        draw_surface.blit(self._general_surface, (0, 0))
 
 
 class InfoPage():
@@ -85,7 +111,6 @@ class InfoPage():
     def draw(self, draw_surface):
         """Draw all relevant information to the screen"""
         draw_surface.blit(self._page_surface, (0, 0))
-        draw_surface.blit(self._pokemon.summary_image, (25, 31))
         draw_surface.blit(self._id, (168, 24))
         draw_surface.blit(self._name, (168, 39))
         draw_surface.blit(self._item, (168, 99))
@@ -126,7 +151,8 @@ class InfoPage():
     def _create_memo_surface(self):
         """Creates the trainer memo surface"""
         text_maker = TextMaker(join("fonts", "party_txt_font.png"))
-        line_1 = text_maker.get_surface(self._pokemon.nature.upper() + " nature.")
+        line_1 = text_maker.get_surface(self._pokemon.nature.upper() +
+                                        " nature.")
         line_2 = text_maker.get_surface("Test line 2.")
         self._memo_surface = pygame.Surface((100, 30))
         self._memo_surface.fill((255, 255, 254))
