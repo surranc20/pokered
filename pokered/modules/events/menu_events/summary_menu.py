@@ -14,8 +14,10 @@ class SummaryMenu():
         from the summary menu in the actual game."""
         self._is_dead = False
         self._player = player
-        self._active_page = PokemonSummaryMenu(player.pokemon_team[cursor_pos])
-        self._cursor_pos = cursor_pos
+        self._vcursor_pos = cursor_pos
+        self._hcursor_pos = 0
+        self._active_page = PokemonSummaryMenu(player.pokemon_team[cursor_pos],
+                                               self._hcursor_pos)
 
     def is_over(self):
         """Returns whether or not the player has exited the summary menu."""
@@ -28,17 +30,28 @@ class SummaryMenu():
     def handle_event(self, event):
         """Handles the user input accordingly"""
         if event.key == BattleActions.UP.value:
-            if self._cursor_pos >= 1:
-                self._cursor_pos -= 1
+            if self._vcursor_pos >= 1:
+                self._vcursor_pos -= 1
                 self._update_active_page()
 
         elif event.key == BattleActions.DOWN.value:
-            if self._cursor_pos < len(self._player.pokemon_team) - 1:
-                self._cursor_pos += 1
+            if self._vcursor_pos < len(self._player.pokemon_team) - 1:
+                self._vcursor_pos += 1
                 self._update_active_page()
 
         elif event.key == BattleActions.BACK.value:
             self._is_dead = True
+
+        elif event.key == BattleActions.LEFT.value:
+            if self._hcursor_pos > 0:
+                self._hcursor_pos -= 1
+                self._update_active_page()
+
+        elif event.key == BattleActions.RIGHT.value:
+            if self._hcursor_pos < 1:
+                self._hcursor_pos += 1
+                self._update_active_page()
+
         elif event.key in [BattleActions.LEFT.value,
                            BattleActions.RIGHT.value,
                            BattleActions.SELECT.value]:
@@ -51,14 +64,18 @@ class SummaryMenu():
     def _update_active_page(self):
         """Updates the player's active page"""
         self._active_page = \
-            PokemonSummaryMenu(self._player.pokemon_team[self._cursor_pos])
+            PokemonSummaryMenu(self._player.pokemon_team[self._vcursor_pos],
+                               self._hcursor_pos)
 
 
 class PokemonSummaryMenu():
     """Individual summary menu for a given pokemon"""
-    def __init__(self, pokemon):
+    def __init__(self, pokemon, start_pos):
         self._pokemon = pokemon
-        self._active_page = InfoPage(self._pokemon)
+        if start_pos == 0:
+            self._active_page = InfoPage(self._pokemon)
+        elif start_pos == 1:
+            self._active_page = StatsPage(self._pokemon)
         self._create_general_surface()
 
     def handle_event(self, event):
@@ -94,6 +111,20 @@ class PokemonSummaryMenu():
         pages i.e. pokemon pic, name and level"""
         self._active_page.draw(draw_surface)
         draw_surface.blit(self._general_surface, (0, 0))
+
+
+class StatsPage():
+    """Displays a Pokemon's stats page"""
+    def __init__(self, pokemon):
+        self._pokemon = pokemon
+        self._create_page_surface()
+
+    def draw(self, draw_surface):
+        """Draw all the relevant information to the screen"""
+        draw_surface.blit(self._page_surface, (0, 0))
+
+    def _create_page_surface(self):
+        self._page_surface = FRAMES.getFrame("pokemon_stats.png")
 
 
 class InfoPage():
@@ -159,4 +190,3 @@ class InfoPage():
         self._memo_surface.set_colorkey((255, 255, 254))
         self._memo_surface.blit(line_1, (0, 0))
         self._memo_surface.blit(line_2, (0, 14))
-
