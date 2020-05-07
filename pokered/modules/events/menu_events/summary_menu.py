@@ -4,6 +4,7 @@ from ...types import Types
 from ...utils.managers.frameManager import FRAMES
 from ...enumerated.battle_actions import BattleActions
 from ...utils.text_maker import TextMaker
+from ...utils.misc import end_at
 
 
 class SummaryMenu():
@@ -122,9 +123,41 @@ class StatsPage():
     def draw(self, draw_surface):
         """Draw all the relevant information to the screen"""
         draw_surface.blit(self._page_surface, (0, 0))
+        draw_surface.blit(self._title_surface, (4, 2))
+        # HP
+        draw_surface.blit(self._attack_surface,
+                          end_at(self._attack_surface, (236, 41)))
+        draw_surface.blit(self._defense_surface,
+                          end_at(self._defense_surface, (236, 54)))
+        draw_surface.blit(self._sp_attack_surface,
+                          end_at(self._sp_attack_surface, (236, 67)))
+        draw_surface.blit(self._sp_defense_surface,
+                          end_at(self._sp_defense_surface, (236, 80)))
+        draw_surface.blit(self._speed_surface,
+                          end_at(self._speed_surface, (236, 93)))
 
     def _create_page_surface(self):
+        """Creates the background for page as well as surfaces for all of the
+        pokemon's stats."""
+        text_maker = TextMaker(join("fonts", "menu_font.png"))
+        text_maker2 = TextMaker(join("fonts", "party_txt_font.png"))
+
+        # Background and title. Need title here because this image does not
+        # have it baked in unlike the info background
         self._page_surface = FRAMES.getFrame("pokemon_stats.png")
+        self._title_surface = text_maker.get_surface("POKeMON SKILLS")
+
+        # Stats
+        self._attack_surface = \
+            text_maker2.get_surface(str(self._pokemon.stats["Attack"]))
+        self._defense_surface = \
+            text_maker2.get_surface(str(self._pokemon.stats["Defense"]))
+        self._sp_attack_surface = \
+            text_maker2.get_surface(str(self._pokemon.stats["Sp. Attack"]))
+        self._sp_defense_surface = \
+            text_maker2.get_surface(str(self._pokemon.stats["Sp. Defense"]))
+        self._speed_surface = \
+            text_maker2.get_surface(str(self._pokemon.stats["Speed"]))
 
 
 class InfoPage():
