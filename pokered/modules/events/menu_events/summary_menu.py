@@ -124,7 +124,9 @@ class StatsPage():
         """Draw all the relevant information to the screen"""
         draw_surface.blit(self._page_surface, (0, 0))
         draw_surface.blit(self._title_surface, (4, 2))
-        # HP
+        draw_surface.blit(self._hp_surface,
+                          end_at(self._hp_surface, (236, 23)))
+        draw_surface.blit(self._hp_bar_surf, end_at(self._hp_bar_surf, (236, 32)))
         draw_surface.blit(self._attack_surface,
                           end_at(self._attack_surface, (236, 41)))
         draw_surface.blit(self._defense_surface,
@@ -146,8 +148,12 @@ class StatsPage():
         # have it baked in unlike the info background
         self._page_surface = FRAMES.getFrame("pokemon_stats.png")
         self._title_surface = text_maker.get_surface("POKeMON SKILLS")
+        self._create_hp_bar()
 
         # Stats
+        self._hp_surface = \
+            text_maker2.get_surface(str(self._pokemon.stats["Current HP"]) +
+                                    "/" + str(self._pokemon.stats["HP"]))
         self._attack_surface = \
             text_maker2.get_surface(str(self._pokemon.stats["Attack"]))
         self._defense_surface = \
@@ -158,6 +164,37 @@ class StatsPage():
             text_maker2.get_surface(str(self._pokemon.stats["Sp. Defense"]))
         self._speed_surface = \
             text_maker2.get_surface(str(self._pokemon.stats["Speed"]))
+
+    def _create_hp_bar(self):
+        """Add the hp bar to the pokemon box"""
+        green = (112, 248, 168)
+        yellow = (248, 224, 56)
+        red = (241, 14, 14)
+
+        current_hp = self._pokemon.stats["Current HP"]
+        max_hp = self._pokemon.stats["HP"]
+        percentage = (current_hp / max_hp)
+        print(percentage)
+
+        self._hp = pygame.Surface((int(percentage * 48), 3))
+        if percentage > .50:
+            self._hp.fill(green)
+        elif percentage > .15:
+            self._hp.fill(yellow)
+        else:
+            self._hp.fill(red)
+        self._hp_darken = pygame.Surface((48, 1))
+        self._hp_darken.fill((0, 0, 0))
+        self._hp_darken.set_alpha(50)
+
+        self._hp_bar = FRAMES.getFrame("hp_bar.png")
+
+        # Can't blit onto the bar directly because it is a singleton
+        self._hp_bar_surf = pygame.Surface((self._hp_bar.get_width(), self._hp_bar.get_height()))
+        self._hp_bar_surf.fill((255, 255, 254))
+        self._hp_bar_surf.set_colorkey((255, 255, 254))
+        self._hp_bar_surf.blit(self._hp_bar, (0, 0))
+        self._hp_bar_surf.blit(self._hp, (15, 2))
 
 
 class InfoPage():
