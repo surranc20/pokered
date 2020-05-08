@@ -8,7 +8,11 @@ class GameManager(object):
         I ever decide to develop this project further I feel like this extra
         layer of abstraction may help."""
         self._player = player
-        self._level = LevelManager(player, "elite_four_1", movie="intro_folder")
+
+        # Uncomment the below line to play the intro movie at startup. You will need
+        # to download the into_folder seperately...
+        # self._level = LevelManager(player, "elite_four_1", movie="intro_folder")
+        self._level = LevelManager(player, "elite_four_1")
         self._FSM = "running"
         self.load = False
 
