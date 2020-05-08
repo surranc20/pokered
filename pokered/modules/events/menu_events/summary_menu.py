@@ -126,7 +126,8 @@ class StatsPage():
         draw_surface.blit(self._title_surface, (4, 2))
         draw_surface.blit(self._hp_surface,
                           end_at(self._hp_surface, (236, 23)))
-        draw_surface.blit(self._hp_bar_surf, end_at(self._hp_bar_surf, (236, 32)))
+        draw_surface.blit(self._hp_bar_surf,
+                          end_at(self._hp_bar_surf, (236, 32)))
         draw_surface.blit(self._attack_surface,
                           end_at(self._attack_surface, (236, 41)))
         draw_surface.blit(self._defense_surface,
@@ -190,7 +191,8 @@ class StatsPage():
         self._hp_bar = FRAMES.getFrame("hp_bar.png")
 
         # Can't blit onto the bar directly because it is a singleton
-        self._hp_bar_surf = pygame.Surface((self._hp_bar.get_width(), self._hp_bar.get_height()))
+        self._hp_bar_surf = pygame.Surface((self._hp_bar.get_width(),
+                                            self._hp_bar.get_height()))
         self._hp_bar_surf.fill((255, 255, 254))
         self._hp_bar_surf.set_colorkey((255, 255, 254))
         self._hp_bar_surf.blit(self._hp_bar, (0, 0))
