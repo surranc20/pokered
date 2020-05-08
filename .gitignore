@@ -1,5 +1,6 @@
 .vscode
 pokered/__pycache__/
 pokered/modules/__pycache__/
+pokered/intro_folder/
 *.py[cod]
 
