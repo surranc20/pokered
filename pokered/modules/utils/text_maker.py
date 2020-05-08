@@ -26,8 +26,8 @@ class TextMaker():
     # { is a symbol for boy logo and } is a symbol for girl logo
     LOCATION = {
         join("fonts", "party_txt_font.png"): {".": (0, 26), "{": (3, 11),
-                                              "}": (3, 12)},
-        join("fonts", "menu_font.png"): {".": (3, 6)}
+                                              "}": (3, 12), "/": (3, 4)},
+        join("fonts", "menu_font.png"): {".": (3, 6), "/": (3, 4)}
     }
 
     def __init__(self, font_name, max=None):
@@ -67,7 +67,7 @@ class TextMaker():
                     x_pos += self.SPACES_DICT[self._font_name].get(
                         str(char), default_char_len)
 
-                elif char in [".", "{", "}"]:
+                elif char in [".", "{", "}", "/"]:
                     row, font_index = self.LOCATION[self._font_name][char]
 
                     font_char = FRAMES.getFrame(self._font_name,
