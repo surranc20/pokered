@@ -175,7 +175,6 @@ class StatsPage():
         current_hp = self._pokemon.stats["Current HP"]
         max_hp = self._pokemon.stats["HP"]
         percentage = (current_hp / max_hp)
-        print(percentage)
 
         self._hp = pygame.Surface((int(percentage * 48), 3))
         if percentage > .50:
