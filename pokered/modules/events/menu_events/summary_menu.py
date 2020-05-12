@@ -124,10 +124,14 @@ class StatsPage():
         """Draw all the relevant information to the screen"""
         draw_surface.blit(self._page_surface, (0, 0))
         draw_surface.blit(self._title_surface, (4, 2))
+
+        # HP
         draw_surface.blit(self._hp_surface,
                           end_at(self._hp_surface, (236, 23)))
         draw_surface.blit(self._hp_bar_surf,
                           end_at(self._hp_bar_surf, (236, 32)))
+
+        # Stats
         draw_surface.blit(self._attack_surface,
                           end_at(self._attack_surface, (236, 41)))
         draw_surface.blit(self._defense_surface,
@@ -138,6 +142,16 @@ class StatsPage():
                           end_at(self._sp_defense_surface, (236, 80)))
         draw_surface.blit(self._speed_surface,
                           end_at(self._speed_surface, (236, 93)))
+
+        # EXP
+        draw_surface.blit(self._exp_surface,
+                          end_at(self._exp_surface, (238, 108)))
+        draw_surface.blit(self._nxt_exp_surface,
+                          end_at(self._nxt_exp_surface, (238, 120)))
+
+        # Ability
+        draw_surface.blit(self._ability_surface, (74, 133))
+        draw_surface.blit(self._ability_desc_surface, (10, 145))
 
     def _create_page_surface(self):
         """Creates the background for page as well as surfaces for all of the
@@ -151,10 +165,12 @@ class StatsPage():
         self._title_surface = text_maker.get_surface("POKeMON SKILLS")
         self._create_hp_bar()
 
-        # Stats
+        # HP
         self._hp_surface = \
             text_maker2.get_surface(str(self._pokemon.stats["Current HP"]) +
                                     "/" + str(self._pokemon.stats["HP"]))
+
+        # Stats
         self._attack_surface = \
             text_maker2.get_surface(str(self._pokemon.stats["Attack"]))
         self._defense_surface = \
@@ -165,6 +181,19 @@ class StatsPage():
             text_maker2.get_surface(str(self._pokemon.stats["Sp. Defense"]))
         self._speed_surface = \
             text_maker2.get_surface(str(self._pokemon.stats["Speed"]))
+
+        # EXP
+        self._exp_surface = \
+            text_maker2.get_surface(str(self._pokemon.exp))
+        self._nxt_exp_surface = \
+            text_maker2.get_surface(str(self._pokemon.nxt_lvl))
+
+        # Ability
+        ability = self._pokemon.ability
+        self._ability_surface = \
+            text_maker2.get_surface(ability.name.upper())
+        self._ability_desc_surface = \
+            text_maker2.get_surface(ability.description.replace("é", "e"))
 
     def _create_hp_bar(self):
         """Add the hp bar to the pokemon box"""
@@ -196,6 +225,10 @@ class StatsPage():
         self._hp_bar_surf.set_colorkey((255, 255, 254))
         self._hp_bar_surf.blit(self._hp_bar, (0, 0))
         self._hp_bar_surf.blit(self._hp, (15, 2))
+
+    def _create_exp_bar(self):
+        """Creates the exp bar and fills it appropriately"""
+        pass
 
 
 class InfoPage():
