@@ -5,6 +5,7 @@ from .utils.managers.frameManager import FRAMES
 from .utils.UI.drawable import Drawable
 from .utils.vector2D import Vector2
 from .move import Move
+from .abilities import Ability
 
 
 class Pokemon(Drawable):
@@ -26,8 +27,12 @@ class Pokemon(Drawable):
         self.gender = gender
         self.moves = []
         self.held_item = None
-        self.ability = None
+        self.ability = Ability("Static")
         self.nature = "Placeholder"
+        self.exp = 100  # Placeholder
+        self.nxt_lvl = 2000  # Placeholder
+
+        # TODO: Fix the above exp and nxt_lvl variables
 
         # Keeps track of the status effects currently on the pokemon.
         self.status = []
