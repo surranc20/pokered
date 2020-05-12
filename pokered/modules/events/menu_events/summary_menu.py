@@ -53,10 +53,9 @@ class SummaryMenu():
                 self._hcursor_pos += 1
                 self._update_active_page()
 
-        elif event.key in [BattleActions.LEFT.value,
-                           BattleActions.RIGHT.value,
-                           BattleActions.SELECT.value]:
-            self._active_page.handle_event(event)
+        elif event.key == BattleActions.SELECT.value:
+            if self._hcursor_pos == 0:
+                self._is_dead = True
 
     def draw(self, draw_surface):
         """Draws the active summary page"""
