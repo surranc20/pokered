@@ -148,6 +148,7 @@ class StatsPage():
                           end_at(self._exp_surface, (238, 108)))
         draw_surface.blit(self._nxt_exp_surface,
                           end_at(self._nxt_exp_surface, (238, 120)))
+        draw_surface.blit(self._exp_bar, (end_at(self._exp_bar, (236, 129))))
 
         # Ability
         draw_surface.blit(self._ability_surface, (74, 133))
@@ -187,6 +188,7 @@ class StatsPage():
             text_maker2.get_surface(str(self._pokemon.exp))
         self._nxt_exp_surface = \
             text_maker2.get_surface(str(self._pokemon.nxt_lvl))
+        self._create_exp_bar()
 
         # Ability
         ability = self._pokemon.ability
@@ -228,7 +230,8 @@ class StatsPage():
 
     def _create_exp_bar(self):
         """Creates the exp bar and fills it appropriately"""
-        pass
+        self._exp_bar = FRAMES.getFrame("exp_bar.png")
+        # TODO: Implement rest of exp bar once exp system in place.
 
 
 class InfoPage():
