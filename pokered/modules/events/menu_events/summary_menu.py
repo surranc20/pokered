@@ -49,7 +49,7 @@ class SummaryMenu():
                 self._update_active_page()
 
         elif event.key == BattleActions.RIGHT.value:
-            if self._hcursor_pos < 1:
+            if self._hcursor_pos < 2:
                 self._hcursor_pos += 1
                 self._update_active_page()
 
@@ -76,6 +76,8 @@ class PokemonSummaryMenu():
             self._active_page = InfoPage(self._pokemon)
         elif start_pos == 1:
             self._active_page = StatsPage(self._pokemon)
+        elif start_pos == 2:
+            self._active_page = MovesPage(self._pokemon)
         self._create_general_surface()
 
     def handle_event(self, event):
@@ -296,3 +298,54 @@ class InfoPage():
         self._memo_surface.set_colorkey((255, 255, 254))
         self._memo_surface.blit(line_1, (0, 0))
         self._memo_surface.blit(line_2, (0, 14))
+
+
+class MovesPage():
+    """Displays a pokemon's moves page"""
+    def __init__(self, pokemon):
+        self._pokemon = pokemon
+        self._create_page_surface()
+
+    def draw(self, draw_surface):
+        draw_surface.blit(self._page_surface, (0, 0))
+        draw_surface.blit(self._title_surface, (4, 2))
+
+        y = 21
+        for move in self._moves_surfaces:
+            draw_surface.blit(move, (123, y))
+            y += 28
+
+    def _create_page_surface(self):
+        """Creates the move page's surface which will be drawn to the page.
+        Will also create all other info needed to draw the page."""
+        # Create the page's background.
+        self._page_surface = FRAMES.getFrame("pokemon_moves.png")
+
+        text_maker = TextMaker(join("fonts", "party_txt_font.png"))
+        text_maker2 = TextMaker(join("fonts", "menu_font.png"))
+
+        # Create title surface
+        self._title_surface = text_maker2.get_surface("KNOWN MOVES")
+
+        # Creates a surface for each move that exists
+        self._moves_surfaces = []
+
+        for move in self._pokemon.moves:
+            # Create surface for move
+            surface = pygame.Surface((130, 30))
+            surface.fill((255, 255, 254))
+            surface.set_colorkey((255, 255, 254))
+
+            # Create info for move
+            type_surf = Types(move.move_type)
+            name_surf = text_maker.get_surface(move.move_name.upper())
+            pp_surf = text_maker.get_surface("PP" + str(move.current_pp) +
+                                             "/" + str(move.max_pp))
+
+            # Add info to surface
+            type_surf.draw(surface)
+            surface.blit(name_surf, (40, 3))
+            surface.blit(pp_surf, end_at(pp_surf, (114, 15)))
+
+            # Add surface to move surface list
+            self._moves_surfaces.append(surface)
