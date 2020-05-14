@@ -30,10 +30,11 @@ class TextMaker():
         join("fonts", "menu_font.png"): {".": (3, 6), "/": (3, 4)}
     }
 
-    def __init__(self, font_name, max=None):
+    def __init__(self, font_name, max=None, line_height=None):
         """Creates the text maker which will be able to return text surfaces"""
         self._font_name = font_name
         self._max = max
+        self._line_height = line_height
 
     def get_surface(self, string):
         """Return a surface with the given string displayed as text"""
@@ -46,7 +47,10 @@ class TextMaker():
         for word in string.split():
             if self._max is not None:
                 if len(word) * default_char_len + x_pos > self._max:
-                    y_pos += FRAMES.get_frame_size(self._font_name)[1] + 2
+                    if self._line_height is not None:
+                        y_pos += self._line_height
+                    else:
+                        y_pos += FRAMES.get_frame_size(self._font_name)[1] + 2
                     x_pos = 0
             for char in word:
                 if char.isalnum():
