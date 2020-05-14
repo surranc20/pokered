@@ -23,7 +23,7 @@ class Pokemon(Drawable):
         _pos = self.PLAYER_POKE_POS if not enemy else self.ENEMY_POKE_POS
         _offset = _lookup if enemy else (_lookup[0] + 1, _lookup[1])
         self.name = pokemon_name
-        self.nick_name = self.name
+        self.nick_name = self.name.upper()
         self.gender = gender
         self.moves = []
         self.held_item = None
