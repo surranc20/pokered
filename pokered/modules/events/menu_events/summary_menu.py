@@ -371,7 +371,7 @@ class MovesPage():
                               (120, 18 + self._vcursor_pos * 28))
 
             # Draw cancel button
-            draw_surface.blit(self._cancel, (170, 138))
+            draw_surface.blit(self._cancel, (167, 138))
 
     def _create_page_surface(self):
         """Creates the move page's surface which will be drawn to the page.
