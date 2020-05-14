@@ -32,7 +32,8 @@ class SummaryMenu():
 
     def handle_event(self, event):
         """Handles the user input accordingly"""
-        if self._hcursor_pos == 2:
+        if self._hcursor_pos == 2 and \
+                self._active_page._active_page.mode == "detail":
             self._active_page.handle_event(event)
 
         elif event.key == BattleActions.UP.value:
@@ -61,6 +62,8 @@ class SummaryMenu():
         elif event.key == BattleActions.SELECT.value:
             if self._hcursor_pos == 0:
                 self._is_dead = True
+            elif self._hcursor_pos == 2:
+                self._active_page.handle_event(event)
 
     def draw(self, draw_surface):
         """Draws the active summary page"""
@@ -324,6 +327,16 @@ class MovesPage():
                 self.mode = "detail"
                 self._create_page_surface()
 
+        elif event.key == BattleActions.DOWN.value and self.mode == "detail":
+            if self._vcursor_pos < len(self._pokemon.moves) - 1:
+                self._vcursor_pos += 1
+                self._create_move_detail_surface()
+
+        elif event.key == BattleActions.UP.value and self.mode == "detail":
+            if self._vcursor_pos > 0:
+                self._vcursor_pos -= 1
+                self._create_move_detail_surface()
+
     def draw(self, draw_surface):
         draw_surface.blit(self._page_surface, (0, 0))
         draw_surface.blit(self._title_surface, (4, 2))
@@ -346,6 +359,10 @@ class MovesPage():
             draw_surface.blit(self._accuracy_surface,
                               end_at(self._accuracy_surface, (75, 74)))
             draw_surface.blit(self._effect_surface, (6, 102))
+
+            # Draw moves selector
+            draw_surface.blit(self._selector,
+                              (120, 18 + self._vcursor_pos * 28))
 
     def _create_page_surface(self):
         """Creates the move page's surface which will be drawn to the page.
@@ -433,3 +450,5 @@ class MovesPage():
         self._power_surface = text_maker.get_surface(str(move.move_power))
         self._accuracy_surface = text_maker.get_surface(str(move.accuracy))
         self._effect_surface = text_maker.get_surface(str(move.effects))
+
+        self._selector = FRAMES.getFrame("moves_selector.png")
