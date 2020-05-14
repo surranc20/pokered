@@ -1,5 +1,7 @@
 import pygame
+import json
 from os.path import join
+
 from ...types import Types
 from ...utils.managers.frameManager import FRAMES
 from ...enumerated.battle_actions import BattleActions
@@ -30,7 +32,10 @@ class SummaryMenu():
 
     def handle_event(self, event):
         """Handles the user input accordingly"""
-        if event.key == BattleActions.UP.value:
+        if self._hcursor_pos == 2:
+            self._active_page.handle_event(event)
+
+        elif event.key == BattleActions.UP.value:
             if self._vcursor_pos >= 1:
                 self._vcursor_pos -= 1
                 self._update_active_page()
@@ -81,7 +86,8 @@ class PokemonSummaryMenu():
         self._create_general_surface()
 
     def handle_event(self, event):
-        pass
+        if type(self._active_page) is MovesPage:
+            self._active_page.handle_event(event)
 
     def update(self, ticks):
         pass
@@ -112,7 +118,9 @@ class PokemonSummaryMenu():
         """Draws the active page. Also draws information that appears on all
         pages i.e. pokemon pic, name and level"""
         self._active_page.draw(draw_surface)
-        draw_surface.blit(self._general_surface, (0, 0))
+        if type(self._active_page) != MovesPage or \
+                self._active_page.mode == "overview":
+            draw_surface.blit(self._general_surface, (0, 0))
 
 
 class StatsPage():
@@ -304,7 +312,16 @@ class MovesPage():
     """Displays a pokemon's moves page"""
     def __init__(self, pokemon):
         self._pokemon = pokemon
+        self.mode = "overview"
         self._create_page_surface()
+
+    def handle_event(self, event):
+        """Handles events. When the user first presses 'a' details of the move
+        will be shown."""
+        if event.key == BattleActions.SELECT.value:
+            if self.mode == "overview":
+                self.mode = "detail"
+                self._create_page_surface()
 
     def draw(self, draw_surface):
         draw_surface.blit(self._page_surface, (0, 0))
@@ -315,11 +332,18 @@ class MovesPage():
             draw_surface.blit(move, (123, y))
             y += 28
 
+        if self.mode == "detail":
+            draw_surface.blit(self._pokemon_surface, (7, 17))
+
     def _create_page_surface(self):
         """Creates the move page's surface which will be drawn to the page.
         Will also create all other info needed to draw the page."""
         # Create the page's background.
-        self._page_surface = FRAMES.getFrame("pokemon_moves.png")
+        if self.mode == "overview":
+            self._page_surface = FRAMES.getFrame("pokemon_moves.png")
+        else:
+            self._page_surface = FRAMES.getFrame("pokemon_moves_active.png")
+            self._create_move_active_general_surface()
 
         text_maker = TextMaker(join("fonts", "party_txt_font.png"))
         text_maker2 = TextMaker(join("fonts", "menu_font.png"))
@@ -349,3 +373,25 @@ class MovesPage():
 
             # Add surface to move surface list
             self._moves_surfaces.append(surface)
+
+    def _create_move_active_general_surface(self):
+        """When a move is being analyzed the left half of the menu changes and
+        it is necessary to override the information drawn in PokemonSummary
+        Menu."""
+        # Create small pokemon image surface
+        with open(join("jsons", "pokemon_lookup_s.json"), "r") as \
+                pokemon_lookup_json:
+            pokemon_lookup = json.load(pokemon_lookup_json)
+            lookup = pokemon_lookup[self._pokemon.name]
+
+        offset = (0, lookup)
+        self._pokemon_surface = \
+            FRAMES.getFrame(join("pokemon", "pokemon_small.png"),
+                            offset=offset)
+        
+        # Create types surface
+        
+        # Create name surface
+
+        # Create gender surface
+
