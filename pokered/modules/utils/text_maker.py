@@ -94,6 +94,7 @@ class TextMaker():
         if self._max is not None:
             while x_size > self._max:
                 x_size -= self._max
-                y_size += height + 2
+                y_size += self._line_height if self._line_height is not None \
+                    else height + 2
 
         return (letter_size * len(string), y_size)
