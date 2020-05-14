@@ -327,8 +327,14 @@ class MovesPage():
                 self.mode = "detail"
                 self._create_page_surface()
 
+            if self.mode == "detail":
+                if self._vcursor_pos == len(self._pokemon.moves):
+                    self.mode = "overview"
+                    self._vcursor_pos = 0
+                    self._create_page_surface()
+
         elif event.key == BattleActions.DOWN.value and self.mode == "detail":
-            if self._vcursor_pos < len(self._pokemon.moves) - 1:
+            if self._vcursor_pos < len(self._pokemon.moves):
                 self._vcursor_pos += 1
                 self._create_move_detail_surface()
 
@@ -363,6 +369,9 @@ class MovesPage():
             # Draw moves selector
             draw_surface.blit(self._selector,
                               (120, 18 + self._vcursor_pos * 28))
+
+            # Draw cancel button
+            draw_surface.blit(self._cancel, (170, 138))
 
     def _create_page_surface(self):
         """Creates the move page's surface which will be drawn to the page.
@@ -445,10 +454,17 @@ class MovesPage():
         (Power, accuracy, effect)"""
         text_maker = TextMaker(join("fonts", "party_txt_font.png"), max=115,
                                line_height=14)
+        if self._vcursor_pos == len(self._pokemon.moves):
+            # Clear surfaces
+            self._power_surface = text_maker.get_surface("")
+            self._accuracy_surface = text_maker.get_surface("")
+            self._effect_surface = text_maker.get_surface("")
 
-        move = self._pokemon.moves[self._vcursor_pos]
-        self._power_surface = text_maker.get_surface(str(move.move_power))
-        self._accuracy_surface = text_maker.get_surface(str(move.accuracy))
-        self._effect_surface = text_maker.get_surface(str(move.effects))
+        else:
+            move = self._pokemon.moves[self._vcursor_pos]
+            self._power_surface = text_maker.get_surface(str(move.move_power))
+            self._accuracy_surface = text_maker.get_surface(str(move.accuracy))
+            self._effect_surface = text_maker.get_surface(str(move.effects))
 
         self._selector = FRAMES.getFrame("moves_selector.png")
+        self._cancel = text_maker.get_surface("CANCEL")
