@@ -313,6 +313,7 @@ class MovesPage():
     def __init__(self, pokemon):
         self._pokemon = pokemon
         self.mode = "overview"
+        self._vcursor_pos = 0
         self._create_page_surface()
 
     def handle_event(self, event):
@@ -333,7 +334,18 @@ class MovesPage():
             y += 28
 
         if self.mode == "detail":
+            # Draw general information about pokemon
             draw_surface.blit(self._pokemon_surface, (7, 17))
+            draw_surface.blit(self._type_surf, (50, 35))
+            draw_surface.blit(self._name_surf, (45, 19))
+            draw_surface.blit(self._gender_surface, (105, 18))
+
+            # Draw move stats
+            draw_surface.blit(self._power_surface,
+                              end_at(self._power_surface, (75, 60)))
+            draw_surface.blit(self._accuracy_surface,
+                              end_at(self._accuracy_surface, (75, 74)))
+            draw_surface.blit(self._effect_surface, (6, 102))
 
     def _create_page_surface(self):
         """Creates the move page's surface which will be drawn to the page.
@@ -344,6 +356,7 @@ class MovesPage():
         else:
             self._page_surface = FRAMES.getFrame("pokemon_moves_active.png")
             self._create_move_active_general_surface()
+            self._create_move_detail_surface()
 
         text_maker = TextMaker(join("fonts", "party_txt_font.png"))
         text_maker2 = TextMaker(join("fonts", "menu_font.png"))
@@ -388,10 +401,35 @@ class MovesPage():
         self._pokemon_surface = \
             FRAMES.getFrame(join("pokemon", "pokemon_small.png"),
                             offset=offset)
-        
+
         # Create types surface
-        
+        self._type_surf = pygame.Surface((80, 20))
+        self._type_surf.fill((255, 255, 254))
+        self._type_surf.set_colorkey((255, 255, 254))
+
+        x = 0
+        for poke_type in self._pokemon.type:
+            type_surf_subset = Types(poke_type)
+            type_surf_subset._position = (x, 0)
+            type_surf_subset.draw(self._type_surf)
+            x += 35
+
         # Create name surface
+        text_maker = TextMaker(join("fonts", "menu_font.png"))
+        self._name_surf = text_maker.get_surface(self._pokemon.nick_name)
 
         # Create gender surface
+        font_index = 0 if self._pokemon.gender == "male" else 1
+        self._gender_surface = \
+            FRAMES.getFrame("gender_t.png", offset=(font_index, 0))
 
+    def _create_move_detail_surface(self):
+        """Creates surfaces containing details about a move.
+        (Power, accuracy, effect)"""
+        text_maker = TextMaker(join("fonts", "party_txt_font.png"), max=115,
+                               line_height=14)
+
+        move = self._pokemon.moves[self._vcursor_pos]
+        self._power_surface = text_maker.get_surface(str(move.move_power))
+        self._accuracy_surface = text_maker.get_surface(str(move.accuracy))
+        self._effect_surface = text_maker.get_surface(str(move.effects))
