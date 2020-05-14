@@ -33,7 +33,7 @@ class SummaryMenu():
     def handle_event(self, event):
         """Handles the user input accordingly"""
         if self._hcursor_pos == 2 and \
-                self._active_page._active_page.mode == "detail":
+                (self._active_page._active_page.mode == "detail" or self._active_page._active_page.mode == "switch"):
             self._active_page.handle_event(event)
 
         elif event.key == BattleActions.UP.value:
@@ -327,18 +327,41 @@ class MovesPage():
                 self.mode = "detail"
                 self._create_page_surface()
 
-            if self.mode == "detail":
+            elif self.mode == "detail":
                 if self._vcursor_pos == len(self._pokemon.moves):
                     self.mode = "overview"
                     self._vcursor_pos = 0
                     self._create_page_surface()
+                else:
+                    self.mode = "switch"
+                    self._pos1 = self._vcursor_pos
 
-        elif event.key == BattleActions.DOWN.value and self.mode == "detail":
-            if self._vcursor_pos < len(self._pokemon.moves):
-                self._vcursor_pos += 1
-                self._create_move_detail_surface()
+            elif self.mode == "switch":
+                # Swap moves
+                self._pokemon.moves[self._pos1], \
+                    self._pokemon.moves[self._vcursor_pos] = \
+                    self._pokemon.moves[self._vcursor_pos], \
+                    self._pokemon.moves[self._pos1]
 
-        elif event.key == BattleActions.UP.value and self.mode == "detail":
+                # Return to detail mode and redraw so swap is drawn to screen
+                self.mode = "detail"
+                self._create_page_surface()
+
+        elif event.key == BattleActions.DOWN.value:
+            if self.mode == "detail":
+                if self._vcursor_pos < len(self._pokemon.moves):
+                    self._vcursor_pos += 1
+                    self._create_move_detail_surface()
+            elif self.mode == "switch":
+                if self._vcursor_pos < len(self._pokemon.moves) - 1:
+                    self._vcursor_pos += 1
+                    self._create_move_detail_surface()
+                elif self._vcursor_pos == len(self._pokemon.moves) - 1:
+                    self._vcursor_pos = 0
+                    self._create_move_detail_surface()
+
+        elif event.key == BattleActions.UP.value and \
+                (self.mode == "detail" or self.mode == "switch"):
             if self._vcursor_pos > 0:
                 self._vcursor_pos -= 1
                 self._create_move_detail_surface()
@@ -352,7 +375,7 @@ class MovesPage():
             draw_surface.blit(move, (123, y))
             y += 28
 
-        if self.mode == "detail":
+        if self.mode == "detail" or self.mode == "switch":
             # Draw general information about pokemon
             draw_surface.blit(self._pokemon_surface, (7, 17))
             draw_surface.blit(self._type_surf, (50, 35))
