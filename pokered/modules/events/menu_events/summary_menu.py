@@ -6,6 +6,7 @@ from ...types import Types
 from ...utils.managers.frameManager import FRAMES
 from ...enumerated.battle_actions import BattleActions
 from ...utils.text_maker import TextMaker
+from ...utils.managers.soundManager import SoundManager
 from ...utils.misc import end_at
 from ...utils.UI.animated import Animated
 
@@ -40,30 +41,36 @@ class SummaryMenu():
 
         elif event.key == BattleActions.UP.value:
             if self._vcursor_pos >= 1:
+                SoundManager.getInstance().playSound("firered_0005.wav")
                 self._vcursor_pos -= 1
                 self._update_active_page()
 
         elif event.key == BattleActions.DOWN.value:
             if self._vcursor_pos < len(self._player.pokemon_team) - 1:
+                SoundManager.getInstance().playSound("firered_0005.wav")
                 self._vcursor_pos += 1
                 self._update_active_page()
 
         elif event.key == BattleActions.BACK.value:
+            SoundManager.getInstance().playSound("firered_0005.wav")
             self._is_dead = True
 
         elif event.key == BattleActions.LEFT.value:
             if self._hcursor_pos > 0:
+                SoundManager.getInstance().playSound("firered_0005.wav")
                 self._hcursor_pos -= 1
                 self._update_active_page()
 
         elif event.key == BattleActions.RIGHT.value:
             if self._hcursor_pos < 2:
+                SoundManager.getInstance().playSound("firered_0005.wav")
                 self._hcursor_pos += 1
                 self._update_active_page()
 
         elif event.key == BattleActions.SELECT.value:
             if self._hcursor_pos == 0:
                 self._is_dead = True
+                SoundManager.getInstance().playSound("firered_0005.wav")
             elif self._hcursor_pos == 2:
                 self._active_page.handle_event(event)
 
@@ -336,10 +343,12 @@ class MovesPage():
         will be shown."""
         if event.key == BattleActions.SELECT.value:
             if self.mode == "overview":
+                SoundManager.getInstance().playSound("firered_0005.wav")
                 self.mode = "detail"
                 self._create_page_surface()
 
             elif self.mode == "detail":
+                SoundManager.getInstance().playSound("firered_0005.wav")
                 if self._vcursor_pos == len(self._pokemon.moves):
                     self.mode = "overview"
                     self._vcursor_pos = 0
@@ -352,6 +361,7 @@ class MovesPage():
                     self._selector_b = FRAMES.getFrame("moves_selector_b.png")
 
             elif self.mode == "switch":
+                SoundManager.getInstance().playSound("firered_0005.wav")
                 # Swap moves
                 self._pokemon.moves[self._pos1], \
                     self._pokemon.moves[self._vcursor_pos] = \
@@ -370,19 +380,23 @@ class MovesPage():
                 if self._vcursor_pos < len(self._pokemon.moves):
                     self._vcursor_pos += 1
                     self._create_move_detail_surface()
+                    SoundManager.getInstance().playSound("firered_0005.wav")
             elif self.mode == "switch":
                 if self._vcursor_pos < len(self._pokemon.moves) - 1:
                     self._vcursor_pos += 1
                     self._create_move_detail_surface()
+                    SoundManager.getInstance().playSound("firered_0005.wav")
                 elif self._vcursor_pos == len(self._pokemon.moves) - 1:
                     self._vcursor_pos = 0
                     self._create_move_detail_surface()
+                    SoundManager.getInstance().playSound("firered_0005.wav")
 
         elif event.key == BattleActions.UP.value and \
                 (self.mode == "detail" or self.mode == "switch"):
             if self._vcursor_pos > 0:
                 self._vcursor_pos -= 1
                 self._create_move_detail_surface()
+                SoundManager.getInstance().playSound("firered_0005.wav")
 
     def draw(self, draw_surface):
         draw_surface.blit(self._page_surface, (0, 0))
