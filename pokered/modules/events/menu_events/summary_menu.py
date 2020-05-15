@@ -509,5 +509,9 @@ class MovesPage():
             self._accuracy_surface = text_maker.get_surface(str(move.accuracy))
             self._effect_surface = text_maker.get_surface(str(move.effects))
 
-        self._selector._position = (120, 18 + self._vcursor_pos * 28)
+        if self._vcursor_pos == len(self._pokemon.moves):
+            self._selector._position = (120, 18 + 4 * 28)
+        else:
+            self._selector._position = (120, 18 + self._vcursor_pos * 28)
+
         self._cancel = text_maker.get_surface("CANCEL")
