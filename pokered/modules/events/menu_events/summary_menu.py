@@ -7,6 +7,7 @@ from ...utils.managers.frameManager import FRAMES
 from ...enumerated.battle_actions import BattleActions
 from ...utils.text_maker import TextMaker
 from ...utils.misc import end_at
+from ...utils.UI.animated import Animated
 
 
 class SummaryMenu():
@@ -33,7 +34,8 @@ class SummaryMenu():
     def handle_event(self, event):
         """Handles the user input accordingly"""
         if self._hcursor_pos == 2 and \
-                (self._active_page._active_page.mode == "detail" or self._active_page._active_page.mode == "switch"):
+                (self._active_page._active_page.mode == "detail" or
+                    self._active_page._active_page.mode == "switch"):
             self._active_page.handle_event(event)
 
         elif event.key == BattleActions.UP.value:
@@ -93,7 +95,7 @@ class PokemonSummaryMenu():
             self._active_page.handle_event(event)
 
     def update(self, ticks):
-        pass
+        self._active_page.update(ticks)
 
     def _create_general_surface(self):
         """Also draws information that appears on all
@@ -131,6 +133,9 @@ class StatsPage():
     def __init__(self, pokemon):
         self._pokemon = pokemon
         self._create_page_surface()
+
+    def update(self, ticks):
+        pass
 
     def draw(self, draw_surface):
         """Draw all the relevant information to the screen"""
@@ -317,7 +322,14 @@ class MovesPage():
         self._pokemon = pokemon
         self.mode = "overview"
         self._vcursor_pos = 0
+        self._selector = Animated("moves_selector.png", (0, 0))
+        self._selector._framesPerSecond = 3
+        self._selector.stopAnimation()
         self._create_page_surface()
+
+    def update(self, ticks):
+        """Necessary to make selector flicker"""
+        self._selector.update(ticks)
 
     def handle_event(self, event):
         """Handles events. When the user first presses 'a' details of the move
@@ -335,6 +347,9 @@ class MovesPage():
                 else:
                     self.mode = "switch"
                     self._pos1 = self._vcursor_pos
+                    self._selector.startAnimation()
+
+                    self._selector_b = FRAMES.getFrame("moves_selector_b.png")
 
             elif self.mode == "switch":
                 # Swap moves
@@ -345,6 +360,9 @@ class MovesPage():
 
                 # Return to detail mode and redraw so swap is drawn to screen
                 self.mode = "detail"
+                self._selector.stopAnimation()
+                self._selector._frame = 0
+                self._selector.get_current_frame()
                 self._create_page_surface()
 
         elif event.key == BattleActions.DOWN.value:
@@ -389,9 +407,11 @@ class MovesPage():
                               end_at(self._accuracy_surface, (75, 74)))
             draw_surface.blit(self._effect_surface, (6, 102))
 
-            # Draw moves selector
-            draw_surface.blit(self._selector,
-                              (120, 18 + self._vcursor_pos * 28))
+            if self.mode == "switch":
+                draw_surface.blit(self._selector_b,
+                                  (120, 18 + self._pos1 * 28))
+
+            self._selector.draw(draw_surface)
 
             # Draw cancel button
             draw_surface.blit(self._cancel, (167, 138))
@@ -489,5 +509,5 @@ class MovesPage():
             self._accuracy_surface = text_maker.get_surface(str(move.accuracy))
             self._effect_surface = text_maker.get_surface(str(move.effects))
 
-        self._selector = FRAMES.getFrame("moves_selector.png")
+        self._selector._position = (120, 18 + self._vcursor_pos * 28)
         self._cancel = text_maker.get_surface("CANCEL")
