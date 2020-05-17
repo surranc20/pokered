@@ -46,6 +46,7 @@ class Dialogue():
         self._current_line = 0
         # Display the first line of the dialogue
         self._blit_line()
+        self.turned = False
 
     def _blit_line(self):
         """Blits the next line to the line surface."""

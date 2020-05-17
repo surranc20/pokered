@@ -32,6 +32,12 @@ class LevelManager(object):
         if self._active_event is None:
             self._level.draw(draw_surface)
         else:
+            # Need to redraw once after starting a dialogue so we can draw the
+            # turned npc
+            if type(self._active_event) is Dialogue and \
+                    self._active_event.turned is False:
+                self._level.draw(draw_surface)
+                self._active_event.turned = True
             self._active_event.draw(draw_surface)
 
     def handle_event(self, event):
