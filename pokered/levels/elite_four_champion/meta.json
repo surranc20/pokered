@@ -1,9 +1,15 @@
-[
-    [13,20],
-    [6,19],
-    [
-        [[6,8],"rival", "south", 13, 14, 15,
-            [
+{
+    "size": [13,20],
+    "start_location": [6,19],
+    "trainers": [
+        {
+            "pos": [6,8],
+            "name": "rival",
+            "orientation": "south",
+            "dialogue": 13,
+            "battle_dialogue": 14,
+            "post_battle_dialogue": 15,
+            "party": [
                 ["pidgeot", ["Aerial Ace", "FeatherDance", "Sand-Attack", "Whirlwind"], 59],
                 ["alakazam", ["Psychic", "Future Sight", "Recover", "Reflect"], 57],
                 ["rhydon", ["Take Down", "Earthquake", "Rock Tomb", "Scary Face"], 59],
@@ -11,12 +17,12 @@
                 ["gyarados", ["Hydro Pump", "Dragon Rage", "Bite", "Thrash"], 61],
                 ["charizard", ["Fire Blast", "Aerial Ace", "Slash", "Fire Spin"], 63]
             ],
-            "defeat_script.json",
-            "male",
-            "Champion"
-        ]
+            "event": "defeat_script.json",
+            "gender": "male",
+            "trainer_type": "Champion"
+        }
     ],
-    [
+    "collide_map": [
         [1,1,1,1,1,1,0,1,1,1,1,1,1],
         [1,1,1,1,1,1,0,1,1,1,1,1,1],
         [1,1,1,1,1,1,0,1,1,1,1,1,1],
@@ -38,5 +44,5 @@
         [1,1,1,1,1,0,0,0,1,1,1,1,1],
         [1,1,1,1,1,0,0,0,1,1,1,1,1]
     ],
-    ["entry_script.json", "defeat_script.json"]
-]
+    "scripts": ["entry_script.json", "defeat_script.json"]
+}
