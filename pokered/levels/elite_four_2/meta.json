@@ -1,21 +1,27 @@
-[
-    [13,13],
-    [6,11],
-    [
-        [[6,5],"bruno", "south", 2, 7, 8,
-            [
+{
+    "size": [13,13],
+    "start_location": [6,11],
+    "trainers": [
+        {
+            "pos": [6,5],
+            "name": "bruno",
+            "orientation": "south",
+            "dialogue": 2,
+            "battle_dialogue": 7,
+            "post_battle_dialogue": 8,
+            "party": [
                 ["onix", ["Earthquake", "Rock Tomb", "Iron Tail", "Roar"], 51],
                 ["hitmonchan", ["Sky Uppercut", "Mach Punch", "Rock Tomb", "Counter"], 53],
                 ["hitmonlee", ["Mega Kick", "Foresight", "Brick Break", "Facade"], 53],
                 ["onix", ["Double-Edge", "Iron Tail", "Earthquake", "Sand Tomb"], 54],
                 ["machamp", ["Bulk Up", "Cross Chop", "Scary Face", "Rock Tomb"], 56]
             ],
-            "defeat_script.json",
-            "male",
-            "Elite Four"
-        ]
+            "event": "defeat_script.json",
+            "gender": "male",
+            "trainer_type": "Elite Four"
+        }
     ],
-    [
+    "collide_map": [
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -30,5 +36,5 @@
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1]
     ],
-    ["entry_script.json", "defeat_script.json"]
-]
+    "scripts": ["entry_script.json", "defeat_script.json"]
+}

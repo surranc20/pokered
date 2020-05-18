@@ -1,21 +1,27 @@
-[
-    [13,13],
-    [6,11],
-    [
-        [[6,5],"lorelei", "south", 1, 5, 6,
-            [
+{
+    "size": [13,13],
+    "start_location": [6,11],
+    "trainers": [
+        {
+            "pos": [6,5],
+            "name": "lorelei",
+            "orientation": "south",
+            "dialogue": 1,
+            "battle_dialogue": 5,
+            "post_battle_dialogue": 6,
+            "party": [
                 ["dewgong", ["Surf", "Ice Beam", "Hail", "Safeguard"], 52],
                 ["cloyster", ["Dive", "Spikes", "Hail", "Protect"], 51],
                 ["slowbro", ["Ice Beam", "Surf", "Amnesia", "Yawn"], 52],
                 ["jynx", ["Double Slap", "Ice Punch", "Sweet Kiss", "Attract"], 54],
                 ["lapras", ["Body Slam", "Confuse Ray", "Surf", "Ice Beam"], 54]
             ],
-            "defeat_script.json",
-            "female",
-            "Elite Four"
-        ]
+            "event": "defeat_script.json",
+            "gender": "female",
+            "trainer_type": "Elite Four"
+        }
     ],
-    [
+    "collide_map": [
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -30,5 +36,5 @@
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1]
     ],
-    ["entry_script.json", "defeat_script.json"]
-]
+    "scripts": ["entry_script.json", "defeat_script.json"]
+}

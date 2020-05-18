@@ -33,9 +33,9 @@ class Level():
         # Load the data for the level.
         with open(join("levels", level_name, "meta.json"), "r") as level_json:
             self._level_meta = json.load(level_json)
-            self._level_size = (self.TILE_SIZE * self._level_meta[0][0],
-                                self.TILE_SIZE * self._level_meta[0][1])
-            self._colide_list = self._level_meta[3]
+            self._level_size = (self.TILE_SIZE * self._level_meta["size"][0],
+                                self.TILE_SIZE * self._level_meta["size"][1])
+            self._colide_list = self._level_meta["collide_map"]
 
         # Tile the level up into 16x16 tiles.
         self.tiles = self._tile()
@@ -52,7 +52,7 @@ class Level():
         SoundManager.getInstance().playMusic("gym_music.mp3", -1, .5)
 
         # Get the list of scripts for the level.
-        self._scripts = self._level_meta[4]
+        self._scripts = self._level_meta["scripts"]
         self.current_scripting_engine = None
 
         # If the level has an entry script that activate the script at the
@@ -86,33 +86,33 @@ class Level():
         """Adds the level's trainers to the level (including the player)."""
         # Add the player to the level by getting the player's start position
         # from the level's meta data.
-        self.player.setPosition(self.correct_border_and_heightpos(self._level_meta[1]))
-        self.tiles[self._level_meta[1][1]][self._level_meta[1][0]].add_obj(self.player)
-        self.player.current_tile = self.tiles[self._level_meta[1][1]][self._level_meta[1][0]]
+        self.player.setPosition(self.correct_border_and_heightpos(self._level_meta["start_location"]))
+        self.tiles[self._level_meta["start_location"][1]][self._level_meta["start_location"][0]].add_obj(self.player)
+        self.player.current_tile = self.tiles[self._level_meta["start_location"][1]][self._level_meta["start_location"][0]]
 
         # Add the rest of the trainers to the level. Get's data from the
         # level's meta data.
-        for trainer_args in self._level_meta[2]:
+        for trainer_args in self._level_meta["trainers"]:
             train = \
-                Trainer(self.correct_border_and_heightpos(trainer_args[0]),
-                        trainer_args[1],
-                        trainer_args[2],
+                Trainer(self.correct_border_and_heightpos(trainer_args["pos"]),
+                        trainer_args["name"],
+                        trainer_args["orientation"],
                         enemy=True,
-                        dialogue_id=trainer_args[3],
-                        battle_dialogue_id=trainer_args[4],
-                        post_battle_dialogue_id=trainer_args[5],
-                        gender=trainer_args[8],
-                        train_type=trainer_args[9]
+                        dialogue_id=trainer_args["dialogue"],
+                        battle_dialogue_id=trainer_args["battle_dialogue"],
+                        post_battle_dialogue_id=trainer_args["post_battle_dialogue"],
+                        gender=trainer_args["gender"],
+                        train_type=trainer_args["trainer_type"]
                         )
 
             # If the trainer has an event specified in the meta data then add
             # that event.
             if len(trainer_args) > 4:
-                train.event = trainer_args[7]
+                train.event = trainer_args["event"]
 
             # Calculates the stats of each of the trainer's pokemon.
             stat_calc = StatCalculator()
-            for pokemon in trainer_args[6]:
+            for pokemon in trainer_args["party"]:
                 new_pokemon = Pokemon(pokemon[0],
                                       enemy=True,
                                       move_set=pokemon[1])
@@ -121,9 +121,9 @@ class Level():
                 train.pokemon_team.append(new_pokemon)
 
             # Add the trainer to the tile.
-            self.tiles[trainer_args[0][1]][trainer_args[0][0]].add_obj(train)
+            self.tiles[trainer_args["pos"][1]][trainer_args["pos"][0]].add_obj(train)
             train.current_tile = \
-                self.tiles[trainer_args[0][1]][trainer_args[0][0]]
+                self.tiles[trainer_args["pos"][1]][trainer_args["pos"][0]]
             self.trainers[train.name] = train
 
     def draw(self, draw_surface):

@@ -1,21 +1,27 @@
-[
-    [13,13],
-    [6,11],
-    [
-        [[6,5],"agatha", "south", 3, 9, 10,
-            [
+{
+    "size": [13,13],
+    "start_location": [6,11],
+    "trainers": [
+        {
+            "pos": [6,5],
+            "name": "agatha",
+            "orientation": "south",
+            "dialogue": 3,
+            "battle_dialogue": 9,
+            "post_battle_dialogue": 10,
+            "party": [
                 ["gengar", ["Shadow Punch", "Double Team", "Toxic", "Confuse Ray"], 54],
                 ["golbat", ["Air Cutter", "Poison Fang", "Bite", "Confuse Ray"], 54],
                 ["haunter", ["Dream Eater", "Hypnosis", "Curse", "Mean Look"], 53],
                 ["arbok", ["Bite", "Iron Tail", "Screech", "Sludge Bomb"], 56],
                 ["gengar", ["Shadow Ball", "Sludge Bomb", "Hypnosis", "Nightmare"], 58]
             ],
-            "defeat_script.json",
-            "female",
-            "Elite Four"
-        ]
+            "event": "defeat_script.json",
+            "gender": "female",
+            "trainer_type": "Elite Four"
+        }
     ],
-    [
+    "collide_map": [
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -30,5 +36,5 @@
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1]
     ],
-    ["entry_script.json", "defeat_script.json"]
-]
+    "scripts": ["entry_script.json", "defeat_script.json"]
+}

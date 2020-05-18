@@ -1,9 +1,15 @@
-[
-    [28,24],
-    [23,13],
-    [
-        [[6,8],"lance", "south", 4, 11, 12,
-            [
+{
+    "size": [28,24],
+    "start_location": [23,13],
+    "trainers": [
+        {
+            "pos": [6,8],
+            "name": "lance",
+            "orientation": "south",
+            "dialogue": 4,
+            "battle_dialogue": 11,
+            "post_battle_dialogue": 12,
+            "party": [
                 ["gyarados", ["Hyper Beam", "Dragon Rage", "Bite", "Twister"], 56],
                 ["dragonair", ["Dragon Rage", "Outrage", "Hyper Beam", "Safeguard"], 54],
                 ["dragonair", ["Hyper Beam", "Safeguard", "Thunder Wave", "Outrage"], 54],
@@ -11,12 +17,12 @@
                 ["dragonite", ["Hyper Beam", "Safeguard", "Outrage", "Wing Attack"], 60]
 
             ],
-            "None",
-            "male",
-            "Elite Four"
-        ]
+            "event": "None",
+            "gender": "male",
+            "trainer_type": "Elite Four"
+        }
     ],
-    [
+    "collide_map": [
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -42,5 +48,5 @@
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
     ],
-    ["entry_script.json"]
-]
+    "scripts": ["entry_script.json"]
+}
