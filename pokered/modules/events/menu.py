@@ -22,9 +22,9 @@ class Menu():
         "OPTION": "Adjust various game settings such as text, speed, game "
         "rules, etc.",
         "EXIT": "Close this MENU window.",
-        "POKeMON": "Check and organize POKeMON that are traveling with you in "
+        "POKéMON": "Check and organize POKéMON that are traveling with you in "
         "your party.",
-        "POKeDEX": "A device that records POKeMON secrets upon meeting them "
+        "POKéDEX": "A device that records POKéMON secrets upon meeting them "
         "or catching them.",
         "PLAYER": "Check your money and other game data."}
 
@@ -117,9 +117,9 @@ class Menu():
             return None
         elif event_name == "OPTION":
             return None
-        elif event_name == "POKeMON":
+        elif event_name == "POKéMON":
             return MenuParty(self._player)
-        elif event_name == "POKeDEX":
+        elif event_name == "POKéDEX":
             return None
         elif event_name == "PLAYER":
             return None
@@ -156,9 +156,9 @@ class Menu():
         # progress in the game.
         menu_text = []
         if self._player.pokedex is not None:
-            menu_text.append("POKeDEX")
+            menu_text.append("POKéDEX")
         if self._player.has_first_pokemon:
-            menu_text.append("POKeMON")
+            menu_text.append("POKéMON")
         menu_text += ["BAG", str(self._player.name), "SAVE", "OPTION", "EXIT"]
         self._options = menu_text
 
