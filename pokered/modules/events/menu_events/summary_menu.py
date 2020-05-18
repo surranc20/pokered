@@ -187,7 +187,7 @@ class StatsPage():
         # Background and title. Need title here because this image does not
         # have it baked in unlike the info background
         self._page_surface = FRAMES.getFrame("pokemon_stats.png")
-        self._title_surface = text_maker.get_surface("POKeMON SKILLS")
+        self._title_surface = text_maker.get_surface("POKéMON SKILLS")
         self._create_hp_bar()
 
         # HP
@@ -219,7 +219,7 @@ class StatsPage():
         self._ability_surface = \
             text_maker2.get_surface(ability.name.upper())
         self._ability_desc_surface = \
-            text_maker2.get_surface(ability.description.replace("é", "e"))
+            text_maker2.get_surface(ability.description)
 
     def _create_hp_bar(self):
         """Add the hp bar to the pokemon box"""

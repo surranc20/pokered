@@ -26,8 +26,10 @@ class TextMaker():
     # { is a symbol for boy logo and } is a symbol for girl logo
     LOCATION = {
         join("fonts", "party_txt_font.png"): {".": (0, 26), "{": (3, 11),
-                                              "}": (3, 12), "/": (3, 4)},
-        join("fonts", "menu_font.png"): {".": (3, 6), "/": (3, 4)}
+                                              "}": (3, 12), "/": (3, 4), 
+                                              "é": (3, 13)},
+        join("fonts", "menu_font.png"): {".": (3, 6), "/": (3, 4), 
+                                         "é": (3, 7)}
     }
 
     def __init__(self, font_name, max=None, line_height=None):
@@ -53,7 +55,19 @@ class TextMaker():
                         y_pos += FRAMES.get_frame_size(self._font_name)[1] + 2
                     x_pos = 0
             for char in word:
-                if char.isalnum():
+                if char in [".", "{", "}", "/", "é"]:
+                    y_offset = -1 if char == "é" and \
+                        self._font_name == join("fonts", "party_txt_font.png") \
+                            else 0
+                    row, font_index = self.LOCATION[self._font_name][char]
+
+                    font_char = FRAMES.getFrame(self._font_name,
+                                                offset=(font_index, row))
+                    font_char.set_colorkey((self.COLOR_KEYS[self._font_name]))
+                    text_surface.blit(font_char, (x_pos, y_pos + y_offset))
+                    x_pos += self.SPACES_DICT[self._font_name].get(
+                        str(char), default_char_len)
+                elif char.isalnum():
                     if char.isupper():
                         ascii_num = 65
                         row = 0
@@ -71,15 +85,7 @@ class TextMaker():
                     x_pos += self.SPACES_DICT[self._font_name].get(
                         str(char), default_char_len)
 
-                elif char in [".", "{", "}", "/"]:
-                    row, font_index = self.LOCATION[self._font_name][char]
-
-                    font_char = FRAMES.getFrame(self._font_name,
-                                                offset=(font_index, row))
-                    font_char.set_colorkey((self.COLOR_KEYS[self._font_name]))
-                    text_surface.blit(font_char, (x_pos, y_pos))
-                    x_pos += self.SPACES_DICT[self._font_name].get(
-                        str(char), default_char_len)
+                
 
             x_pos += 4
 
