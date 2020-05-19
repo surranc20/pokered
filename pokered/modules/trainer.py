@@ -86,10 +86,7 @@ class Trainer(NPC):
         trainer is an enemy, the dialouge id associated with the trainer, the
         event that happens when interacting with the trainer, and the gender
         of the trainer."""
-        if not enemy:
-            super().__init__("trainer.png", position, facing)
-        else:
-            super().__init__(join("trainers", name + ".png"), position, facing)
+        super().__init__(name, position, facing, enemy=enemy)
 
         self._nFrames = 4
         self._framesPerSecond = 6
@@ -291,4 +288,4 @@ class Trainer(NPC):
         loss."""
         return self.pokemon_team[-1].lvl * self.BASE_PAYOUT[self.trainer_type]
 
-    
+
