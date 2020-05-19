@@ -37,6 +37,7 @@ class Level():
             self._level_size = (self.TILE_SIZE * self._level_meta["size"][0],
                                 self.TILE_SIZE * self._level_meta["size"][1])
             self._colide_list = self._level_meta["collide_map"]
+            self._more_info = self._level_meta["more_info"]
 
         # Tile the level up into 16x16 tiles.
         self.tiles = self._tile()
@@ -70,7 +71,7 @@ class Level():
         for y in range(tile_dims[1]):
             row = []
             for x in range(tile_dims[0]):
-                row.append(Tile((x, y), self._colide_list[y][x], None))
+                row.append(Tile((x, y), self._colide_list[y][x], None, self._more_info.get("(" + str(x) + "," + str(y) + ")")))
             tiles.append(row)
         return tiles
 
@@ -188,7 +189,7 @@ class Level():
 
 
 class Tile:
-    def __init__(self, pos, collidable, obj):
+    def __init__(self, pos, collidable, obj, more_info):
         """Simple class representing a tile on the map. While commenting this
         I realized that I spelt collidable wrong. I will fix this later."""
         self.pos = pos
@@ -202,6 +203,19 @@ class Tile:
         # A tile is a warp if occupying it sends the player to another level.
         self._is_warp = False
         self.collidable = True if collidable == 1 else False
+
+        # Some tiles have extra information
+        if more_info is not None:
+
+            # Check to see if tile is a link tile (i.e a tile in front of a
+            # shop seller or nurse joy). If it is a link tile then when a talk
+            # is trigerred with this tile it will link to the nurse or shop
+            # seller
+            if "link" in more_info:
+                self._link = more_info.split("-")[1].split(",")
+                self._link = tuple(int(x) for x in self._link)
+            else:
+                self._link = False
 
     def add_obj(self, obj):
         """Adds an object to a tile. Usually a player or a trainer. If a tile
@@ -232,6 +246,9 @@ class Tile:
         """Updates the tiles obj if one exists."""
         if self._obj is not None:
             self._obj.update(ticks, nearby_tiles, self)
+
+    def talk_event(self, player):
+        return self._obj.talk_event(player)
 
     def set_warp(self, level_name):
         """Sets a tile as a warp tile, requires being passed in a level name
