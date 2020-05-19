@@ -81,17 +81,19 @@ class FrameManager(object):
          "hp_bar.png": (65, 7),
          "exp_bar.png": (83, 7),
          "moves_selector.png": (120, 29),
-         "moves_selector_b.png": (120, 29)
+         "moves_selector_b.png": (120, 29),
+         "poke_center_balls.png": (6, 6),
+         "poke_center_screens.png": (24, 15)
       }
 
       # A default frame size
       _DEFAULT_FRAME = (64,64)
 
       # A list of images that require to be loaded with transparency
-      _TRANSPARENCY = ["menu_parts.png", join("battle" , "battle_menus.png"), "hp_bar.png"]
+      _TRANSPARENCY = ["menu_parts.png", join("battle", "battle_menus.png"), "hp_bar.png"]
 
       # A list of images that require to be loaded with a color key
-      _COLOR_KEY = [join("trainers", "nurse.png"), "moves_selector_b.png", "moves_selector.png", "exp_bar.png", "gender_t.png", "types.png", join("fonts", "party_txt_font.png"), join("fonts", "menu_font.png"), join("trainers", "rival.png"), join("trainers", "rival_b.png"), join("trainers", "lance.png"), join("trainers", "lance_b.png"), join("trainers", "agatha_b.png"), join("trainers", "agatha.png"), "dialog_boxes.png", "status.png", join("moves", "fist.png"), join("moves", "ice_punch.png"), join("moves", "body_slam.png"), join("moves", "ice_beam.png"), join("moves", "surf.png"), join("moves", "thunder_wave.png"), join("moves", "thunderbolt_static.png"), join("moves", "thunderbolt_ball.png"), join("moves", "thunderbolt.png"), join("moves", "thunder.png"), join("trainers", "bruno.png"), join("trainers", "bruno_b.png"), "text_cursor.png", join("trainers", "lorelei.png"), join("trainers", "lorelei_b.png"), "gender.png", "menu.png", "trainer.png", "party_text_box.png", "party_cancel_bar.png", join("pokemon", "pokemon_small.png"), join("battle", "trainer_toss_anim.png"), join("battle", "pokeball_anim.png"), join("battle", "pokeball_open_anim.png"), join("pokemon", "pokemon_big.png"), join("battle", "health_bars.png"), join("trainers", "lorelei_b.png") ,join("battle", "gary_battle.png"), "pokemon_fire_red_battle_font.png", join("battle", "pokemon_remaining_balls.png"), join("battle", "pokemon_remaining.png"), join("battle", "cursor.png"), "party_active_poke_bar.png", "party_individual_poke_bar.png"]
+      _COLOR_KEY = ["poke_center_screens.png", "poke_center_balls.png", join("trainers", "nurse.png"), "moves_selector_b.png", "moves_selector.png", "exp_bar.png", "gender_t.png", "types.png", join("fonts", "party_txt_font.png"), join("fonts", "menu_font.png"), join("trainers", "rival.png"), join("trainers", "rival_b.png"), join("trainers", "lance.png"), join("trainers", "lance_b.png"), join("trainers", "agatha_b.png"), join("trainers", "agatha.png"), "dialog_boxes.png", "status.png", join("moves", "fist.png"), join("moves", "ice_punch.png"), join("moves", "body_slam.png"), join("moves", "ice_beam.png"), join("moves", "surf.png"), join("moves", "thunder_wave.png"), join("moves", "thunderbolt_static.png"), join("moves", "thunderbolt_ball.png"), join("moves", "thunderbolt.png"), join("moves", "thunder.png"), join("trainers", "bruno.png"), join("trainers", "bruno_b.png"), "text_cursor.png", join("trainers", "lorelei.png"), join("trainers", "lorelei_b.png"), "gender.png", "menu.png", "trainer.png", "party_text_box.png", "party_cancel_bar.png", join("pokemon", "pokemon_small.png"), join("battle", "trainer_toss_anim.png"), join("battle", "pokeball_anim.png"), join("battle", "pokeball_open_anim.png"), join("pokemon", "pokemon_big.png"), join("battle", "health_bars.png"), join("trainers", "lorelei_b.png") ,join("battle", "gary_battle.png"), "pokemon_fire_red_battle_font.png", join("battle", "pokemon_remaining_balls.png"), join("battle", "pokemon_remaining.png"), join("battle", "cursor.png"), "party_active_poke_bar.png", "party_individual_poke_bar.png"]
 
 
 
