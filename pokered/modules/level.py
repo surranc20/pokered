@@ -2,6 +2,7 @@ import json
 from os.path import join
 from .trainer import Trainer
 from .player import Player
+from .nurse import Nurse
 from .pokemon import Pokemon
 from .utils.scripting_engine import ScriptingEngine
 from .utils.UI.drawable import Drawable
@@ -93,32 +94,35 @@ class Level():
         # Add the rest of the trainers to the level. Get's data from the
         # level's meta data.
         for trainer_args in self._level_meta["trainers"]:
-            train = \
-                Trainer(self.correct_border_and_heightpos(trainer_args["pos"]),
-                        trainer_args["name"],
-                        trainer_args["orientation"],
-                        enemy=True,
-                        dialogue_id=trainer_args["dialogue"],
-                        battle_dialogue_id=trainer_args["battle_dialogue"],
-                        post_battle_dialogue_id=trainer_args["post_battle_dialogue"],
-                        gender=trainer_args["gender"],
-                        train_type=trainer_args["trainer_type"]
-                        )
+            if trainer_args["name"] == "nurse":
+                train = Nurse(self.correct_border_and_heightpos(trainer_args["pos"]), trainer_args["orientation"])
+            else:
+                train = \
+                    Trainer(self.correct_border_and_heightpos(trainer_args["pos"]),
+                            trainer_args["name"],
+                            trainer_args["orientation"],
+                            enemy=True,
+                            dialogue_id=trainer_args["dialogue"],
+                            battle_dialogue_id=trainer_args["battle_dialogue"],
+                            post_battle_dialogue_id=trainer_args["post_battle_dialogue"],
+                            gender=trainer_args["gender"],
+                            train_type=trainer_args["trainer_type"]
+                            )
 
-            # If the trainer has an event specified in the meta data then add
-            # that event.
-            if len(trainer_args) > 4:
-                train.event = trainer_args["event"]
+                # If the trainer has an event specified in the meta data then add
+                # that event.
+                if len(trainer_args) > 4:
+                    train.event = trainer_args["event"]
 
-            # Calculates the stats of each of the trainer's pokemon.
-            stat_calc = StatCalculator()
-            for pokemon in trainer_args["party"]:
-                new_pokemon = Pokemon(pokemon[0],
-                                      enemy=True,
-                                      move_set=pokemon[1])
-                new_pokemon.stats = stat_calc.calculate_main(new_pokemon,
-                                                             pokemon[2])
-                train.pokemon_team.append(new_pokemon)
+                # Calculates the stats of each of the trainer's pokemon.
+                stat_calc = StatCalculator()
+                for pokemon in trainer_args["party"]:
+                    new_pokemon = Pokemon(pokemon[0],
+                                        enemy=True,
+                                        move_set=pokemon[1])
+                    new_pokemon.stats = stat_calc.calculate_main(new_pokemon,
+                                                                pokemon[2])
+                    train.pokemon_team.append(new_pokemon)
 
             # Add the trainer to the tile.
             self.tiles[trainer_args["pos"][1]][trainer_args["pos"][0]].add_obj(train)
