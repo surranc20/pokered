@@ -18,7 +18,9 @@ class NPC(Mobile):
         self.is_enemy = enemy
 
     def _parse_cardinality(self, card_string):
-        if card_string == "north":
+        if type(card_string) == Cardinality:
+            return card_string
+        elif card_string == "north":
             return Cardinality.NORTH
         elif card_string == "south":
             return Cardinality.SOUTH
