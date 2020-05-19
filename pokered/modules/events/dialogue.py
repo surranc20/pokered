@@ -75,8 +75,8 @@ class Dialogue():
 
     def draw(self, draw_surface):
         """Draw the dialogue frame, text cursor, and line surface."""
-        self._npc.draw(draw_surface)
-        self._player.draw(draw_surface)
+        #self._npc.draw(draw_surface)
+        #self._player.draw(draw_surface)
 
         self._dialogue_frame.draw(draw_surface)
         draw_surface.blit(self._line_surface, (6, 111))
