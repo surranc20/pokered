@@ -37,7 +37,7 @@ class Level():
             self._level_size = (self.TILE_SIZE * self._level_meta["size"][0],
                                 self.TILE_SIZE * self._level_meta["size"][1])
             self._colide_list = self._level_meta["collide_map"]
-            self._more_info = self._level_meta["more_info"]
+            self._more_info = self._level_meta.get("more_info", {})
 
         # Tile the level up into 16x16 tiles.
         self.tiles = self._tile()
