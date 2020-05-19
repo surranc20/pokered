@@ -244,24 +244,6 @@ class Trainer(NPC):
             self._move_script_active = None
             return True
 
-    def determine_direction_to_tile(self, tile_pos):
-        """Helper method to determine the cardinal direction to a tile."""
-        if self.current_tile.pos == tile_pos:
-            return self._orientation
-        else:
-
-            if tile_pos[0] > self.current_tile.pos[0]:
-                direction = Cardinality.EAST
-            elif tile_pos[0] < self.current_tile.pos[0]:
-                direction = Cardinality.WEST
-            elif tile_pos[1] > self.current_tile.pos[1]:
-                direction = Cardinality.SOUTH
-            else:
-                direction = Cardinality.NORTH
-
-            self._row = abs(direction.value)
-            return direction
-
     def talk_event(self, player):
         """Returns the talke event associated with the trainer."""
         # Create the talk event

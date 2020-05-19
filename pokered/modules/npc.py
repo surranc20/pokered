@@ -34,3 +34,21 @@ class NPC(Mobile):
         self._row = abs(self._orientation.value)
         self._flip = True if self._orientation == Cardinality.EAST else False
         self.get_current_frame()
+    
+    def determine_direction_to_tile(self, tile_pos):
+        """Helper method to determine the cardinal direction to a tile."""
+        if self.current_tile.pos == tile_pos:
+            return self._orientation
+        else:
+
+            if tile_pos[0] > self.current_tile.pos[0]:
+                direction = Cardinality.EAST
+            elif tile_pos[0] < self.current_tile.pos[0]:
+                direction = Cardinality.WEST
+            elif tile_pos[1] > self.current_tile.pos[1]:
+                direction = Cardinality.SOUTH
+            else:
+                direction = Cardinality.NORTH
+
+            self._row = abs(direction.value)
+            return direction
