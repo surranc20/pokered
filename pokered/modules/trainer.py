@@ -2,14 +2,14 @@ import json
 import random
 from os.path import join
 from .events.dialogue import Dialogue
-from .utils.UI.mobile import Mobile
+from .npc import NPC
 from .utils.UI.drawable import Drawable
 from .utils.vector2D import Vector2
 from .enumerated.cardinality import Cardinality
 from .utils.managers.soundManager import SoundManager
 
 
-class Trainer(Mobile):
+class Trainer(NPC):
     BASE_PAYOUT = {
         "Beauty": 80,
         "Biker": 20,
@@ -89,8 +89,7 @@ class Trainer(Mobile):
         if not enemy:
             super().__init__("trainer.png", position, facing)
         else:
-            super().__init__(join("trainers", name + ".png"), position,
-                             self._parse_cardinality(facing))
+            super().__init__(join("trainers", name + ".png"), position, facing)
 
         self._nFrames = 4
         self._framesPerSecond = 6
@@ -99,7 +98,6 @@ class Trainer(Mobile):
         self.pokemon_team = []
         self.active_pokemon = None
         self.is_enemy = enemy
-        self.name = name.upper()
         self._key_down_timer = 0
         self._wait_till_next_update = 0
         self._walk_event = None
@@ -205,7 +203,7 @@ class Trainer(Mobile):
         # This ensures the player travels a full tile once they have begun
         # moving.
         if self._walk_event is not None:
-            Mobile.update(self, ticks)
+            super().update(ticks)
             self._wait_till_next_update += ticks
             self._walk_event[0] += 1
 
@@ -236,12 +234,6 @@ class Trainer(Mobile):
         move until they reach the tile provided."""
         self._move_script_active = tile_pos
         return self.current_tile.pos == tile_pos
-
-    def turn(self, direction):
-        self._orientation = direction
-        self._row = abs(self._orientation.value)
-        self._flip = True if self._orientation == Cardinality.EAST else False
-        self.get_current_frame()
 
     def _move_to_tile(self, tile_pos):
         """Helper function that implements the above functionality. Helps
@@ -299,12 +291,4 @@ class Trainer(Mobile):
         loss."""
         return self.pokemon_team[-1].lvl * self.BASE_PAYOUT[self.trainer_type]
 
-    def _parse_cardinality(self, card_string):
-        if card_string == "north":
-            return Cardinality.NORTH
-        elif card_string == "south":
-            return Cardinality.SOUTH
-        elif card_string == "east":
-            return Cardinality.EAST
-        else:
-            return Cardinality.WEST
+    
