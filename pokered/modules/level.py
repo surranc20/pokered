@@ -73,6 +73,10 @@ class Level():
             for x in range(tile_dims[0]):
                 row.append(Tile((x, y), self._colide_list[y][x], None, self._more_info.get("(" + str(x) + "," + str(y) + ")")))
             tiles.append(row)
+        for tile_row in tiles:
+            for tile in tile_row:
+                if tile.link is not False:
+                    tile.link = tiles[tile.link[1]][tile.link[0]]
         return tiles
 
     def play_music(self):
@@ -203,7 +207,7 @@ class Tile:
         # A tile is a warp if occupying it sends the player to another level.
         self._is_warp = False
         self.collidable = True if collidable == 1 else False
-
+        self.link = False
         # Some tiles have extra information
         if more_info is not None:
 
@@ -212,10 +216,9 @@ class Tile:
             # is trigerred with this tile it will link to the nurse or shop
             # seller
             if "link" in more_info:
-                self._link = more_info.split("-")[1].split(",")
-                self._link = tuple(int(x) for x in self._link)
-            else:
-                self._link = False
+                self.link = more_info.split("-")[1].split(",")
+                self.link = tuple(int(x) for x in self.link)
+
 
     def add_obj(self, obj):
         """Adds an object to a tile. Usually a player or a trainer. If a tile
@@ -248,7 +251,14 @@ class Tile:
             self._obj.update(ticks, nearby_tiles, self)
 
     def talk_event(self, player):
-        return self._obj.talk_event(player)
+        """Returns tile's talk event. Will returned linked tile's talk event
+        if a link exists."""
+        if self.link is not False:
+            return self.link.talk_event(player)
+        elif self._obj is not None and self._obj is not player:
+            return self._obj.talk_event(player)
+        else:
+            return None
 
     def set_warp(self, level_name):
         """Sets a tile as a warp tile, requires being passed in a level name
