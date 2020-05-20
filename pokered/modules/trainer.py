@@ -262,7 +262,7 @@ class Trainer(NPC):
         """Heals all of the trainer's pokemon."""
         for pokemon in self.pokemon_team:
             pokemon.stats["Current HP"] = pokemon.stats["HP"]
-            for move in pokemon.get_moves():
+            for move in pokemon.moves:
                 move.reset_pp()
 
     def payout(self):
