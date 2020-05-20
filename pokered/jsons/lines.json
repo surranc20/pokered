@@ -15,5 +15,6 @@
     "14": ["NO! That can't be! You beat me at my best!\nAfter all that work to become the League Champ?\nMy reign is over already? It's not fair!", "False"],
     "15": ["Why? Why did I lose?\nI never made any mistakes raising my Pokémon… Darn it!\nYou're the new Pokémon League Champion!\nAlthough I don't like to admit it…", "False"],
     "16": ["Welcome to our POKéMON CENTER!\nWould you like me to heal your POKéMON back to perfect health?", "False"],
-    "17": ["Okay, I'll, take your POKeMON for a few seconds.", "False"]
+    "17": ["Okay, I'll take your POKéMON for a few seconds.", "False"],
+    "18": ["Thank you for waiting.  We've restored your POKéMON to full health.\nWe hope to see you again!", "False"]
 }
