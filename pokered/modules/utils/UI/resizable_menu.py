@@ -3,8 +3,9 @@ from ..managers.frameManager import FRAMES
 
 
 class ResizableMenu():
-    def __init__(self, lines):
+    def __init__(self, lines, width=8):
         self.lines = lines
+        self.width = width
         self._middlelines = self._calculate_middlelines()
         self._create_menu()
         self.size = self._middlelines + 2
@@ -24,6 +25,8 @@ class ResizableMenu():
             return 6
         elif self.lines == 3:
             return 4
+        elif self.lines == 2:
+            return 3
 
     def _create_menu(self):
         # Create the surface where the menu is drawn
@@ -31,18 +34,12 @@ class ResizableMenu():
         self.menu_surface.fill((255, 255, 255))
         self.menu_surface.set_colorkey((255, 255, 255))
 
-        # Create the top row of the menu
+        # Create the top corners of the menu
         top_left = FRAMES.getFrame("menu_parts.png", offset=(0, 0))
         top_mid = FRAMES.getFrame("menu_parts.png", offset=(1, 0))
         top_right = FRAMES.getFrame("menu_parts.png", offset=(2, 0))
         self.menu_surface.blit(top_left, (0, 0))
-        self.menu_surface.blit(top_mid, (8, 0))
-        self.menu_surface.blit(top_mid, (16, 0))
-        self.menu_surface.blit(top_mid, (24, 0))
-        self.menu_surface.blit(top_mid, (32, 0))
-        self.menu_surface.blit(top_mid, (40, 0))
-        self.menu_surface.blit(top_mid, (48, 0))
-        self.menu_surface.blit(top_right, (56, 0))
+
 
         # Create the middle rows
         white_blob = FRAMES.getFrame("menu_parts.png", offset=(1, 1))
@@ -54,25 +51,24 @@ class ResizableMenu():
         current_y = 8
         for i in range(self._middlelines):
             self.menu_surface.blit(mid_left, (0, current_y))
-            self.menu_surface.blit(white_blob, (8, current_y))
-            self.menu_surface.blit(white_blob, (16, current_y))
-            self.menu_surface.blit(white_blob, (24, current_y))
-            self.menu_surface.blit(white_blob, (32, current_y))
-            self.menu_surface.blit(white_blob, (40, current_y))
-            self.menu_surface.blit(white_blob, (48, current_y))
-            self.menu_surface.blit(mid_right, (56, current_y))
+            width = 8
+            for x in range(self.width - 2):
+                self.menu_surface.blit(top_mid, (width, 0))
+                self.menu_surface.blit(white_blob, (width, current_y))
+                width += 8
+
+            self.menu_surface.blit(top_right, (width, 0))
+            self.menu_surface.blit(mid_right, (width, current_y))
             current_y += 8
 
-        # Create the bottom rows
+        # Create the bottom row
         bottom_right = FRAMES.getFrame("menu_parts.png", offset=(2, 2))
         bottom_left = FRAMES.getFrame("menu_parts.png", offset=(0, 2))
         bottom_mid = FRAMES.getFrame("menu_parts.png", offset=(1, 2))
         self.menu_surface.blit(bottom_left, (0, current_y))
-        self.menu_surface.blit(bottom_mid, (8, current_y))
-        self.menu_surface.blit(bottom_mid, (16, current_y))
-        self.menu_surface.blit(bottom_mid, (24, current_y))
-        self.menu_surface.blit(bottom_mid, (32, current_y))
-        self.menu_surface.blit(bottom_mid, (40, current_y))
-        self.menu_surface.blit(bottom_mid, (48, current_y))
-        self.menu_surface.blit(bottom_right, (56, current_y))
+        width = 8
+        for x in range(self.width - 2):
+            self.menu_surface.blit(bottom_mid, (width, current_y))
+            width += 8
+        self.menu_surface.blit(bottom_right, (width, current_y))
 
