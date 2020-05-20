@@ -10,7 +10,7 @@ from ..utils.UI.text_cursor import TextCursor
 
 
 class Dialogue():
-    def __init__(self, dialogue_id, player, npc, box=0, gender="male"):
+    def __init__(self, dialogue_id, player, npc, box=0, gender="male", show_curs=True):
         """Creates a Dialogue instance. The dialogue tells the object which
         lines the dialogue consists off. It requires the player and npc to
         passed in so that a battle can be created if necessary. Also, the
@@ -47,6 +47,7 @@ class Dialogue():
         # Display the first line of the dialogue
         self._blit_line()
         self.turned = False
+        self._show_curs = show_curs
 
     def _blit_line(self):
         """Blits the next line to the line surface."""
@@ -80,11 +81,14 @@ class Dialogue():
 
         self._dialogue_frame.draw(draw_surface)
         draw_surface.blit(self._line_surface, (6, 111))
-        self._text_cursor.draw(draw_surface)
+        if self._show_curs:
+            self._text_cursor.draw(draw_surface)
 
     def update(self, ticks):
         """Updates the cursor so that it can bounce up and down."""
         self._text_cursor.update(ticks)
+        if not self._show_curs:
+            self._blit_line()
 
     def handle_event(self, event):
         """If the player hits enter then blit the next line."""
