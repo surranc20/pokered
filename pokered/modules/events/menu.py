@@ -188,18 +188,19 @@ class Menu():
 
 class Cursor(Drawable):
     """Small Cursor class that keeps track of the menu cursor."""
-    def __init__(self, max_value):
+    def __init__(self, max_value, initial_pos=(178, 20)):
         """Initialize the cursor. Max_value is the highest possible value the
         cursor can have based on the size of the menu."""
         self._max_value = max_value
+        self._initial_pos = initial_pos
         self.cursor = 0
-        super().__init__(join("battle", "cursor.png"), (178, 20),
+        super().__init__(join("battle", "cursor.png"), initial_pos,
                          world_bound=False)
 
     def reset(self):
         """Resets the cursor to its initial position."""
         self.cursor = 0
-        self._position = (174, 20 + self.cursor * 11)
+        self._position = self._initial_pos
 
     def draw(self, draw_surface):
         """Draws the cursor"""
@@ -218,3 +219,4 @@ class Cursor(Drawable):
                 SoundManager.getInstance().playSound("firered_0005.wav")
 
         self._position = (178, 20 + self.cursor * 11)
+        self._position = (self._initial_pos[0], self._initial_pos[1] + self.cursor * 11)
