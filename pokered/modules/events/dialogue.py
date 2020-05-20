@@ -53,7 +53,7 @@ class Dialogue():
         """Blits the next line to the line surface."""
         # If all lines have been blitted then increase current_line by one so
         # that is_dead can determine that the dialogue is over.
-        if self._current_line == len(self._dialogue):
+        if self._current_line >= len(self._dialogue):
             self._current_line += 1
             return
         # Otherwise, blit the next line to the line surface
