@@ -25,6 +25,7 @@ class NurseHeal():
         self._choice_box_cleared = False
         self.turned = True
         self._is_dead = False
+        self._no_dialogue = None
 
         # Ball place animation portion
         self._ballTimer = 0
@@ -41,9 +42,15 @@ class NurseHeal():
         self._static_finished = False
 
     def update(self, ticks):
-        if self._healed_dialogue.is_over():
+        if self._no_dialogue is not None:
+            if self._no_dialogue.is_over():
+                self._is_dead = True
+            else:
+                self._no_dialogue.update(ticks)
+
+        elif self._healed_dialogue.is_over():
             self._is_dead = True
-        if self._static_finished:
+        elif self._static_finished:
             self._healed_dialogue.update(ticks)
         elif self._flash_finished:
             self._static_timer += ticks
@@ -60,7 +67,6 @@ class NurseHeal():
                     ball.get_current_frame()
                 self._screen._frame = 0
                 self._screen.get_current_frame()
-
             else:
                 for ball in self._balls:
                     ball.update(ticks)
@@ -81,9 +87,10 @@ class NurseHeal():
                     SoundManager.getInstance().playSound("pokemon_healed.wav")
                 else:
                     SoundManager.getInstance().playSound("firered_0017.wav", sound=2)
-
         else:
             if self._response_dialogue.is_over():
+                if self._response_dialogue.response == 1:
+                    self._no_dialogue = Dialogue("19", self._player, self._nurse)
                 if not self._choice_box_cleared:
                     self.turned = False
                     self._choice_box_cleared = True
@@ -92,7 +99,9 @@ class NurseHeal():
                 self._response_dialogue.update(ticks)
 
     def draw(self, draw_surface):
-        if self._static_finished:
+        if self._no_dialogue is not None:
+            self._no_dialogue.draw(draw_surface)
+        elif self._static_finished:
             self._healed_dialogue.draw(draw_surface)
         elif self._dialogue.is_over():
             self._dialogue.draw(draw_surface)
@@ -106,6 +115,8 @@ class NurseHeal():
             self._response_dialogue.draw(draw_surface)
 
     def handle_event(self, event):
+        if self._no_dialogue is not None:
+            self._no_dialogue.handle_event(event)
         if self._static_finished:
             self._healed_dialogue.handle_event(event)
         if not self._response_dialogue.is_over():
