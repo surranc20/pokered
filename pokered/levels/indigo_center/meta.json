@@ -6,6 +6,20 @@
             "pos": [14, 10],
             "name": "nurse",
             "orientation": "south"
+        },
+        {
+            "pos": [1, 7],
+            "name": "clerk",
+            "orientation": "east",
+            "inventory": {
+                "Ultra Ball": 1200,
+                "Great Ball": 600,
+                "Full Restore": 3000,
+                "Max Potion": 2500,
+                "Revive": 1500,
+                "Full Heal": 600,
+                "Max Repel": 700
+            }
         }
     ],
     "collide_map": [

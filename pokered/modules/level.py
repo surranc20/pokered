@@ -3,6 +3,7 @@ from os.path import join
 from .trainer import Trainer
 from .player import Player
 from .nurse import Nurse
+from .clerk import Clerk
 from .pokemon import Pokemon
 from .utils.scripting_engine import ScriptingEngine
 from .utils.UI.drawable import Drawable
@@ -100,7 +101,14 @@ class Level():
         # level's meta data.
         for trainer_args in self._level_meta["trainers"]:
             if trainer_args["name"] == "nurse":
-                train = Nurse(self.correct_border_and_heightpos(trainer_args["pos"]), trainer_args["orientation"])
+                train = \
+                    Nurse(self.correct_border_and_heightpos(trainer_args["pos"]),
+                          trainer_args["orientation"])
+            elif trainer_args["name"] == "clerk":
+                train = \
+                    Clerk(self.correct_border_and_heightpos(trainer_args["pos"]),
+                          trainer_args["orientation"],
+                          trainer_args["inventory"])
             else:
                 train = \
                     Trainer(self.correct_border_and_heightpos(trainer_args["pos"]),
