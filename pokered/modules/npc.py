@@ -16,6 +16,7 @@ class NPC(Mobile):
 
         self.name = name.upper()
         self.is_enemy = enemy
+        self.get_current_frame()
 
     def _parse_cardinality(self, card_string):
         if type(card_string) == Cardinality:
@@ -34,7 +35,7 @@ class NPC(Mobile):
         self._row = abs(self._orientation.value)
         self._flip = True if self._orientation == Cardinality.EAST else False
         self.get_current_frame()
-    
+
     def determine_direction_to_tile(self, tile_pos):
         """Helper method to determine the cardinal direction to a tile."""
         if self.current_tile.pos == tile_pos:
