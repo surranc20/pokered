@@ -1,4 +1,5 @@
 from .npc import NPC
+from .events.poke_mart_event import PokeMartEvent
 
 
 class Clerk(NPC):
@@ -9,7 +10,7 @@ class Clerk(NPC):
         self.inventory = inventory
 
     def update(self, ticks, nerby_tiles, current_tile):
-        print(self._orientation)
+        pass
 
     def talk_event(self, player):
-        return
+        return PokeMartEvent(self, player)
