@@ -153,9 +153,9 @@ class NurseHeal():
         make up a heal event."""
         if self._no_dialogue is not None:
             self._no_dialogue.handle_event(event)
-        if self._static_finished:
+        elif self._static_finished:
             self._healed_dialogue.handle_event(event)
-        if not self._response_dialogue.is_over():
+        elif not self._response_dialogue.is_over():
             self._response_dialogue.handle_event(event)
         elif not self._dialogue.is_over():
             self._dialogue.handle_event(event)
