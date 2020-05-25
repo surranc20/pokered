@@ -72,7 +72,8 @@ class Level():
         for y in range(tile_dims[1]):
             row = []
             for x in range(tile_dims[0]):
-                row.append(Tile((x, y), self._colide_list[y][x], None, self._more_info.get("(" + str(x) + "," + str(y) + ")")))
+                row.append(Tile((x, y), self._colide_list[y][x], None,
+                           self._more_info.get("(" + str(x) + "," + str(y) + ")")))
             tiles.append(row)
         for tile_row in tiles:
             for tile in tile_row:
@@ -122,8 +123,8 @@ class Level():
                             train_type=trainer_args["trainer_type"]
                             )
 
-                # If the trainer has an event specified in the meta data then add
-                # that event.
+                # If the trainer has an event specified in the meta data then
+                # add that event.
                 if len(trainer_args) > 4:
                     train.event = trainer_args["event"]
 
@@ -131,10 +132,10 @@ class Level():
                 stat_calc = StatCalculator()
                 for pokemon in trainer_args["party"]:
                     new_pokemon = Pokemon(pokemon[0],
-                                        enemy=True,
-                                        move_set=pokemon[1])
+                                          enemy=True,
+                                          move_set=pokemon[1])
                     new_pokemon.stats = stat_calc.calculate_main(new_pokemon,
-                                                                pokemon[2])
+                                                                 pokemon[2])
                     train.pokemon_team.append(new_pokemon)
 
             # Add the trainer to the tile.
@@ -226,7 +227,6 @@ class Tile:
             if "link" in more_info:
                 self.link = more_info.split("-")[1].split(",")
                 self.link = tuple(int(x) for x in self.link)
-
 
     def add_obj(self, obj):
         """Adds an object to a tile. Usually a player or a trainer. If a tile
