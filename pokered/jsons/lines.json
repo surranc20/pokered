@@ -17,5 +17,6 @@
     "16": ["Welcome to our POKéMON CENTER!\nWould you like me to heal your POKéMON back to perfect health?", "False"],
     "17": ["Okay, I'll take your POKéMON for a few seconds.", "False"],
     "18": ["Thank you for waiting.  We've restored your POKéMON to full health.\nWe hope to see you again!", "False"],
-    "19": ["We hope to see you again!", "False"]
+    "19": ["We hope to see you again!", "False"],
+    "20": ["Hi there! How may I help you?", "False"]
 }
