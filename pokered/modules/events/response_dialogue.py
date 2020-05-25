@@ -9,16 +9,22 @@ from ..enumerated.battle_actions import BattleActions
 
 
 class ResponseDialogue(Dialogue):
-    def __init__(self, dialogue_id, player, npc, box=0, gender="male"):
+    def __init__(self, dialogue_id, player, npc, box=0, gender="male", response_string="YES NO"):
         """Creates a Dialogue instance. The dialogue tells the object which
         lines the dialogue consists off. It requires the player and npc to
         passed in so that a battle can be created if necessary. Also, the
         color of the dialogue is based on the gender of the npc. A response
         Dialogue will end with a text box question and will store said
         response."""
+        self._response_string = response_string
         super().__init__(dialogue_id, player, npc, box=box, gender=gender)
+
         self.response = None
         self.response_menu = None
+
+        if len(self._dialogue) == 1:
+            self._text_cursor.deactivate()
+            self._blit_response()
 
     def _blit_line(self):
         if self._current_line > len(self._dialogue):
@@ -49,7 +55,7 @@ class ResponseDialogue(Dialogue):
         """Blit the response box as well as the two prompts"""
         self.response_menu = ResizableMenu(2, width=5).menu_surface
         text_maker = TextMaker(join("fonts", "party_txt_font.png"), max=15, line_height=12)
-        self.response_menu.blit(text_maker.get_surface("YES NO"), (15, 11))
+        self.response_menu.blit(text_maker.get_surface(self._response_string), (15, 11))
         self.cursor = Cursor(2, initial_pos=(156, 79))
 
     def is_over(self):
