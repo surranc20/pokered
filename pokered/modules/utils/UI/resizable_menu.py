@@ -30,7 +30,7 @@ class ResizableMenu():
 
     def _create_menu(self):
         # Create the surface where the menu is drawn
-        self.menu_surface = pygame.Surface((64, 120))
+        self.menu_surface = pygame.Surface((100, 120))
         self.menu_surface.fill((255, 255, 255))
         self.menu_surface.set_colorkey((255, 255, 255))
 
