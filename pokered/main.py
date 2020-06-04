@@ -1,11 +1,14 @@
 import pygame
 import pickle
+import json
+from os.path import join
 from modules.utils.vector2D import Vector2
 from modules.player import Player
 from modules.pokemon import Pokemon
 from modules.move import Move
 from modules.utils.stat_calc import StatCalculator
 from modules.utils.managers.game_manager import GameManager
+from modules.utils.managers.controller_manager import ControllerManager
 
 # Two different sizes now! Screen size is the amount we show the player,
 #  and world size is the size of the interactable world.
@@ -22,6 +25,18 @@ def main():
     pygame.display.set_caption("Pokemon Gym")
     screen = pygame.display.set_mode(UPSCALED)
     draw_surface = pygame.Surface(SCREEN_SIZE)
+
+    # Load config file
+    with open(join("jsons", "config.json"), "r") as json_config:
+        config_data = json.load(json_config)
+        use_controller = bool(config_data["controller"])
+
+    if use_controller:
+        joystick = pygame.joystick.Joystick(0)
+        joycon_threshold = 0.2
+        controller_manager = ControllerManager(joystick, 0.2)
+        if not joystick.get_init():
+            joystick.init()
 
     # Create Player and add pokemon to their team
     player = Player(Vector2(32, 26), "Chris")
@@ -88,6 +103,7 @@ def main():
     # Define a variable to control the main loop
     running = True
     game_clock = pygame.time.Clock()
+    controller_clock = pygame.time.Clock()
 
     # Main loop
     while running:
@@ -99,6 +115,49 @@ def main():
         # event handling, gets all event from the event queue
         game_clock.tick(60)
         for event in pygame.event.get():
+
+            # Check if the user has a controller plugged in and convert events
+            # to keyboard events if they do have one plugged in.
+            if use_controller and event.type == pygame.JOYAXISMOTION:
+                parsed_joystick_values = controller_manager.parse_input(joystick)
+                print(f"parsed: {parsed_joystick_values} previous: {controller_manager.previous_input}")
+
+                if not controller_manager.input_valid:
+                    break
+
+                if parsed_joystick_values[0] == 1 or (parsed_joystick_values ==
+                        [0, 0] and controller_manager.previous_input == [1, 0]):
+                    event_dict = {'unicode': 'd', 'key': 100, 'mod': 0, 'scancode': 2}
+                    print("1")
+                elif parsed_joystick_values[0] == -1 or \
+                        (parsed_joystick_values == [0, 0] and
+                         controller_manager.previous_input == [-1, 0]):
+                    event_dict = {'unicode': 'a', 'key': 97, 'mod': 0, 'scancode': 0}
+                    print("2")
+                elif parsed_joystick_values[1] == 1 or \
+                        (parsed_joystick_values == [0, 0] and
+                         controller_manager.previous_input == [0, 1]):
+                    event_dict = {'unicode': 's', 'key': 115, 'mod': 0, 'scancode': 1}
+                    print("3")
+                elif parsed_joystick_values[1] == -1 or \
+                        (parsed_joystick_values == [0, 0] and
+                         controller_manager.previous_input == [0, -1]):
+                    event_dict = {'unicode': 'w', 'key': 119, 'mod': 0, 'scancode': 13}
+                    print("4")
+                elif parsed_joystick_values == [0, 0] and (controller_manager.previous_input == [0, 0] or controller_manager.previous_input is None):
+                    break
+
+                else:
+                    print(f"{parsed_joystick_values} {controller_manager.previous_input}")
+                    raise Exception
+
+
+                # Is the axis "on" or "off" based on the threshold
+                if max([abs(value) for value in parsed_joystick_values]) > joycon_threshold:
+                    event = pygame.event.Event(2, event_dict)
+                else:
+                    event = pygame.event.Event(3, event_dict)
+
             # Catch quit events
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and
                                              event.key == pygame.K_ESCAPE):
@@ -110,6 +169,7 @@ def main():
         # Update everything
         ticks = game_clock.get_time() / 1000
         response = game.update(ticks)
+
         if response == "RESTART" and running:
             main()
             break
