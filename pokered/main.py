@@ -119,44 +119,16 @@ def main():
             # Check if the user has a controller plugged in and convert events
             # to keyboard events if they do have one plugged in.
             if use_controller and event.type == pygame.JOYAXISMOTION:
-                parsed_joystick_values = controller_manager.parse_input(joystick)
-                print(f"parsed: {parsed_joystick_values} previous: {controller_manager.previous_input}")
 
+                event_data = controller_manager.get_event_data()
+
+                # If the event is not valid (joystick held in same direction)
+                # then don't process event.
                 if not controller_manager.input_valid:
                     break
 
-                if parsed_joystick_values[0] == 1 or (parsed_joystick_values ==
-                        [0, 0] and controller_manager.previous_input == [1, 0]):
-                    event_dict = {'unicode': 'd', 'key': 100, 'mod': 0, 'scancode': 2}
-                    print("1")
-                elif parsed_joystick_values[0] == -1 or \
-                        (parsed_joystick_values == [0, 0] and
-                         controller_manager.previous_input == [-1, 0]):
-                    event_dict = {'unicode': 'a', 'key': 97, 'mod': 0, 'scancode': 0}
-                    print("2")
-                elif parsed_joystick_values[1] == 1 or \
-                        (parsed_joystick_values == [0, 0] and
-                         controller_manager.previous_input == [0, 1]):
-                    event_dict = {'unicode': 's', 'key': 115, 'mod': 0, 'scancode': 1}
-                    print("3")
-                elif parsed_joystick_values[1] == -1 or \
-                        (parsed_joystick_values == [0, 0] and
-                         controller_manager.previous_input == [0, -1]):
-                    event_dict = {'unicode': 'w', 'key': 119, 'mod': 0, 'scancode': 13}
-                    print("4")
-                elif parsed_joystick_values == [0, 0] and (controller_manager.previous_input == [0, 0] or controller_manager.previous_input is None):
-                    break
-
-                else:
-                    print(f"{parsed_joystick_values} {controller_manager.previous_input}")
-                    raise Exception
-
-
-                # Is the axis "on" or "off" based on the threshold
-                if max([abs(value) for value in parsed_joystick_values]) > joycon_threshold:
-                    event = pygame.event.Event(2, event_dict)
-                else:
-                    event = pygame.event.Event(3, event_dict)
+                # Create event from event data
+                event = pygame.event.Event(event_data[0], event_data[1])
 
             # Catch quit events
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and

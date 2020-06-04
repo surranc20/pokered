@@ -56,6 +56,46 @@ class ControllerManager():
             normalized_input.append(value)
         return normalized_input
 
+    def get_event_data(self):
+        parsed_joystick_values = self.parse_input(self.controller)
+        print(f"parsed: {parsed_joystick_values} previous: {self.previous_input}")
+
+        if parsed_joystick_values[0] == 1 or (parsed_joystick_values ==
+                        [0, 0] and self.previous_input == [1, 0]):
+            event_dict = {'unicode': 'd', 'key': 100, 'mod': 0, 'scancode': 2}
+            print("1")
+        elif parsed_joystick_values[0] == -1 or \
+                (parsed_joystick_values == [0, 0] and
+                    self.previous_input == [-1, 0]):
+            event_dict = {'unicode': 'a', 'key': 97, 'mod': 0, 'scancode': 0}
+            print("2")
+        elif parsed_joystick_values[1] == 1 or \
+                (parsed_joystick_values == [0, 0] and
+                    self.previous_input == [0, 1]):
+            event_dict = {'unicode': 's', 'key': 115, 'mod': 0, 'scancode': 1}
+            print("3")
+        elif parsed_joystick_values[1] == -1 or \
+                (parsed_joystick_values == [0, 0] and
+                    self.previous_input == [0, -1]):
+            event_dict = {'unicode': 'w', 'key': 119, 'mod': 0, 'scancode': 13}
+            print("4")
+        elif parsed_joystick_values == [0, 0] and (self.previous_input == [0, 0] or self.previous_input is None):
+            self.input_valid = False
+            event_dict = {}
+
+        else:
+            print(f"{parsed_joystick_values} {self.previous_input}")
+            raise Exception
+
+
+        # Is the axis "on" or "off" based on the threshold
+        if max([abs(value) for value in parsed_joystick_values]) > self.threshold:
+            event_data = (2, event_dict)
+        else:
+            event_data = (3, event_dict)
+
+        return event_data
+
     def _get_match(self, current_input):
         prev_set = None
         for index, value in enumerate(self._previous_input):
