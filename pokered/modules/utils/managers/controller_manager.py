@@ -6,8 +6,6 @@ class ControllerManager():
         self.previous_input = None
         self.input_valid = True
 
-
-
     def parse_input(self, controller):
         self.previous_input = self._previous_input
         print(f"previous before: {self.previous_input}")
