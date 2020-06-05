@@ -31,12 +31,15 @@ def main():
         config_data = json.load(json_config)
         use_controller = bool(config_data["controller"])
 
-    if use_controller:
-        joystick = pygame.joystick.Joystick(0)
-        joycon_threshold = 0.2
-        controller_manager = ControllerManager(joystick, 0.2)
-        if not joystick.get_init():
-            joystick.init()
+    try:
+        if use_controller:
+            joystick = pygame.joystick.Joystick(0)
+            controller_manager = ControllerManager(joystick, 0.2)
+            if not joystick.get_init():
+                joystick.init()
+    except pygame.error:
+        print("WARNING: Controller loading failed...")
+        use_controller = False
 
     # Create Player and add pokemon to their team
     player = Player(Vector2(32, 26), "Chris")
@@ -103,7 +106,6 @@ def main():
     # Define a variable to control the main loop
     running = True
     game_clock = pygame.time.Clock()
-    controller_clock = pygame.time.Clock()
 
     # Main loop
     while running:
