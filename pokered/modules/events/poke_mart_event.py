@@ -41,6 +41,8 @@ class PokeMartEvent():
             self._response = self._initial_prompt.response
         elif self._response == 2 and not self._seeya_dialogue.is_over():
             self._seeya_dialogue.update(ticks)
+        elif self._seeya_dialogue.is_over():
+            self._is_dead = True
         elif self._response == 0 and not self._buy_menu.is_over():
             if self.turned:
                 self.turned = False
