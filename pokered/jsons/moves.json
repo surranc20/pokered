@@ -730,8 +730,8 @@
         "Effects": "burn"
     },
     "Slash": {
-        "Move type": "Fire",
-        "Category":   "Special",
+        "Move type": "Normal",
+        "Category":   "Physical",
         "Move power": 70,
         "Accuracy": 100,
         "PP": 20,
