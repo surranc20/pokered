@@ -7,6 +7,8 @@ from ..utils.UI.resizable_menu import ResizableMenu
 from ..utils.UI.drawable import Drawable
 from ..utils.text_maker import TextMaker
 from ..utils.managers.frameManager import FRAMES
+from ..utils.misc import end_at
+from ..enumerated.battle_actions import BattleActions
 
 
 class PokeMartEvent():
@@ -101,6 +103,7 @@ class PokeMartMenu(Drawable):
         prices."""
         super().__init__("shop_menu.png", (80, 1), world_bound=False)
         self._inventory = inventory
+        self.cursor = Cursor(5, initial_pos=(88, 13), line_height=16)
 
     def is_over(self):
         """Tells when the menu is over."""
@@ -110,9 +113,24 @@ class PokeMartMenu(Drawable):
         """Updates the cursor on the poke mart menu."""
         pass
 
+    def draw(self, draw_surface):
+        """Draw menu background and print out items for sale and their 
+        prices."""
+        super().draw(draw_surface)
+        text_maker = TextMaker(join("fonts", "party_txt_font.png"))
+        height = 15
+        for item in self._inventory:
+            draw_surface.blit(text_maker.get_surface(item), (97, height))
+            price_surf = text_maker.get_surface(str(self._inventory[item]))
+            draw_surface.blit(price_surf, end_at(price_surf, (223, height)))
+            height += 16
+        self.cursor.draw(draw_surface)
+
     def handle_event(self, event):
         """Handles the events: up, down, and select."""
-        pass
+        if event.type == pygame.KEYDOWN:
+            self.cursor.change_cursor_pos(event)
+
 
 
 class MartResponseDialogue(ResponseDialogue):
