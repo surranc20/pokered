@@ -38,6 +38,7 @@ class PokeMartEvent():
         is organized from first dialouge/menu up to the last in terms of
         chronological order."""
         if not self._initial_prompt.is_over():
+
             self._initial_prompt.update(ticks)
         elif self._response is None:
             self._response = self._initial_prompt.response
@@ -49,6 +50,14 @@ class PokeMartEvent():
             if self.turned:
                 self.turned = False
             self._buy_menu.update(ticks)
+        elif self._buy_menu.is_over():
+            self.turned = False
+            self._response = None
+            self._initial_prompt = \
+                MartResponseDialogue("21", self._player,
+                                     self._clerk,
+                                     response_string="BUY SELL SEE YA!")
+            self._buy_menu = PokeMartMenu(self._clerk.inventory)
 
     def draw(self, draw_surface):
         """Draws the poke mart menu event based on where the user is in the
@@ -102,34 +111,70 @@ class PokeMartMenu(Drawable):
         """Creates the pokemart menu. Displays the items for sale and their
         prices."""
         super().__init__("shop_menu.png", (80, 1), world_bound=False)
+        self._is_dead = False
         self._inventory = inventory
-        self.cursor = Cursor(5, initial_pos=(88, 13), line_height=16)
+        self._inventory_list = list(self._inventory.keys()) + ["CANCEL"]
+        self.draw_cursor = Cursor(6, initial_pos=(88, 13), line_height=16)
+        self.item_cursor = Cursor(len(self._inventory_list))
+        self.start_item_index = 0
+        self.create_item_surface()
 
     def is_over(self):
         """Tells when the menu is over."""
-        return False
+        return self._is_dead
 
     def update(self, ticks):
         """Updates the cursor on the poke mart menu."""
         pass
 
     def draw(self, draw_surface):
-        """Draw menu background and print out items for sale and their 
+        """Draw menu background and print out items for sale and their
         prices."""
         super().draw(draw_surface)
-        text_maker = TextMaker(join("fonts", "party_txt_font.png"))
-        height = 15
-        for item in self._inventory:
-            draw_surface.blit(text_maker.get_surface(item), (97, height))
-            price_surf = text_maker.get_surface(str(self._inventory[item]))
-            draw_surface.blit(price_surf, end_at(price_surf, (223, height)))
-            height += 16
-        self.cursor.draw(draw_surface)
+        draw_surface.blit(self._item_surface, (0, 0))
+        self.draw_cursor.draw(draw_surface)
 
     def handle_event(self, event):
         """Handles the events: up, down, and select."""
-        if event.type == pygame.KEYDOWN:
-            self.cursor.change_cursor_pos(event)
+        if event.type == pygame.KEYDOWN and event.key in \
+                [BattleActions.UP.value, BattleActions.DOWN.value]:
+            if event.key == BattleActions.UP.value:
+                if self.draw_cursor.cursor == 1 and self.item_cursor.cursor != 1:
+                    self.start_item_index -= 1
+                else:
+                    self.draw_cursor.change_cursor_pos(event)
+            elif event.key == BattleActions.DOWN.value:
+                if self.draw_cursor.cursor == 3 and self.item_cursor.cursor < len(self._inventory_list) - 3:
+                    self.start_item_index += 1
+                else:
+                    self.draw_cursor.change_cursor_pos(event)
+
+            self.item_cursor.change_cursor_pos(event)
+            self.create_item_surface()
+        elif event.type == pygame.KEYDOWN and event.key == \
+                BattleActions.SELECT.value:
+            print(self._inventory_list[self.item_cursor.cursor])
+            if self._inventory_list[self.item_cursor.cursor] == "CANCEL":
+                self._is_dead = True
+        elif event.type == pygame.KEYDOWN and event.key == \
+                BattleActions.BACK.value:
+            self._is_dead = True
+
+    def create_item_surface(self):
+        self._item_surface = pygame.Surface((240, 160))
+        self._item_surface.fill((255, 255, 254))
+        self._item_surface.set_colorkey((255, 255, 254))
+
+        text_maker = TextMaker(join("fonts", "party_txt_font.png"))
+        height = 15
+        for item in self._inventory_list[self.start_item_index: self.start_item_index + 6]:
+            self._item_surface.blit(text_maker.get_surface(item), (97, height))
+            if item != "CANCEL":
+                price_surf = text_maker.get_surface(str(self._inventory[item]))
+                self._item_surface.blit(price_surf, end_at(price_surf, (223, height)))
+            height += 16
+
+
 
 
 
