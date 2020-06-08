@@ -122,7 +122,7 @@ def main():
             # to keyboard events if they do have one plugged in.
             if use_controller and event.type == pygame.JOYAXISMOTION:
 
-                event_data = controller_manager.get_event_data()
+                event_data = controller_manager.get_joystick_data()
 
                 # If the event is not valid (joystick held in same direction)
                 # then don't process event.
@@ -132,12 +132,19 @@ def main():
                 # Create event from event data
                 event = pygame.event.Event(event_data[0], event_data[1])
 
+            if use_controller and event.type == pygame.JOYBUTTONDOWN:
+                event_data = controller_manager.get_button_data(event)
+                if not controller_manager.input_valid:
+                    break
+                event = pygame.event.Event(2, event_data)
+
             # Catch quit events
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and
                                              event.key == pygame.K_ESCAPE):
                 # change the value to False, to exit the main loop
                 running = False
             if (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP):
+                print(event)
                 game.handle_event(event)
 
         # Update everything
