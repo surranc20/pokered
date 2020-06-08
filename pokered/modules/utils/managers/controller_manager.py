@@ -54,7 +54,7 @@ class ControllerManager():
             normalized_input.append(value)
         return normalized_input
 
-    def get_event_data(self):
+    def get_joystick_data(self):
         parsed_joystick_values = self.parse_input(self.controller)
         print(f"parsed: {parsed_joystick_values} previous: {self.previous_input}")
 
@@ -112,5 +112,18 @@ class ControllerManager():
                 matched_input[index] = 0
 
         return matched_input
+
+    def get_button_data(self, event):
+        """2 - a,  3 - x, 0 - y, 1 - b, 9 - +, 8 - -, 13 - screenshot"""
+        self.input_valid = True
+        button_map = {
+            2: {'unicode': '\\r',  'key': 13, 'mod': 0, 'scancode': 36},
+            1: {'unicode': 'b',  'key': 98, 'mod': 0, 'scancode': 11},
+            9: {'unicode': '',  'key': 303, 'mod': 0, 'scancode': 0}
+        }
+        response = button_map.get(event.button)
+        if response is None:
+            self.input_valid = False
+        return response
 
 
