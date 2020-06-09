@@ -28,10 +28,11 @@ class Player(Trainer):
         self._nFrames = 4
         self.badges = []
         self.rival_name = "Gary"
-        self.money = 600
+        self.money = 1200
         self.hidden_inventory = []
         self.pokedex = "National"
         self.has_first_pokemon = True
+        self.bag = []
 
     def handle_event(self, event, nearby_tiles):
         """Handles the events from the level manager. Is capable of taking
@@ -130,6 +131,10 @@ class Player(Trainer):
         """Player stops running."""
         self._runnign = False
         self._framesPerSecond = 4
+
+    def add_items(self, item_name, quantity):
+        for _ in range(quantity):
+            self.bag.append(item_name)
 
     @property
     def highest_level(self):
