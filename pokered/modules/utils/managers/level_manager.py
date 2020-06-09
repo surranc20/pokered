@@ -38,7 +38,7 @@ class LevelManager(object):
             # turned npc
             if type(self._active_event) in [Dialogue, NurseHeal, PokeMartEvent] and \
                     self._active_event.turned is False:
-
+                print(f"turned!: {self._active_event}")
                 self._level.draw(draw_surface)
                 self._active_event.turned = True
             self._active_event.draw(draw_surface)
