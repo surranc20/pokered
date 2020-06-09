@@ -26,13 +26,13 @@ class PokeMartEvent():
                                  self._clerk,
                                  response_string="BUY SELL SEE YA!")
         self._seeya_dialogue = Dialogue("19", self._player, self._clerk)
-        self._buy_menu = PokeMartMenu(self._clerk.inventory, self._player, self._clerk)
+        self._buy_menu = PokeMartMenu(self._clerk.inventory, self._player,
+                                      self._clerk)
 
         self._create_money_surface()
 
         self._help_surface = pygame.Surface((240, 49))
         self._help_surface.blit(FRAMES.getFrame("blue_help_box_b.png"), (0, 0))
-
 
     def update(self, ticks):
         """Updates the PokeMart event and all of its sub dialogues/menus. Code
@@ -64,7 +64,8 @@ class PokeMartEvent():
                 MartResponseDialogue("21", self._player,
                                      self._clerk,
                                      response_string="BUY SELL SEE YA!")
-            self._buy_menu = PokeMartMenu(self._clerk.inventory, self._player, self._clerk)
+            self._buy_menu = PokeMartMenu(self._clerk.inventory, self._player,
+                                          self._clerk)
 
     def draw(self, draw_surface):
         """Draws the poke mart menu event based on where the user is in the
@@ -146,12 +147,20 @@ class PokeMartMenu(Drawable):
             self.select_count_event.update(ticks)
             if self.select_count_event.is_over():
                 if self.select_count_event.num_selected is not None:
-                    self.confirm_buy_response = ResponseDialogue("24", self._player, self._npc, replace=[self.select_count_event.item_name, str(self.select_count_event.num_selected), str(self.select_count_event.num_selected * self.select_count_event.item_cost)], dy=1)
+                    name = self.select_count_event.item_name
+                    num_selected = self.select_count_event.num_selected
+                    cost = self.select_count_event.num_selected * \
+                        self.select_count_event.item_cost
+                    self.confirm_buy_response = \
+                        ResponseDialogue("24", self._player, self._npc,
+                                         replace=[name, str(num_selected),
+                                                  str(cost)],
+                                         dy=1)
                     self.turned = False
                     self.pending_buy = {
-                        "name": self.select_count_event.item_name,
-                        "quantity": self.select_count_event.num_selected,
-                        "cost": self.select_count_event.num_selected * self.select_count_event.item_cost
+                        "name": name,
+                        "quantity": num_selected,
+                        "cost": cost
                     }
                 self.select_count_event = None
 
@@ -165,9 +174,11 @@ class PokeMartMenu(Drawable):
 
             if self.confirm_buy_response.is_over():
                 if self.confirm_buy_response.response == 0:
-                    self.thanks_dialogue = Dialogue("25", self._player, self._npc, dy=1)
+                    self.thanks_dialogue = Dialogue("25", self._player,
+                                                    self._npc, dy=1)
                     self._player.money -= self.pending_buy["cost"]
-                    self._player.add_items(self.pending_buy["name"], self.pending_buy["quantity"])
+                    self._player.add_items(self.pending_buy["name"],
+                                           self.pending_buy["quantity"])
                     self.player_money_updated = True
 
                 self.confirm_buy_response = None
@@ -203,12 +214,14 @@ class PokeMartMenu(Drawable):
         if event.type == pygame.KEYDOWN and event.key in \
                 [BattleActions.UP.value, BattleActions.DOWN.value]:
             if event.key == BattleActions.UP.value:
-                if self.draw_cursor.cursor == 1 and self.item_cursor.cursor != 1:
+                if self.draw_cursor.cursor == 1 and \
+                        self.item_cursor.cursor != 1:
                     self.start_item_index -= 1
                 else:
                     self.draw_cursor.change_cursor_pos(event)
             elif event.key == BattleActions.DOWN.value:
-                if self.draw_cursor.cursor == 3 and self.item_cursor.cursor < len(self._inventory_list) - 3:
+                if self.draw_cursor.cursor == 3 and \
+                        self.item_cursor.cursor < len(self._inventory_list) - 3:
                     self.start_item_index += 1
                 else:
                     self.draw_cursor.change_cursor_pos(event)
@@ -221,7 +234,9 @@ class PokeMartMenu(Drawable):
             if name == "CANCEL":
                 self._is_dead = True
             else:
-                self.select_count_event = SelectCountEvent(self._player, name, self._inventory[name], self._npc)
+                self.select_count_event = \
+                    SelectCountEvent(self._player, name, self._inventory[name],
+                                     self._npc)
         elif event.type == pygame.KEYDOWN and event.key == \
                 BattleActions.BACK.value:
             self._is_dead = True
@@ -233,11 +248,13 @@ class PokeMartMenu(Drawable):
 
         text_maker = TextMaker(join("fonts", "party_txt_font.png"))
         height = 15
-        for item in self._inventory_list[self.start_item_index: self.start_item_index + 6]:
+        for item in self._inventory_list[self.start_item_index:
+                                         self.start_item_index + 6]:
             self._item_surface.blit(text_maker.get_surface(item), (97, height))
             if item != "CANCEL":
                 price_surf = text_maker.get_surface(f"~{self._inventory[item]}")
-                self._item_surface.blit(price_surf, end_at(price_surf, (223, height)))
+                self._item_surface.blit(price_surf,
+                                        end_at(price_surf, (223, height)))
             height += 16
 
 
@@ -278,7 +295,9 @@ class SelectCountEvent():
             self.how_many_dialogue = Dialogue("23", player, npc,
                                               show_curs=False, turn=False,
                                               replace=[item_name], dy=1)
-            self.how_many_selector = HowManySelector(self.player.money // self.item_cost, self.item_cost)
+            self.how_many_selector = \
+                HowManySelector(self.player.money // self.item_cost,
+                                self.item_cost)
 
     def draw(self, draw_surface):
         if not self.can_afford:
@@ -318,7 +337,8 @@ class HowManySelector():
         self.menu_frame = ResizableMenu(2, width=9).menu_surface
 
         self.text_maker = TextMaker(join("fonts", "party_txt_font.png"))
-        self.cost_surf = self.text_maker.get_surface(f"~{self.num_selected * item_price}")
+        self.cost_surf = \
+            self.text_maker.get_surface(f"~{self.num_selected * item_price}")
 
         self.item_price = item_price
 
@@ -337,21 +357,27 @@ class HowManySelector():
             if self.num_selected + 1 <= self.max_num:
                 self.num_selected += 1
                 self.quantity_cursor.change_count(self.num_selected)
-                self.cost_surf = self.text_maker.get_surface(f"~{self.num_selected * self.item_price}")
+                cost_string = f"~{self.num_selected * self.item_price}"
+                self.cost_surf = \
+                    self.text_maker.get_surface(cost_string)
             elif self.num_selected + 1 == self.max_num + 1:
                 self.num_selected = 1
                 self.quantity_cursor.change_count(self.num_selected)
-                self.cost_surf = self.text_maker.get_surface(f"~{self.num_selected * self.item_price}")
+                cost_string = f"~{self.num_selected * self.item_price}"
+                self.cost_surf = \
+                    self.text_maker.get_surface(cost_string)
 
         elif event.key == BattleActions.DOWN.value:
             if self.num_selected - 1 >= 1:
                 self.num_selected -= 1
                 self.quantity_cursor.change_count(self.num_selected)
-                self.cost_surf = self.text_maker.get_surface(f"~{self.num_selected * self.item_price}")
+                cost_string = f"~{self.num_selected * self.item_price}"
+                self.cost_surf = self.text_maker.get_surface(cost_string)
             elif self.num_selected == 1:
                 self.num_selected = self.max_num
                 self.quantity_cursor.change_count(self.num_selected)
-                self.cost_surf = self.text_maker.get_surface(f"~{self.num_selected * self.item_price}")
+                cost_string = f"~{self.num_selected * self.item_price}"
+                self.cost_surf = self.text_maker.get_surface(cost_string)
 
         elif event.key == BattleActions.SELECT.value:
             self.is_dead = True
@@ -367,7 +393,8 @@ class QuantityCursor():
         self.up_arrow_surf = pygame.Surface(self.down_arrow_surf.get_size())
         self.up_arrow_surf.fill((255, 245, 245))
         self.up_arrow_surf.set_colorkey((255, 245, 245))
-        self.up_arrow_surf.blit(pygame.transform.flip(self.down_arrow_surf, False, True), (0, 0))
+        self.up_arrow_surf.blit(pygame.transform.flip(self.down_arrow_surf,
+                                                      False, True), (0, 0))
 
         self.up_pos = pos
         self.down_pos = (pos[0], pos[1] + 25)
@@ -385,7 +412,8 @@ class QuantityCursor():
         self.count_pos = (self.up_pos[0] + 1, self.up_pos[1] + 13)
 
     def change_count(self, count):
-        self.count_surf = self.text_maker.get_surface(f"x{str(count).zfill(2)}")
+        self.count_surf = \
+            self.text_maker.get_surface(f"x{str(count).zfill(2)}")
 
     def draw(self, draw_surface):
         draw_surface.blit(self.up_arrow_surf, self.up_pos)
@@ -402,6 +430,6 @@ class QuantityCursor():
 
         if self.timer > .2:
             self.up_pos = (self.up_pos[0], self.up_pos[1] - self.current_delta)
-            self.down_pos = (self.down_pos[0], self.down_pos[1] + self.current_delta)
+            self.down_pos = (self.down_pos[0],
+                             self.down_pos[1] + self.current_delta)
             self.timer -= .2
-
