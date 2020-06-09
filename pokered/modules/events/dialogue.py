@@ -10,13 +10,13 @@ from ..utils.UI.text_cursor import TextCursor
 
 
 class Dialogue():
-    def __init__(self, dialogue_id, player, npc, box=0, gender="male", show_curs=True):
+    def __init__(self, dialogue_id, player, npc, box=0, gender="male", show_curs=True, turn=True, dy=0, replace=None):
         """Creates a Dialogue instance. The dialogue tells the object which
         lines the dialogue consists off. It requires the player and npc to
         passed in so that a battle can be created if necessary. Also, the
         color of the dialogue is based on the gender of the npc."""
         self._dialogue_frame = Drawable("dialog_boxes.png",
-                                        (0, 110),
+                                        (0, 110 + dy),
                                         offset=(0, box),
                                         world_bound=False)
         self._line_surface = pygame.Surface(
@@ -45,9 +45,16 @@ class Dialogue():
                                       15)
         self._current_line = 0
         # Display the first line of the dialogue
+        self.replace = replace
+        self.replace_index = 0
+        self._dy = dy
         self._blit_line()
-        self.turned = False
+        self.turned = not turn
         self._show_curs = show_curs
+
+        print(self.replace)
+
+
 
     def _blit_line(self):
         """Blits the next line to the line surface."""
@@ -65,6 +72,13 @@ class Dialogue():
         for string in string_lyst:
             string = string.replace("<player>", self._player.name.upper())
             string = string.replace("<rival>", self._player.rival_name.upper())
+            if self.replace is not None:
+                try:
+                    while "<replace>" in string:
+                        string = string.replace("<replace>", self.replace[self.replace_index], 1)
+                        self.replace_index += 1
+                except IndexError as e:
+                    pass
             rendered = self._font.render(string, False, self._color)
             self._line_surface.blit(rendered, (10, height))
             height += 15
@@ -80,7 +94,7 @@ class Dialogue():
         #self._player.draw(draw_surface)
 
         self._dialogue_frame.draw(draw_surface)
-        draw_surface.blit(self._line_surface, (6, 111))
+        draw_surface.blit(self._line_surface, (6, 111 + self._dy))
         if self._show_curs:
             self._text_cursor.draw(draw_surface)
 
