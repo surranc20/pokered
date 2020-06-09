@@ -9,7 +9,7 @@ from ..enumerated.battle_actions import BattleActions
 
 
 class ResponseDialogue(Dialogue):
-    def __init__(self, dialogue_id, player, npc, box=0, gender="male", response_string="YES NO"):
+    def __init__(self, dialogue_id, player, npc, box=0, gender="male", response_string="YES NO", replace=None, dy=0):
         """Creates a Dialogue instance. The dialogue tells the object which
         lines the dialogue consists off. It requires the player and npc to
         passed in so that a battle can be created if necessary. Also, the
@@ -17,7 +17,7 @@ class ResponseDialogue(Dialogue):
         Dialogue will end with a text box question and will store said
         response."""
         self._response_string = response_string
-        super().__init__(dialogue_id, player, npc, box=box, gender=gender)
+        super().__init__(dialogue_id, player, npc, box=box, gender=gender, replace=replace, dy=dy)
 
         self.response = None
         self.response_menu = None
