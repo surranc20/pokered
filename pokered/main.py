@@ -144,7 +144,6 @@ def main():
                 # change the value to False, to exit the main loop
                 running = False
             if (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP):
-                print(event)
                 game.handle_event(event)
 
         # Update everything
