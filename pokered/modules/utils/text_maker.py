@@ -12,7 +12,7 @@ class TextMaker():
             "default": 7, "l": 4, "i": 3, "n": 6, "r": 6
             },
         join("fonts", "party_txt_font.png"): {
-                "default": 5, "Y": 4, "T": 4, "I": 4
+                "default": 5, "Y": 4, "T": 4, "I": 4, "1": 4
             }
     }
 
@@ -27,7 +27,8 @@ class TextMaker():
     LOCATION = {
         join("fonts", "party_txt_font.png"): {".": (0, 26), "{": (3, 11),
                                               "}": (3, 12), "/": (3, 4),
-                                              "é": (3, 13), "!": (3, 0)},
+                                              "é": (3, 13), "!": (3, 0),
+                                              "~": (3, 14)},
         join("fonts", "menu_font.png"): {".": (3, 6), "/": (3, 4),
                                          "é": (3, 7)}
     }
@@ -55,7 +56,7 @@ class TextMaker():
                         y_pos += FRAMES.get_frame_size(self._font_name)[1] + 2
                     x_pos = 0
             for char in word:
-                if char in [".", "{", "}", "/", "é", "!"]:
+                if char in [".", "{", "}", "/", "é", "!", "~"]:
                     y_offset = -1 if char == "é" and \
                         self._font_name == join("fonts", "party_txt_font.png") \
                             else 0
@@ -84,8 +85,6 @@ class TextMaker():
                     text_surface.blit(font_char, (x_pos, y_pos))
                     x_pos += self.SPACES_DICT[self._font_name].get(
                         str(char), default_char_len)
-
-
 
             x_pos += 4
 
