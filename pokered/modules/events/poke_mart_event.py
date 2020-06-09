@@ -5,7 +5,6 @@ from .response_dialogue import ResponseDialogue
 from .menu import Cursor
 from ..utils.UI.resizable_menu import ResizableMenu
 from ..utils.UI.drawable import Drawable
-from ..utils.UI.text_cursor import TextCursor
 from ..utils.text_maker import TextMaker
 from ..utils.managers.frameManager import FRAMES
 from ..utils.misc import end_at
