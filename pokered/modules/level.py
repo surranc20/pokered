@@ -95,7 +95,7 @@ class Level():
         """Adds the level's trainers to the level (including the player)."""
         # Add the player to the level by getting the player's start position
         # from the level's meta data.
-        self.player.setPosition(self.correct_border_and_heightpos(self._level_meta["start_location"]))
+        self.player.setPosition(self.correct_border_and_heightpos(self._level_meta["start_location"], True))
         self.tiles[self._level_meta["start_location"][1]][self._level_meta["start_location"][0]].add_obj(self.player)
         self.player.current_tile = self.tiles[self._level_meta["start_location"][1]][self._level_meta["start_location"][0]]
 
@@ -200,11 +200,15 @@ class Level():
         else:
             return True
 
-    def correct_border_and_heightpos(self, pos):
+    def correct_border_and_heightpos(self, pos, is_player=False):
         """The player is 22 pixels high so we need to adjust his position down
         a little when first loading the level. """
-        return Vector2(pos[0] * self.TILE_SIZE + self.foreground._x_off,
-                       pos[1] * self.TILE_SIZE - 6)
+        if is_player:
+            return Vector2(pos[0] * self.TILE_SIZE + self.foreground._x_off,
+                           pos[1] * self.TILE_SIZE - 6)
+        else:
+            return Vector2(pos[0] * self.TILE_SIZE + self.foreground._x_off,
+                           pos[1] * self.TILE_SIZE - 8)
 
 
 class Tile:
