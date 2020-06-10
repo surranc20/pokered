@@ -75,7 +75,8 @@ class Trainer(NPC):
         "Elite Four": 100,
         "Champion": 200,
         "Pokémon Trainer": 200,
-        "Rival": 36
+        "Rival": 36,
+        "Guard": 0
         }
 
     def __init__(self, position, name, facing, enemy=True, dialogue_id=None,
@@ -113,13 +114,15 @@ class Trainer(NPC):
             # Get battle dialogues lines/ids
             with open(join("jsons", "lines.json"), "r") as lines_json:
                 lines = json.load(lines_json)
+            if battle_dialogue_id is not None:
                 self.battle_dialogue = lines[str(battle_dialogue_id)][0]
+
             self.post_battle_dialogue_id = post_battle_dialogue_id
             self._dialogue_id = dialogue_id
-
-            self.battle_image = \
-                Drawable(join("trainers", self.name.lower() + "_b.png"),
-                         Vector2(240, 10))
+            if self.post_battle_dialogue_id is not None:
+                self.battle_image = \
+                    Drawable(join("trainers", self.name.lower() + "_b.png"),
+                            Vector2(240, 10))
         else:
             self.battle_image = \
                 Drawable(join("battle", "trainer_toss_anim.png"),
