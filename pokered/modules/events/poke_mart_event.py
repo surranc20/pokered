@@ -253,7 +253,7 @@ class PokeMartMenu(Drawable):
                 # If the num selected is not none then extract the information
                 # about the items being purchased.
                 if self.select_count_event.num_selected is not None:
-                    name = self.select_count_event.item_name
+                    name = self.select_count_event.item
                     num_selected = self.select_count_event.num_selected
                     cost = self.select_count_event.num_selected * \
                         self.select_count_event.item_cost
@@ -262,7 +262,7 @@ class PokeMartMenu(Drawable):
                     # player actually wants to buy the items.
                     self.confirm_buy_response = \
                         ResponseDialogue("24", self._player, self._npc,
-                                         replace=[name, str(num_selected),
+                                         replace=[name.name, str(num_selected),
                                                   str(cost)],
                                          dy=1)
 
@@ -370,7 +370,8 @@ class PokeMartMenu(Drawable):
             # increase the draw cursor.
             elif event.key == BattleActions.DOWN.value:
                 if self.draw_cursor.cursor == 3 and \
-                        self.item_cursor.cursor < len(self._inventory_list) - 3:
+                        self.item_cursor.cursor < \
+                        len(self._inventory_list) - 3:
                     self.start_item_index += 1
                 else:
                     self.draw_cursor.change_cursor_pos(event)
@@ -420,14 +421,19 @@ class PokeMartMenu(Drawable):
         for item in self._inventory_list[self.start_item_index:
                                          self.start_item_index + 6]:
 
-            # Display item name.
-            self._item_surface.blit(text_maker.get_surface(item), (97, height))
-
             # If the item is not cancel then also display its price.
             if item != "CANCEL":
-                price_surf = text_maker.get_surface(f"~{self._inventory[item]}")
+                price_surf = \
+                    text_maker.get_surface(f"~{self._inventory[item]}")
                 self._item_surface.blit(price_surf,
                                         end_at(price_surf, (223, height)))
+                # Display item name.
+                self._item_surface.blit(text_maker.get_surface(item.name),
+                                        (97, height))
+            else:
+                # Display item name.
+                self._item_surface.blit(text_maker.get_surface(item),
+                                        (97, height))
 
             height += 16
 
@@ -444,13 +450,13 @@ class PokeMartMenu(Drawable):
 
 
 class SelectCountEvent():
-    def __init__(self, player, item_name, item_cost, npc):
+    def __init__(self, player, item, item_cost, npc):
         """Creates a SelectCountEvent. It's purpose is to return the amount of
         an item that a user will buy. If the user can't afford any of the item
         that they selected than a dialogue is displayed."""
         # Store arguments
         self.player = player
-        self.item_name = item_name
+        self.item = item
         self.item_cost = item_cost
         self.npc = npc
         self.is_dead = False  # Status of the event
@@ -467,7 +473,7 @@ class SelectCountEvent():
             self.in_bag_frame = FRAMES.getFrame("in_bag_frame.png")
             self.how_many_dialogue = Dialogue("23", player, npc,
                                               show_curs=False, turn=False,
-                                              replace=[item_name], dy=1)
+                                              replace=[item.name], dy=1)
             self.how_many_selector = \
                 HowManySelector(self.player.money // self.item_cost,
                                 self.item_cost)
