@@ -2,7 +2,7 @@ from .enumerated.item_types import ItemTypes
 
 
 class Item():
-    ITEM_TYPES = {
+    ITEM_TYPES_DICT = {
         "potion": ItemTypes.ITEMS,
         "super potion": ItemTypes.ITEMS,
         "hyper potion": ItemTypes.ITEMS,
@@ -190,4 +190,5 @@ class Item():
     }
 
     def __init__(self, name):
-        pass
+        self.name = name
+        self.type = self.ITEM_TYPES_DICT[name.lower()]
