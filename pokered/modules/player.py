@@ -1,6 +1,7 @@
 import pygame
 from .events.menu import Menu
 from .trainer import Trainer
+from .bag import Bag
 from .enumerated.cardinality import Cardinality
 from .enumerated.battle_actions import BattleActions
 
@@ -32,7 +33,7 @@ class Player(Trainer):
         self.hidden_inventory = []
         self.pokedex = "National"
         self.has_first_pokemon = True
-        self.bag = []
+        self.bag = Bag()
 
     def handle_event(self, event, nearby_tiles):
         """Handles the events from the level manager. Is capable of taking
@@ -43,9 +44,11 @@ class Player(Trainer):
         if self._move_script_active is None:
             if (event.type == pygame.KEYDOWN or
                     event.type == pygame.KEYUP) and \
-                    event.key in [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_b]:
+                    event.key in [pygame.K_w, pygame.K_a, pygame.K_s,
+                                  pygame.K_d, pygame.K_b]:
                 self.move(event)
-            elif event.type == pygame.KEYDOWN and event.key == BattleActions.SELECT.value:
+            elif event.type == pygame.KEYDOWN and \
+                    event.key == BattleActions.SELECT.value:
                 return nearby_tiles[self._orientation].talk_event(self)
         else:
             return
@@ -133,8 +136,7 @@ class Player(Trainer):
         self._framesPerSecond = 4
 
     def add_items(self, item_name, quantity):
-        for _ in range(quantity):
-            self.bag.append(item_name)
+        self.bag.add_item(item_name, quantity)
 
     @property
     def highest_level(self):
