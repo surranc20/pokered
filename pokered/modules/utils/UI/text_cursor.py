@@ -2,7 +2,8 @@ from .drawable import Drawable
 
 
 class TextCursor(Drawable):
-    def __init__(self, pos, name="text_cursor.png", invert=False):
+    def __init__(self, pos, name="text_cursor.png", invert=False,
+                 horizontal=False):
         """A simple text cursor object that bobs up and down while waiting for
         the user to press enter."""
         super().__init__(name, pos)
@@ -12,6 +13,7 @@ class TextCursor(Drawable):
         self._world_bound = False
         self._anchored_pos = pos
         self._invert = invert
+        self._horizontal = horizontal
 
     def activate(self):
         """Activates the cursor so that it can be drawn."""
@@ -35,20 +37,25 @@ class TextCursor(Drawable):
 
     def update(self, ticks):
         """Updates the cursor so that it can bob up and down."""
+        main_axis = 0 if self._horizontal else 1
+
         if not self._invert:
             if self._position == self._anchored_pos:
                 self._current_delta = 1
-            elif self._position[1] - self._anchored_pos[1] >= 2:
-                self._current_delta = -1
+            elif self._position[main_axis] - self._anchored_pos[main_axis] >= 2:
+                self._current_delta = - 1
         else:
             if self._position == self._anchored_pos:
-                self._current_delta = -1
-            elif self._anchored_pos[1] - self._position[1] >= 2:
+                self._current_delta = - 1
+            elif self._anchored_pos[main_axis] - self._position[main_axis] >= 2:
                 self._current_delta = 1
 
         self._timer += ticks
         if self._timer > .2:
-            self._position = (self._position[0],
-                              self._position[1] + self._current_delta)
+
+            # Convert to list so that we can easily change main axis
+            self._position = list(self._position)
+            self._position[main_axis] += self._current_delta
+            self._position = tuple(self._position)
 
             self._timer -= .2
