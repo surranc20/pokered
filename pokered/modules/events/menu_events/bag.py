@@ -1,9 +1,10 @@
 import pygame
 from os.path import join
+from ...utils.misc import end_at
 from ...utils.cursor import Cursor
 from ...utils.text_maker import TextMaker
 from ...utils.managers.frameManager import FRAMES
-from ...utils.misc import end_at
+from ...utils.UI.text_cursor import TextCursor
 from ...enumerated.battle_actions import BattleActions
 from ...enumerated.item_types import ItemTypes
 
@@ -26,7 +27,10 @@ class Bag():
 
     def update(self, ticks):
         """Updates the bag."""
-        pass
+        self.up_bobbing_cursor.update(ticks)
+        self.down_bobbing_cursor.update(ticks)
+        self.right_bobbing_cursor.update(ticks)
+        self.left_bobbing_cursor.update(ticks)
 
     def handle_event(self, event):
         """Handles event."""
@@ -37,11 +41,13 @@ class Bag():
                     self.bag_index += 1
                     self.update_bag_info()
                     self.create_cursors()
+                    self.start_item_index = 0
             elif event.key == BattleActions.LEFT.value:
                 if self.bag_index > 0:
                     self.bag_index -= 1
                     self.update_bag_info()
                     self.create_cursors()
+                    self.start_item_index = 0
 
             # When going up and down change cursors appropriately.
 
@@ -83,6 +89,7 @@ class Bag():
             # necessary.
             self.item_cursor.change_cursor_pos(event)
             self.create_items_surface()
+            self.update_bobbbing_cursor_status()
 
     def draw(self, draw_surface):
         """Draws the bag."""
@@ -91,6 +98,11 @@ class Bag():
         draw_surface.blit(self.title_surf, (10, 8))
         draw_surface.blit(self.item_surface, (0, 0))
         self.draw_cursor.draw(draw_surface)
+
+        self.up_bobbing_cursor.draw(draw_surface)
+        self.down_bobbing_cursor.draw(draw_surface)
+        self.left_bobbing_cursor.draw(draw_surface)
+        self.right_bobbing_cursor.draw(draw_surface)
 
     def update_bag_info(self):
         """Updates the bag picture and title displayed."""
@@ -121,7 +133,7 @@ class Bag():
             if item == "CANCEL":
                 item_surf = text_maker.get_surface(item)
             else:
-                item_surf = text_maker.get_surface(item.name)
+                item_surf = text_maker.get_surface(item.name.upper())
                 if bag_key != ItemTypes.KEY_ITEMS:
                     quantity = str(self.player.bag.bag[bag_key][item]).zfill(3)
                     quantity_surf = \
@@ -138,11 +150,46 @@ class Bag():
 
     def create_cursors(self):
         """Creates the two cursors."""
-        # This import is defined here because importing at the top will result
-        # in a circular import.
+
         self.draw_cursor = Cursor(min(6, len(self.item_list)),
                                   initial_pos=(88, 13), line_height=16)
         self.item_cursor = Cursor(len(self.item_list))
+
+        self.up_bobbing_cursor = TextCursor((153, 3), "shop_menu_cursor_f.png",
+                                            invert=True)
+        self.down_bobbing_cursor = TextCursor((153, 100),
+                                              "shop_menu_cursor.png")
+
+        self.left_bobbing_cursor = TextCursor((2, 70),
+                                              "shop_menu_cursor_l.png",
+                                              horizontal=True)
+
+        self.right_bobbing_cursor = TextCursor((69, 70),
+                                               "shop_menu_cursor_r.png",
+                                               horizontal=True, invert=True)
+
+        self.update_bobbbing_cursor_status()
+
+    def update_bobbbing_cursor_status(self):
+        if self.start_item_index < len(self.item_list) - 6:
+            self.down_bobbing_cursor.activate()
+        else:
+            self.down_bobbing_cursor.deactivate()
+
+        if self.start_item_index != 0:
+            self.up_bobbing_cursor.activate()
+        else:
+            self.up_bobbing_cursor.deactivate()
+
+        if self.bag_index > 0:
+            self.left_bobbing_cursor.activate()
+        else:
+            self.left_bobbing_cursor.deactivate()
+
+        if self.bag_index < 2:
+            self.right_bobbing_cursor.activate()
+        else:
+            self.right_bobbing_cursor.deactivate()
 
     def _create_title_surf(self):
         """Creates the title surface based on which bag is open."""
