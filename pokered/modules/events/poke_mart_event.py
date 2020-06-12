@@ -2,13 +2,13 @@ import pygame
 from os.path import join
 from .dialogue import Dialogue
 from .response_dialogue import ResponseDialogue
-from .menu import Cursor
 from ..utils.UI.resizable_menu import ResizableMenu
 from ..utils.UI.drawable import Drawable
 from ..utils.text_maker import TextMaker
 from ..utils.managers.frameManager import FRAMES
 from ..utils.misc import end_at
 from ..utils.UI.text_cursor import TextCursor
+from ..utils.cursor import Cursor
 from ..enumerated.battle_actions import BattleActions
 
 
@@ -195,7 +195,8 @@ class PokeMartMenu(Drawable):
         self.start_item_index = 0
 
         # Cursor that keeps track of where the black cursor is on the menu.
-        self.draw_cursor = Cursor(6, initial_pos=(88, 13), line_height=16)
+        self.draw_cursor = Cursor(min(6, len(self._inventory_list)),
+                                  initial_pos=(88, 13), line_height=16)
 
         # Cursor that keeps track of which item in the store is currently
         # selected. Two cursors are needed because it is possible for a store
