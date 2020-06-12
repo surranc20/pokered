@@ -1,13 +1,14 @@
 import pygame
 from os.path import join
 from .menu_events.menu_party import MenuParty
+from .menu_events.bag import Bag
 from ..enumerated.battle_actions import BattleActions
 from ..utils.vector2D import Vector2
 from ..utils.text_maker import TextMaker
 from ..utils.managers.frameManager import FRAMES
-from ..utils.UI.drawable import Drawable
 from ..utils.UI.resizable_menu import ResizableMenu
 from ..utils.managers.soundManager import SoundManager
+from ..utils.cursor import Cursor
 
 # TODO: Inherit pokemon selected menu and pokeparty and override appropriate
 # functions
@@ -112,7 +113,7 @@ class Menu():
         """Creates the menu sub event"""
         # TODO: ADD EVENTS
         if event_name == "BAG":
-            return None
+            return Bag(self._player)
         elif event_name == "SAVE":
             return None
         elif event_name == "OPTION":
@@ -184,40 +185,3 @@ class Menu():
         self._help_text_surface.set_colorkey((190, 190, 112))
         word_surf = text_maker.get_surface(string)
         self._help_text_surface.blit(word_surf, (2, 5))
-
-
-class Cursor(Drawable):
-    """Small Cursor class that keeps track of the menu cursor."""
-    def __init__(self, max_value, initial_pos=(178, 20), line_height=11):
-        """Initialize the cursor. Max_value is the highest possible value the
-        cursor can have based on the size of the menu."""
-        self._max_value = max_value
-        self._initial_pos = initial_pos
-        self._line_height = line_height
-        self.cursor = 0
-        super().__init__(join("battle", "cursor.png"), initial_pos,
-                         world_bound=False)
-
-    def reset(self):
-        """Resets the cursor to its initial position."""
-        self.cursor = 0
-        self._position = self._initial_pos
-
-    def draw(self, draw_surface):
-        """Draws the cursor"""
-        super().draw(draw_surface)
-
-    def change_cursor_pos(self, action):
-        """Changes the cursor pos based on the action provided"""
-        if action.key == BattleActions.UP.value:
-            if self.cursor > 0:
-                self.cursor -= 1
-                SoundManager.getInstance().playSound("firered_0005.wav")
-
-        elif action.key == BattleActions.DOWN.value:
-            if self.cursor < self._max_value - 1:
-                self.cursor += 1
-                SoundManager.getInstance().playSound("firered_0005.wav")
-
-        self._position = (178, 20 + self.cursor * 11)
-        self._position = (self._initial_pos[0], self._initial_pos[1] + self.cursor * self._line_height)
