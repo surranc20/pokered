@@ -2,7 +2,7 @@ import pygame
 from os.path import join
 
 from .dialogue import Dialogue
-from .menu import Cursor
+from ..utils.cursor import Cursor
 from ..utils.UI.resizable_menu import ResizableMenu
 from ..utils.text_maker import TextMaker
 from ..enumerated.battle_actions import BattleActions
