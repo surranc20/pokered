@@ -5,6 +5,7 @@ from ...utils.cursor import Cursor
 from ...utils.text_maker import TextMaker
 from ...utils.managers.frameManager import FRAMES
 from ...utils.UI.text_cursor import TextCursor
+from ...utils.UI.resizable_menu import ResizableMenu
 from ...enumerated.battle_actions import BattleActions
 from ...enumerated.item_types import ItemTypes
 
@@ -21,6 +22,9 @@ class Bag():
         self.update_bag_info()
         self.create_cursors()
 
+        self.do_what_response_menu = None
+        self.do_what_response = None
+
     def is_over(self):
         """Returns whether or not the bag has been exited."""
         return self.is_dead
@@ -32,8 +36,17 @@ class Bag():
         self.right_bobbing_cursor.update(ticks)
         self.left_bobbing_cursor.update(ticks)
 
+        if self.do_what_response_menu is not None:
+            if self.do_what_response_menu.is_over():
+                self.do_what_response = self.do_what_response_menu.response
+                self.do_what_response_menu = None
+
     def handle_event(self, event):
         """Handles event."""
+        if self.do_what_response_menu is not None:
+            self.do_what_response_menu.handle_event(event)
+            return
+
         if event.type == pygame.KEYDOWN:
             # When going left and right change bag open and reset cursors.
             if event.key == BattleActions.RIGHT.value:
@@ -84,6 +97,8 @@ class Bag():
                 selected_item = self.item_list[self.item_cursor.cursor]
                 if selected_item == "CANCEL":
                     self.is_dead = True
+                else:
+                    self.do_what_response_menu = DoWhatMenu(self.bag_index)
 
             # Change cursor pos method will update the cursor's position if
             # necessary.
@@ -103,6 +118,9 @@ class Bag():
         self.down_bobbing_cursor.draw(draw_surface)
         self.left_bobbing_cursor.draw(draw_surface)
         self.right_bobbing_cursor.draw(draw_surface)
+
+        if self.do_what_response_menu is not None:
+            self.do_what_response_menu.draw(draw_surface)
 
     def update_bag_info(self):
         """Updates the bag picture and title displayed."""
@@ -171,6 +189,8 @@ class Bag():
         self.update_bobbbing_cursor_status()
 
     def update_bobbbing_cursor_status(self):
+        """Activate or deactivate the bobbing cursors based on what part of
+        the bag you are in."""
         if self.start_item_index < len(self.item_list) - 6:
             self.down_bobbing_cursor.activate()
         else:
@@ -202,3 +222,44 @@ class Bag():
         Items - 0, Key Items - 1, Pokeballs - 2"""
         self.open_bag_surf = \
             FRAMES.getFrame("bag.png", offset=(self.bag_index, 0))
+
+
+class DoWhatMenu():
+    def __init__(self, bag_index):
+        """Creates a menu asking what to do with a particular item."""
+        text_maker = TextMaker(join("fonts", "party_txt_font.png"), max=15)
+        if bag_index == 0:
+            self.response_menu = ResizableMenu(4, width=8).menu_surface
+            self.response_menu.blit(text_maker.get_surface("USE GIVE TOSS CANCEL"),
+                                    (15, 12))
+            self.cursor = Cursor(4, initial_pos=(156, 79))
+        elif bag_index == 1:
+            self.response_menu = ResizableMenu(3, width=8).menu_surface
+            self.response_menu.blit(text_maker.get_surface("USE REGISTER CANCEL"),
+                                    (15, 10))
+            self.cursor = Cursor(3, initial_pos=(156, 77))
+        else:
+            text_maker = TextMaker(join("fonts", "party_txt_font.png"), max=20)
+            self.response_menu = ResizableMenu(3, width=8).menu_surface
+            self.response_menu.blit(text_maker.get_surface("GIVE TOSS CANCEL"),
+                                    (15, 10))
+            self.cursor = Cursor(3, initial_pos=(156, 77))
+
+        self.response = None  # Response that that the player selects.
+        self.is_dead = False  # Whether or not the menu is over.
+
+    def is_over(self):
+        return self.is_dead
+
+    def draw(self, draw_surface):
+        if self.response_menu is not None:
+            draw_surface.blit(self.response_menu, (150, 70))
+            self.cursor.draw(draw_surface)
+
+    def handle_event(self, event):
+        if self.response is None:
+            if event.key in [BattleActions.UP.value, BattleActions.DOWN.value]:
+                self.cursor.change_cursor_pos(event)
+            elif event.key == BattleActions.SELECT.value:
+                self.response = self.cursor.cursor
+                self.is_dead = True
