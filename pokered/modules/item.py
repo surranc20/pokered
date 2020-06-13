@@ -192,3 +192,12 @@ class Item():
     def __init__(self, name):
         self.name = name
         self.type = self.ITEM_TYPES_DICT[name.lower()]
+
+    def __eq__(self, other):
+        return isinstance(other, Item) and self.name == other.name
+
+    def __hash__(self):
+        """Hashing is here so that the "same" item is not added to the bag
+        multiple times when using an item object as a key."""
+        return hash(self.name)
+
