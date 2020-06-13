@@ -98,7 +98,8 @@ class Bag():
                 if selected_item == "CANCEL":
                     self.is_dead = True
                 else:
-                    self.do_what_response_menu = DoWhatMenu(self.bag_index)
+                    self.do_what_response_menu = DoWhatMenu(self.bag_index,
+                                                            selected_item)
 
             # Change cursor pos method will update the cursor's position if
             # necessary.
@@ -225,35 +226,53 @@ class Bag():
 
 
 class DoWhatMenu():
-    def __init__(self, bag_index):
+    def __init__(self, bag_index, item):
         """Creates a menu asking what to do with a particular item."""
+        self.bag_index = bag_index
+        self.item = item
         text_maker = TextMaker(join("fonts", "party_txt_font.png"), max=15)
         if bag_index == 0:
             self.response_menu = ResizableMenu(4, width=8).menu_surface
             self.response_menu.blit(text_maker.get_surface("USE GIVE TOSS CANCEL"),
                                     (15, 12))
-            self.cursor = Cursor(4, initial_pos=(156, 79))
+            self.cursor = Cursor(4, initial_pos=(176, 104))
         elif bag_index == 1:
             self.response_menu = ResizableMenu(3, width=8).menu_surface
             self.response_menu.blit(text_maker.get_surface("USE REGISTER CANCEL"),
                                     (15, 10))
-            self.cursor = Cursor(3, initial_pos=(156, 77))
+            self.cursor = Cursor(3, initial_pos=(176, 118))
         else:
             text_maker = TextMaker(join("fonts", "party_txt_font.png"), max=20)
             self.response_menu = ResizableMenu(3, width=8).menu_surface
             self.response_menu.blit(text_maker.get_surface("GIVE TOSS CANCEL"),
                                     (15, 10))
-            self.cursor = Cursor(3, initial_pos=(156, 77))
+            self.cursor = Cursor(3, initial_pos=(176, 118))
+
+        self.create_item_selected_surf()
 
         self.response = None  # Response that that the player selects.
         self.is_dead = False  # Whether or not the menu is over.
 
-    def is_over(self):
-        return self.is_dead
+    def create_item_selected_surf(self):
+        """Creates a surface which says __ is seleted."""
+        text_maker = TextMaker(join("fonts", "party_txt_font.png"), max=100)
+
+        background_frame = FRAMES.getFrame("bag_item_selected.png")
+        self.item_selected_surf = \
+            pygame.Surface((background_frame.get_size()))
+        self.item_selected_surf.fill((255, 255, 254))
+        self.item_selected_surf.set_colorkey((255, 255, 254))
+        self.item_selected_surf.blit(background_frame, (0, 0))
+
+        item_surf = \
+            text_maker.get_surface(f'{self.item.name.upper()} is selected.')
+        self.item_selected_surf.blit(item_surf, (10, 10))
 
     def draw(self, draw_surface):
+        height = 95 if self.bag_index == 0 else 111
         if self.response_menu is not None:
-            draw_surface.blit(self.response_menu, (150, 70))
+            draw_surface.blit(self.response_menu, (170, height))
+            draw_surface.blit(self.item_selected_surf, (40, 114))
             self.cursor.draw(draw_surface)
 
     def handle_event(self, event):
@@ -263,3 +282,6 @@ class DoWhatMenu():
             elif event.key == BattleActions.SELECT.value:
                 self.response = self.cursor.cursor
                 self.is_dead = True
+
+    def is_over(self):
+        return self.is_dead
