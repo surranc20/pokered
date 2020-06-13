@@ -269,6 +269,7 @@ class DoWhatMenu():
         self.item_selected_surf.blit(item_surf, (10, 10))
 
     def draw(self, draw_surface):
+        """Draws the item selected frame, cursor, and menu of options."""
         height = 95 if self.bag_index == 0 else 111
         if self.response_menu is not None:
             draw_surface.blit(self.response_menu, (170, height))
@@ -276,6 +277,7 @@ class DoWhatMenu():
             self.cursor.draw(draw_surface)
 
     def handle_event(self, event):
+        """Moves cursor in menu."""
         if self.response is None:
             if event.key in [BattleActions.UP.value, BattleActions.DOWN.value]:
                 self.cursor.change_cursor_pos(event)
@@ -284,4 +286,5 @@ class DoWhatMenu():
                 self.is_dead = True
 
     def is_over(self):
+        """Returns the status of the menu of options."""
         return self.is_dead
