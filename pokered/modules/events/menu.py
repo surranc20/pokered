@@ -122,10 +122,8 @@ class Menu():
             return MenuParty(self._player)
         elif event_name == "POKéDEX":
             return None
-        elif event_name == "PLAYER":
+        elif event_name == str(self._player.name):
             return None
-        else:
-            raise AttributeError
 
     def _get_help_text(self):
         """Returns the appropriate help text given the selected menu item"""
