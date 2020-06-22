@@ -28,7 +28,7 @@ class TextMaker():
         join("fonts", "party_txt_font.png"): {".": (0, 26), "{": (3, 11),
                                               "}": (3, 12), "/": (3, 4),
                                               "é": (3, 13), "!": (3, 0),
-                                              "~": (3, 14)},
+                                              "~": (3, 14), "?": (3, 1)},
         join("fonts", "menu_font.png"): {".": (3, 6), "/": (3, 4),
                                          "é": (3, 7)}
     }
@@ -56,10 +56,14 @@ class TextMaker():
                         y_pos += FRAMES.get_frame_size(self._font_name)[1] + 2
                     x_pos = 0
             for char in word:
-                if char in [".", "{", "}", "/", "é", "!", "~"]:
-                    y_offset = -1 if char == "é" and \
-                        self._font_name == join("fonts", "party_txt_font.png") \
-                            else 0
+                if char in [".", "{", "}", "/", "é", "!", "~", "?"]:
+                    if char == "é" and \
+                            self._font_name == join("fonts",
+                                                    "party_txt_font.png"):
+                        y_offset = -1
+                    else:
+                        y_offset = 0
+
                     row, font_index = self.LOCATION[self._font_name][char]
 
                     font_char = FRAMES.getFrame(self._font_name,
