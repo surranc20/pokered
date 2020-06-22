@@ -18,9 +18,18 @@ class Bag():
         self.add_item(Item("Potion"), 99)
         self.add_item(Item("Bike"))
 
+    def __getitem__(self, bag_type):
+        return self.bag[bag_type]
+
     def add_item(self, item, num=1):
         """Adds a given number of an item to the bag."""
         if self.bag[item.type].get(item) is None:
             self.bag[item.type][item] = num
         else:
             self.bag[item.type][item] += num
+
+    def subtract_item(self, item, num=1):
+        """Subtracts a given number of an item from the bag."""
+        self.bag[item.type][item] -= num
+        if self.bag[item.type][item] <= 0:
+            self.bag[item.type].pop(item)
