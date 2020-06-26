@@ -294,8 +294,13 @@ class InfoPage():
         text_maker = TextMaker(join("fonts", "party_txt_font.png"))
         self._id = text_maker.get_surface(str(self._pokemon.id_num).zfill(3))
         self._name = text_maker.get_surface(self._pokemon.name.upper())
+
+        # Make sure that no errors arrise if pokemon is not holding an item.
+        item = "" if self._pokemon.held_item is None else \
+            self._pokemon.held_item.name.upper()
         self._item = \
-            text_maker.get_surface(str(self._pokemon.held_item).upper())
+            text_maker.get_surface(item)
+
         self._train_id = text_maker.get_surface(self._pokemon.trainer_id)
         self._original_trainer = \
             text_maker.get_surface(self._pokemon.original_trainer)
