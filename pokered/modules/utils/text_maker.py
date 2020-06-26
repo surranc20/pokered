@@ -37,7 +37,8 @@ class TextMaker():
         """Creates the text maker which will be able to return text surfaces"""
         self._font_name = font_name
         self._max = max
-        self._line_height = line_height
+        self.line_height = line_height if line_height is not None else \
+            FRAMES.get_frame_size(self._font_name)[1] + 2
 
     def get_surface(self, string):
         """Return a surface with the given string displayed as text"""
@@ -50,10 +51,7 @@ class TextMaker():
         for word in string.split():
             if self._max is not None:
                 if len(word) * default_char_len + x_pos > self._max:
-                    if self._line_height is not None:
-                        y_pos += self._line_height
-                    else:
-                        y_pos += FRAMES.get_frame_size(self._font_name)[1] + 2
+                    y_pos += self.line_height
                     x_pos = 0
             for char in word:
                 if char in [".", "{", "}", "/", "é", "!", "~", "?"]:
@@ -97,14 +95,12 @@ class TextMaker():
 
     def calculate_surface_size(self, string):
         """Calculates the size to make a surface based on the given string"""
-        height = FRAMES.get_frame_size(self._font_name)[1]
         letter_size = int(self.SPACES_DICT[self._font_name]["default"])
         x_size = letter_size * len(string)
-        y_size = height
+        y_size = self.line_height
         if self._max is not None:
             while x_size > self._max:
                 x_size -= self._max
-                y_size += self._line_height if self._line_height is not None \
-                    else height + 2
+                y_size += self.line_height
 
         return (letter_size * len(string), y_size)
