@@ -91,6 +91,7 @@ class TextMaker():
                         str(char), default_char_len)
 
             x_pos += 4
+            self.pos = (x_pos, y_pos)
 
         return text_surface
 
