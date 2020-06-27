@@ -465,6 +465,12 @@ class GiveEvent(MenuParty):
     display the pokemon menu when the user is deciding who to give the item
     to."""
     def __init__(self, item, player):
+        # Need to keep track of the offset going into the event because
+        # MenuParty messes up the offset and if we do not reset at the end of
+        # the GiveEvent then the game will hitch for one frame when returning
+        # to the overworld.
+        self._old_offset = Drawable.WINDOW_OFFSET
+
         super().__init__(player)
         self.item = item
         self.player = player
@@ -472,12 +478,6 @@ class GiveEvent(MenuParty):
 
         self._text_bar.blit_string("Give item to whom?")
         self.give_event_handler = None
-
-        # Need to keep track of the offset going into the event because
-        # MenuParty messes up the offset and if we do not reset at the end of
-        # the GiveEvent then the game will hitch for one frame when returning
-        # to the overworld.
-        self._old_offset = Drawable.WINDOW_OFFSET
 
     def draw(self, draw_surface):
         """Always draw the pokemon menu. Additionally, if the player has
