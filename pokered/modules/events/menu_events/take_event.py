@@ -21,9 +21,11 @@ class TakeEvent(SubEvent):
         if item is None:
             first_string = f"{pokemon.name.upper()} isn't holding anything."
         elif self.can_take:
-            first_string = f"Recieved the {item.name.upper()} from {pokemon.name.upper()}."
+            first_string = (f"Recieved the {item.name.upper()} from "
+                            f"{pokemon.name.upper()}.")
         else:
-            first_string = f"The BAG is full. The POKéMON's item could not be removed."
+            first_string = (f"The BAG is full. The POKéMON's item could "
+                            f"not be removed.")
 
         super().__init__(pokemon, None, bag, first_string)
 
