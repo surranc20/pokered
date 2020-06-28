@@ -9,7 +9,7 @@ from ...utils.UI.resizable_menu import ResizableMenu
 from ...enumerated.item_types import ItemTypes
 from ...enumerated.battle_actions import BattleActions
 from .toss_event import TossEvent
-from .give_event import GiveEvent
+from ..dialogue import Dialogue
 
 
 class Bag():
@@ -41,7 +41,8 @@ class Bag():
         if self.do_what_response_menu is not None:
             self.do_what_response_menu.update(ticks)
             if self.do_what_response_menu.is_over():
-                self.do_what_response = self.do_what_response_menu.response
+                if type(self.do_what_response_menu) != Dialogue:
+                    self.do_what_response = self.do_what_response_menu.response
                 self.do_what_response_menu = None
                 self.create_items_surface()
 
@@ -98,19 +99,22 @@ class Bag():
                 self.is_dead = True
 
             elif event.key == BattleActions.SELECT.value:
-                selected_item = self.item_list[self.item_cursor.cursor]
-                if selected_item == "CANCEL":
-                    self.is_dead = True
-                else:
-                    self.do_what_response_menu = DoWhatMenu(self.bag_index,
-                                                            selected_item,
-                                                            self.player)
+                self._handle_select_event()
 
             # Change cursor pos method will update the cursor's position if
             # necessary.
             self.item_cursor.change_cursor_pos(event)
             self.create_items_surface()
             self.update_bobbbing_cursor_status()
+
+    def _handle_select_event(self):
+        selected_item = self.item_list[self.item_cursor.cursor]
+        if selected_item == "CANCEL":
+            self.is_dead = True
+        else:
+            self.do_what_response_menu = DoWhatMenu(self.bag_index,
+                                                    selected_item,
+                                                    self.player)
 
     def draw(self, draw_surface):
         """Draws the bag."""
@@ -301,6 +305,7 @@ class DoWhatMenu():
                 elif action == "TOSS":
                     self.response = TossEvent(self.item, self.player)
                 elif action == "GIVE":
+                    from .give_event import GiveEvent
                     self.response = GiveEvent(self.item, self.player)
                 # self.is_dead = True
         else:
