@@ -1,11 +1,14 @@
 from os.path import join
 from .menu_party import MenuParty
+from .bag import Bag
+from ..dialogue import Dialogue
 from ...utils.UI.drawable import Drawable
 from ...enumerated.battle_actions import BattleActions
 from ...utils.UI.resizable_menu import ResizableMenu
 from ...utils.text_maker import TextMaker
 from ...utils.UI.text_cursor import TextCursor
 from ..response_box import ResponseBox
+from ...enumerated.item_types import ItemTypes
 
 
 class GiveEvent(MenuParty):
@@ -75,6 +78,46 @@ class GiveEvent(MenuParty):
         if self.is_dead:
             Drawable.WINDOW_OFFSET = self._old_offset
         return self.is_dead
+
+
+class GiveEventFromMenu(Bag):
+    def __init__(self, pokemon, player):
+        super().__init__(player)
+        self.pokemon = pokemon
+        self.player = player
+        self.active_give_event = None
+        self.display_pokemon_menu = False
+
+    def draw(self, draw_surface):
+        if self.active_give_event is None:
+            super().draw(draw_surface)
+        else:
+            self.active_give_event.draw(draw_surface)
+
+    def handle_event(self, event):
+        if self.active_give_event is None:
+            super().handle_event(event)
+        else:
+            self.active_give_event.handle_event(event)
+
+    def update(self, ticks):
+        if self.active_give_event is None:
+            super().update(ticks)
+        else:
+            self.active_give_event.update(ticks)
+            if self.active_give_event.is_dead:
+                self.is_dead = True
+
+    def _handle_select_event(self):
+        selected_item = self.item_list[self.item_cursor.cursor]
+        if selected_item == "CANCEL":
+            self.is_dead = True
+        else:
+            if selected_item.type == ItemTypes.KEY_ITEMS:
+                self.do_what_response_menu = Dialogue("27", self.player, self.player, replace=[selected_item.name.upper()])
+            else:
+                self.display_pokemon_menu = True
+                self.active_give_event = GiveEventHandler(self.pokemon, selected_item, self.player.bag)
 
 
 class GiveEventHandler():
