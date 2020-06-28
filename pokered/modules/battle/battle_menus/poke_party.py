@@ -3,14 +3,12 @@ import pygame
 from os.path import join
 from ...utils.UI.drawable import Drawable
 from ...utils.UI.animated import Animated
-from ...utils.UI.resizable_menu import ResizableMenu
 from ...utils.vector2D import Vector2
 from ...utils.managers.frameManager import FRAMES
 from ...utils.managers.soundManager import SoundManager
 from ...enumerated.battle_states import BattleStates
 from ...enumerated.battle_actions import BattleActions
 from ...events.response_box import ResponseBox
-
 
 
 class PokeParty(Drawable):
@@ -222,7 +220,8 @@ class PokemonSelectedMenu():
 
 class PokemonMenuPokemon(Drawable):
 
-    def __init__(self, pokemon, position, bar_name, selected=False, green=False, second_green=False):
+    def __init__(self, pokemon, position, bar_name, selected=False,
+                 green=False, second_green=False):
         """This is the base class for the pokemon objects in the menu. It
         displays the bouncing pokemon, the hp bar,  and the hp remaining."""
         self._pokemon = pokemon
