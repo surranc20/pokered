@@ -85,8 +85,12 @@ class MenuParty(PokeParty):
         # If the summary menu is active then update that instead.
         if self._summary_active is not None:
             if not self._summary_active.is_over():
+
+                # If sub event is item event then sometimes the pokemon menu
+                # itself needs to be updated as well.
                 if self._should_display_pokemon_menu():
                     super().update(ticks)
+
                 return self._summary_active.update(ticks)
             else:
                 self._summary_active = None
@@ -195,6 +199,8 @@ class MenuParty(PokeParty):
 
     def draw(self, draw_surface):
         if self._summary_active is not None:
+            # If sub event is item event then sometimes the pokemon menu
+            # itself needs to be drawn as well.
             if self._should_display_pokemon_menu():
                 super().draw(draw_surface)
             self._summary_active.draw(draw_surface)
