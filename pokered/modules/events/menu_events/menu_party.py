@@ -85,9 +85,12 @@ class MenuParty(PokeParty):
         # If the summary menu is active then update that instead.
         if self._summary_active is not None:
             if not self._summary_active.is_over():
+                if self._should_display_pokemon_menu():
+                    super().update(ticks)
                 return self._summary_active.update(ticks)
             else:
                 self._summary_active = None
+                self._text_bar.blit_string("Choose a POKeMON.")
 
         super().update(ticks)
         if self._switch_triggered is not None:
@@ -183,15 +186,30 @@ class MenuParty(PokeParty):
                     elif response == "summary":
                         self._summary_active = SummaryMenu(self._player,
                                                            self._cursor)
-                    elif response == "info":
-                        print("hello")
-                        pass
+                    elif response == "item":
+                        from .item_event import ItemEvent
+                        self._text_bar.blit_string("Do what with an item?")
+                        self._summary_active = ItemEvent(self._player.pokemon_team[self._cursor], self._player)
+                        self._pokemon_selected_menu = None
+                        self._selected_pokemon = False
 
     def draw(self, draw_surface):
         if self._summary_active is not None:
+            if self._should_display_pokemon_menu():
+                super().draw(draw_surface)
             self._summary_active.draw(draw_surface)
         else:
             super().draw(draw_surface)
+
+    def _should_display_pokemon_menu(self):
+        """Not using duck typing here because I expect this function to return
+        False the majority of the time. This means the try catch would fail
+        much more often than not."""
+        from .item_event import ItemEvent
+        if type(self._summary_active) is ItemEvent:
+            if self._summary_active.display_pokemon_menu:
+                return True
+        return False
 
 
 class MenuPokemonSelectedMenu(PokemonSelectedMenu):
