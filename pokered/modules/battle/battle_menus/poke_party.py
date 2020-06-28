@@ -9,6 +9,7 @@ from ...utils.managers.frameManager import FRAMES
 from ...utils.managers.soundManager import SoundManager
 from ...enumerated.battle_states import BattleStates
 from ...enumerated.battle_actions import BattleActions
+from ...events.response_box import ResponseBox
 
 
 
@@ -170,45 +171,30 @@ class PokemonSelectedMenu():
         self._battle = battle
         self._selected_pos = selected_pos
         self._cursor = 0
-        self._menu_surface = ResizableMenu(3)
-        self._position = (177, 113)
-
-        # Add the text and cursor arrow to the menu
-        self.blit_text()
-        self.blit_arrow()
+        self._create_response_box()
 
     def handle_event(self, action):
         """Handle wasd and select actions."""
-        if action.key == BattleActions.UP.value:
-            if self._cursor > 0:
-                SoundManager.getInstance().playSound("firered_0005.wav")
-                self._cursor -= 1
-                self.blit_arrow()
+        self.response_box.handle_event(action)
+        if self.response_box.is_dead:
+            return self._handle_option_selected()
 
-        elif action.key == BattleActions.DOWN.value:
-            if self._cursor < self._num_lines - 1:
-                SoundManager.getInstance().playSound("firered_0005.wav")
-                self._cursor += 1
-                self.blit_arrow()
-
-        elif action.key == BattleActions.SELECT.value:
-            return self._handle_select_event()
-
-    def _handle_select_event(self):
+    def _handle_option_selected(self):
         """Handles a select event for the selected pokemon menu."""
-        SoundManager.getInstance().playSound("firered_0005.wav")
+        response = self.response_box.response
+
         # If the cancel button is selected then cancel
-        if self._cursor == 2:
+        if response == 2:
             return "cancel"
 
         # If the summary button is selected then get summary NOTE: This is
         # not implemented yet.
-        elif self._cursor == 1:
+        elif response == 1:
             return  # summary
 
         # If shift is selected then determine if the pokemon is eligible
         # to battle.
-        elif self._cursor == 0:
+        elif response == 0:
 
             # Make sure the pokemon is not already battling.
             if self._selected_pos != 0:
@@ -225,47 +211,13 @@ class PokemonSelectedMenu():
             else:
                 return "PKMN is already in battle!"
 
-    def blit_arrow(self):
-        """Add the cursor arrow to the menu"""
-        y_pos = self._cursor * 12
-        position = (5, y_pos + 5)
-        self._arrow = pygame.Surface((20, 120))
-        self._arrow.fill((255, 255, 255))
-        self._arrow.set_colorkey((255, 255, 255))
-        arrow_frame = FRAMES.getFrame(join("battle", "cursor.png"))
-        self._arrow.blit(arrow_frame, position)
-
-    def blit_text(self):
-        """Add the text to the menu"""
-        if self._battle:
-            lines = ["SHIFT", "SUMMARY", "CANCEL"]
-            self._txt = pygame.Surface((160, 50))
-            self._txt.fill((255, 255, 255))
-            self._txt.set_colorkey((255, 255, 255))
-            current_pos = Vector2(15, 7)
-            for line in lines:
-                for char in line:
-                    font_index = int(ord(char)) - 65
-                    font_char = FRAMES.getFrame(join("fonts", "party_txt_font.png"),
-                                                offset=(font_index, 0))
-                    font_char.set_colorkey((255, 255, 255))
-                    self._txt.blit(font_char, (current_pos.x, current_pos.y))
-
-                    # The I character is particularly small so add an extra
-                    # space.
-                    if char != "I":
-                        current_pos.x += 5
-                    else:
-                        current_pos.x += 4
-                current_pos.y += 12
-                current_pos.x = 15
-            self._num_lines = len(lines)
+    def _create_response_box(self):
+        lines = ["SHIFT", "SUMMARY", "CANCEL"]
+        self.response_box = ResponseBox(lines, (177, 113))
 
     def draw(self, draw_surface):
         """Draw the menu to the screen."""
-        draw_surface.blit(self._menu_surface.menu_surface, self._position)
-        draw_surface.blit(self._txt, self._position)
-        draw_surface.blit(self._arrow, self._position)
+        self.response_box.draw(draw_surface)
 
 
 class PokemonMenuPokemon(Drawable):
