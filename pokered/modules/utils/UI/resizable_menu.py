@@ -7,8 +7,8 @@ class ResizableMenu():
         self.lines = lines
         self.width = width
         self._middlelines = self._calculate_middlelines()
-        self._create_menu()
         self.size = self._middlelines + 2
+        self._create_menu()
 
     def _calculate_middlelines(self):
         """Return how many middle sections are needed for the size of the
@@ -30,8 +30,10 @@ class ResizableMenu():
 
     def _create_menu(self):
         # Create the surface where the menu is drawn
-        width = 240 if self.width > 10 else 100
-        self.menu_surface = pygame.Surface((width, 120))
+        width = self.width * 8
+        height = self.size * 8
+
+        self.menu_surface = pygame.Surface((width, height))
         self.menu_surface.fill((255, 255, 255))
         self.menu_surface.set_colorkey((255, 255, 255))
 
