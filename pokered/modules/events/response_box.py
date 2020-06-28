@@ -29,7 +29,7 @@ class ResponseBox():
         # Display options on menu
         y_pos = 12  # Blit first option 12 pixels down
         for line in lines:
-            self.menu.blit(text_maker.get_surface(line), (16, y_pos))
+            self.menu.blit(text_maker.get_surface(line), (16 + dx, y_pos + dy))
             y_pos += text_maker.line_height
 
         # Create cursor the position of the response box offset by (7, 10)
