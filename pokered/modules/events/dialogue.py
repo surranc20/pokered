@@ -10,11 +10,13 @@ from ..utils.UI.text_cursor import TextCursor
 
 
 class Dialogue():
-    def __init__(self, dialogue_id, player, npc, box=0, gender="male", show_curs=True, turn=True, dy=0, replace=None):
+    def __init__(self, dialogue_id, player, npc, box=0, gender="male",
+                 show_curs=True, turn=True, dy=0, replace=None):
         """Creates a Dialogue instance. The dialogue tells the object which
         lines the dialogue consists off. It requires the player and npc to
         passed in so that a battle can be created if necessary. Also, the
-        color of the dialogue is based on the gender of the npc."""
+        color of the dialogue is based on the gender of the npc. Replace is a
+        list and allows dynamically changing aspects of the dialogue."""
         self._dialogue_frame = Drawable("dialog_boxes.png",
                                         (0, 110 + dy),
                                         offset=(0, box),
@@ -52,10 +54,6 @@ class Dialogue():
         self.turned = not turn
         self._show_curs = show_curs
 
-        print(self.replace)
-
-
-
     def _blit_line(self):
         """Blits the next line to the line surface."""
         # If all lines have been blitted then increase current_line by one so
@@ -78,6 +76,7 @@ class Dialogue():
                         string = string.replace("<replace>", self.replace[self.replace_index], 1)
                         self.replace_index += 1
                 except IndexError as e:
+                    print(e)
                     pass
             rendered = self._font.render(string, False, self._color)
             self._line_surface.blit(rendered, (10, height))
