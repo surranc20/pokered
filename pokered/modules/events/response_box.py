@@ -2,7 +2,7 @@ from os.path import join
 from ..utils.UI.resizable_menu import ResizableMenu
 from ..utils.text_maker import TextMaker
 from ..utils.cursor import Cursor
-from ..utils.misc import end_at as get_end
+from ..utils.misc import end_at_all
 from ..enumerated.battle_actions import BattleActions
 
 
@@ -22,7 +22,7 @@ class ResponseBox():
 
         # Position where menu will be drawn.
         if end_at:
-            self.pos = get_end(self.menu, pos)
+            self.pos = end_at_all(self.menu, pos)
         else:
             self.pos = pos
 
