@@ -1,14 +1,11 @@
 import pygame
-from os.path import join
-from ...utils.managers.soundManager import SoundManager
-from ...utils.managers.frameManager import FRAMES
 from ...battle.battle_menus.poke_party import PokeParty, PokemonSelectedMenu
 from ...utils.UI.drawable import Drawable
-from ...utils.UI.resizable_menu import ResizableMenu
 from ...utils.vector2D import Vector2
 from ...enumerated.battle_actions import BattleActions
 from ...animations.menu_switch import MenuSwitch
 from .summary_menu import SummaryMenu
+from ..response_box import ResponseBox
 
 
 class MenuParty(PokeParty):
@@ -184,7 +181,11 @@ class MenuParty(PokeParty):
                         self._switch_queued = self._cursor
                         self.set_green_first(self._selectable_items[self._switch_queued])
                     elif response == "summary":
-                        self._summary_active = SummaryMenu(self._player, self._cursor)
+                        self._summary_active = SummaryMenu(self._player,
+                                                           self._cursor)
+                    elif response == "info":
+                        print("hello")
+                        pass
 
     def draw(self, draw_surface):
         if self._summary_active is not None:
@@ -198,30 +199,29 @@ class MenuPokemonSelectedMenu(PokemonSelectedMenu):
         """Overrides pokemon selected menu to include switch and the
         possibility of HM moves."""
         super().__init__(player, selected_pos, False)
-        self._menu_surface = ResizableMenu(self._num_lines)
-        self._position = (self._position[0],
-                          self._position[1] - (self._menu_surface.size - 6) * 8)
 
-    def _handle_select_event(self):
+    def _handle_option_selected(self):
         """Handles a select event for the selected pokemon menu."""
-        SoundManager.getInstance().playSound("firered_0005.wav")
         # If the cancel button is selected then cancel
-        if self._cursor == self._num_lines - 1:
+        response = self.response_box.response
+        max_value = self.response_box.cursor._max_value - 1
+
+        if response == max_value:
             return "cancel"
 
         # If the summary button is selected then get summary NOTE: This is
         # not implemented yet.
-        elif self._cursor == 0:
+        elif response == 0:
             return "summary"
 
         # Switch button is selected
-        elif self._cursor == self._num_lines - 3:
+        elif response == max_value - 2:
             return "switch"
 
-        elif self._cursor == self._num_lines - 2:
+        elif response == max_value - 1:
             return "item"
 
-    def blit_text(self):
+    def _create_response_box(self):
         """Overwrite blit text to correctly display out of battle options"""
         lines = ["SUMMARY"]
         self._hms = 0
@@ -232,27 +232,4 @@ class MenuPokemonSelectedMenu(PokemonSelectedMenu):
                 self._hms += 1
         lines += ["SWITCH", "ITEM", "CANCEL"]
 
-        self._txt = pygame.Surface((160, 120))
-        self._txt.fill((255, 255, 255))
-        self._txt.set_colorkey((255, 255, 255))
-        current_pos = Vector2(15, 7)
-        for line in lines:
-            for char in line:
-                if char != " ":
-                    font_index = int(ord(char)) - 65
-                    font_char = FRAMES.getFrame(join("fonts", "party_txt_font.png"),
-                                                offset=(font_index, 0))
-                    font_char.set_colorkey((255, 255, 255))
-                    self._txt.blit(font_char, (current_pos.x, current_pos.y))
-
-                    # The I character is particularly small so add an extra
-                    # space.
-                    if char != "I":
-                        current_pos.x += 5
-                    else:
-                        current_pos.x += 4
-                else:
-                    current_pos.x += 2
-            current_pos.y += 12
-            current_pos.x = 15
-        self._num_lines = len(lines)
+        self.response_box = ResponseBox(lines, (240, 159), end_at=True)
