@@ -299,12 +299,19 @@ class PokeMartMenu(Drawable):
                 # items to bag, and signal PokeMartEvent that user's money has
                 # changed so it can reflect said change in UI.
                 if self.confirm_buy_response.response == 0:
-                    self.thanks_dialogue = Dialogue("25", self._player,
-                                                    self._npc, dy=1)
-                    self._player.money -= self.pending_buy["cost"]
-                    self._player.add_items(self.pending_buy["name"],
-                                           self.pending_buy["quantity"])
-                    self.player_money_updated = True
+                    item = self.pending_buy["name"]
+
+                    if self._player.bag[item.type].get(item, 0) + \
+                            self.pending_buy["quantity"] > 999:
+                        self.thanks_dialogue = Dialogue("28", self._player,
+                                                        self._npc, dy=1)
+                    else:
+                        self.thanks_dialogue = Dialogue("25", self._player,
+                                                        self._npc, dy=1)
+                        self._player.money -= self.pending_buy["cost"]
+                        self._player.add_items(self.pending_buy["name"],
+                                               self.pending_buy["quantity"])
+                        self.player_money_updated = True
 
                 self.confirm_buy_response = None
 
