@@ -1,5 +1,6 @@
 from ..response_box import ResponseBox
 from .give_event import GiveEventFromMenu
+from .take_event import TakeEvent
 
 
 class ItemEvent():
@@ -55,7 +56,7 @@ class ItemEvent():
 
             # This means they want to take an item.
             elif self.response_box.response == 1:
-                pass
+                self.sub_event = TakeEvent(self.pokemon, self.player.bag)
 
             # This is cancel.
             elif self.response_box.response == 2:
