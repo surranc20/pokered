@@ -2,14 +2,15 @@ from os.path import join
 from ..utils.UI.resizable_menu import ResizableMenu
 from ..utils.text_maker import TextMaker
 from ..utils.cursor import Cursor
+from ..utils.misc import end_at as get_end
 from ..enumerated.battle_actions import BattleActions
 
 
 class ResponseBox():
     """Class which creates a box of varying dimensions and will display the
     options as well as a cursor."""
-    def __init__(self, lines, pos, width=8, line_height=None, dx=0, dy=0):
-        self.pos = pos  # Position where menu will be drawn.
+    def __init__(self, lines, pos, width=8, line_height=None, dx=0, dy=0,
+                 end_at=False):
         self.is_dead = False  # Tracks if an option has been selected.
 
         # Create text maker with the desired height
@@ -19,6 +20,12 @@ class ResponseBox():
         # Create the menu
         self.menu = ResizableMenu(len(lines), width=width).menu_surface
 
+        # Position where menu will be drawn.
+        if end_at:
+            self.pos = get_end(self.menu, pos)
+        else:
+            self.pos = pos
+
         # Display options on menu
         y_pos = 12  # Blit first option 12 pixels down
         for line in lines:
@@ -27,7 +34,8 @@ class ResponseBox():
 
         # Create cursor the position of the response box offset by (7, 10)
         # Dx and Dy can be used for further granularity.
-        self.cursor = Cursor(len(lines), (pos[0] + 7 + dx, pos[1] + 10 + dy))
+        self.cursor = Cursor(len(lines), (self.pos[0] + 7 + dx,
+                                          self.pos[1] + 10 + dy))
 
     def draw(self, draw_surface):
         """Draws the menu (with the options) and the cursor."""
