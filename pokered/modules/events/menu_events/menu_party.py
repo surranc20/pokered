@@ -95,6 +95,9 @@ class MenuParty(PokeParty):
             else:
                 self._summary_active = None
                 self._text_bar.blit_string("Choose a POKeMON.")
+                active_bouncing_pokemon = \
+                    self._selectable_items[self._cursor]._bouncing_pokemon
+                active_bouncing_pokemon.create_held_item_surf()
 
         super().update(ticks)
         if self._switch_triggered is not None:
