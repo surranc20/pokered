@@ -87,7 +87,7 @@ class MenuSwitch():
                 elif type(self.slot2) is ActivePokemon:
                     self.slot1 = ActivePokemon(self.slot1._pokemon,
                                                self.slot1._position,
-                                               elected=True,
+                                               selected=True,
                                                second_green=True)
                     self.slot2 = SecondaryPokemon(self.slot2._pokemon,
                                                   self.slot2._position,
