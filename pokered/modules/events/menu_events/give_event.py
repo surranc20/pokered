@@ -114,10 +114,15 @@ class GiveEventFromMenu(Bag):
             self.is_dead = True
         else:
             if selected_item.type == ItemTypes.KEY_ITEMS:
-                self.do_what_response_menu = Dialogue("27", self.player, self.player, replace=[selected_item.name.upper()])
+                self.do_what_response_menu = \
+                    Dialogue("27", self.player, self.player,
+                             replace=[selected_item.name.upper()],
+                             show_curs=False)
             else:
                 self.display_pokemon_menu = True
-                self.active_give_event = GiveEventHandler(self.pokemon, selected_item, self.player.bag)
+                self.active_give_event = GiveEventHandler(self.pokemon,
+                                                          selected_item,
+                                                          self.player.bag)
 
 
 class GiveEventHandler():
