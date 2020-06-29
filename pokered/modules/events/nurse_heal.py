@@ -22,7 +22,7 @@ class NurseHeal():
         self._response_dialogue = ResponseDialogue("16", self._player,
                                                    self._nurse)
         self._dialogue = Dialogue("17", self._player, self._nurse,
-                                  show_curs=False)
+                                  show_curs=False, auto_finish=True)
         self._healed_dialogue = Dialogue("18", self._player, self._nurse)
         self._no_dialogue = None
 
