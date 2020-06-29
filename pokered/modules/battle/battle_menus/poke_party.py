@@ -477,6 +477,23 @@ class BouncingPokemon(Animated):
         self._row = _lookup
         self._framesPerSecond = 8
 
+        self.create_held_item_surf()
+
+    def draw(self, draw_surface):
+        """Overwrite parent draw method to possibly draw the item surface."""
+        super().draw(draw_surface)
+        if self.item_surf is not None:
+            draw_surface.blit(self.item_surf, self._item_pos)
+
+    def create_held_item_surf(self):
+        """Determines if the pokemon has an item and need to display item
+        surface."""
+        if self._pokemon.held_item is not None:
+            self._item_pos = (self._position[0] + 20, self._position[1] + 24)
+            self.item_surf = FRAMES.getFrame("party_item.png")
+        else:
+            self.item_surf = None
+
 
 class CancelButton(Drawable):
     def __init__(self, selected=False):
