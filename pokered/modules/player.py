@@ -26,7 +26,6 @@ class Player(Trainer):
         """Creates an instance of a player. Requires the player's start
         position, and name."""
         super().__init__(position, name, Cardinality.NORTH, enemy=False)
-        self._nFrames = 4
         self.badges = []
         self.rival_name = "Gary"
         self.money = 1200
