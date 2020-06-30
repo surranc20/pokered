@@ -1,8 +1,8 @@
 import pygame
 from os.path import join
-from ..poke_mart_event import QuantityCursor
 from ...utils.cursor import Cursor
 from ...utils.UI.resizable_menu import ResizableMenu
+from ...utils.UI.quantity_cursor import QuantityCursor
 from ...enumerated.battle_actions import BattleActions
 from ...utils.text_maker import TextMaker
 from ...utils.managers.frameManager import FRAMES
