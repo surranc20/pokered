@@ -26,5 +26,7 @@
     "25": ["Here you are! Thank you!", "False"],
     "26": ["My developer is lazy and has not finished the renovation upstairs.\nCome back later.", "False"],
     "27": ["The <replace> can't be held.", "False"],
-    "28": ["You have no more room for this item.", "False"]
+    "28": ["You have no more room for this item.", "False"],
+    "29": ["<replace>? Oh, no. I can't buy that.", "False"],
+    "30": ["<replace>? How many would you like to sell?", "False"]
 }
