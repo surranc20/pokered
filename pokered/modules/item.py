@@ -192,6 +192,7 @@ class Item():
     def __init__(self, name):
         self.name = name
         self.type = self.ITEM_TYPES_DICT[name.lower()]
+        self.sell_price = 300
 
     def __eq__(self, other):
         return isinstance(other, Item) and self.name == other.name
