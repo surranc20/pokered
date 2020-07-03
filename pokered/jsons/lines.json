@@ -28,5 +28,7 @@
     "27": ["The <replace> can't be held.", "False"],
     "28": ["You have no more room for this item.", "False"],
     "29": ["<replace>? Oh, no. I can't buy that.", "False"],
-    "30": ["<replace>? How many would you like to sell?", "False"]
+    "30": ["<replace>? How many would you like to sell?", "False"],
+    "31": ["I can pay <replace>. Would that be okay?", "False"],
+    "32": ["Turned over the <replace>(s) worth <replace>.", "False"]
 }
