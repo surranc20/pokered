@@ -41,7 +41,7 @@ class PokeMartEvent():
         # Create the buy and sell menus
         self._buy_menu = PokeMartMenu(self._clerk.inventory, self._player,
                                       self._clerk)
-        
+
         self._sell_menu = SellEvent(self._player)
 
         # Create surface which displays how much money the player has.
@@ -103,10 +103,10 @@ class PokeMartEvent():
                                      response_string="BUY SELL SEE YA!")
             self._buy_menu = PokeMartMenu(self._clerk.inventory, self._player,
                                           self._clerk)
-        
+
         elif self._response == 1 and not self._sell_menu.is_over():
             self._sell_menu.update(ticks)
-        
+
         elif self._response == 1 and self._sell_menu.is_over():
             self._response = None
             self.turned = False
@@ -151,7 +151,7 @@ class PokeMartEvent():
         # menu.
         elif self._response == 0 and not self._buy_menu.is_over():
             self._buy_menu.handle_event(event)
-        
+
         elif self._response == 1 and not self._sell_menu.is_over():
             self._sell_menu.handle_event(event)
 
@@ -640,45 +640,62 @@ class HowManySelector():
 
 
 class SellEvent(Bag):
-    """Sell event triggered a when player wants to sell anything inside of a 
+    """Sell event triggered a when player wants to sell anything inside of a
     pokemon shop."""
     def __init__(self, player):
         super().__init__(player)
         self.active_sell_event = None
-    
+
     def draw(self, draw_surface):
+        """Always draw the bag and draw the active sell event if it exists."""
         super().draw(draw_surface)
         if self.active_sell_event is not None:
             self.active_sell_event.draw(draw_surface)
-    
+
     def handle_event(self, event):
+        """If the active sell event exists then pass control to it otherwise
+        pass control to the bag."""
         if self.active_sell_event is not None:
             self.active_sell_event.handle_event(event)
         else:
             super().handle_event(event)
-    
+
     def update(self, ticks):
+        """Always update the bag and update the active sell event if it is not
+        None."""
         if self.active_sell_event is not None:
             self.active_sell_event.update(ticks)
+
+            # If the sell event is over then clear it and update the bag UI.
             if self.active_sell_event.is_dead:
-                self.is_dead = True
+                self.active_sell_event = None
+                self.update_bag_info()
         super().update(ticks)
-    
+
     def _handle_select_event(self):
+        """Overwrites the Bag's select event to allow for new functionality
+        when clicking on an item. If the player clicks on a key item let them
+        know that they can't sell it. Otherwise create a sell event."""
         selected_item = self.item_list[self.item_cursor.cursor]
         if selected_item == "CANCEL":
             self.is_dead = True
+
+        # You can't sell key items.
         elif selected_item.type == ItemTypes.KEY_ITEMS:
             self.do_what_response_menu = \
-                Dialogue("29", self.player, self.player, 
+                Dialogue("29", self.player, self.player,
                          replace=[selected_item.name.upper()], show_curs=False)
+
+        # Create a sell event with the selected item.
         else:
-            self.active_sell_event = CanSellSubEvent(self.player,
-                                                     selected_item)
+            self.active_sell_event = SellHowMany(self.player,
+                                                 selected_item)
 
 
-class CanSellSubEvent():
+class SellHowMany():
     def __init__(self, player, item):
+        """Creates an event which determines how many of an item that the user
+        wants to sell."""
         self.player = player
         self.item = item
         self.quant = 1
@@ -690,18 +707,34 @@ class CanSellSubEvent():
                                           show_curs=False,
                                           replace=[item.name.upper()])
 
-        # Create the menu frame which shows the quantity cursor and the amount 
+        # Create the menu frame which shows the quantity cursor and the amount
         # the player recieaves for selling a given number of the item.
         self.text_maker = TextMaker(join("fonts", "party_txt_font.png"))
         self.menu_frame = ResizableMenu(3, width=14).menu_surface
         self.quantity_cursor = QuantityCursor((140, 71))
         self.cost_surf = \
             self.text_maker.get_surface(str(self.item.sell_price * self.quant))
-    
+
+        self.sub_event = None
+
     def update(self, ticks):
-        self.quantity_cursor.update(ticks)
+        """Updates the sell event if it exists. Otherwise update the quantity
+        cursor."""
+        if self.sub_event is not None:
+            self.sub_event.update(ticks)
+            if self.sub_event.is_dead:
+                self.is_dead = True
+
+        else:
+            self.quantity_cursor.update(ticks)
 
     def handle_event(self, event):
+        """If the sub event exists then pass control to it. Otherwise respond
+        according to the action."""
+        if self.sub_event is not None:
+            self.sub_event.handle_event(event)
+            return
+
         if event.key == BattleActions.UP.value:
             if self.quant < self.max_quant:
                 self.update_cursor_and_price(self.quant + 1)
@@ -712,15 +745,110 @@ class CanSellSubEvent():
                 self.update_cursor_and_price(self.quant - 1)
             elif self.quant == 1:
                 self.update_cursor_and_price(self.max_quant)
-                
+        elif event.key == BattleActions.SELECT.value:
+            self.sub_event = ConfirmSell(self.player, self.item, self.quant)
+
     def draw(self, draw_surface):
+        """Draws the sub event if it exists. Otherwise draw the dialogue, and
+        information regarding how much the user will buy."""
+        if self.sub_event is not None:
+            self.sub_event.draw(draw_surface)
+            return
+
+        # Draw info regarding how many of a given item the user will buy.
         self.how_many_dialogue.draw(draw_surface)
         draw_surface.blit(self.menu_frame, (128, 64))
         draw_surface.blit(self.cost_surf, end_at(self.cost_surf, (225, 84)))
         self.quantity_cursor.draw(draw_surface)
-    
+
     def update_cursor_and_price(self, new_quant):
+        """Updates the amount of the item the user intends to buy and updates
+        UI to show said change."""
         self.quant = new_quant
         self.quantity_cursor.change_count(self.quant)
         self.cost_surf = \
             self.text_maker.get_surface(str(self.item.sell_price * self.quant))
+
+
+class ConfirmSell():
+    def __init__(self, player, item, amount):
+        """Sub event which asks the user if they really want to go through
+        with the sale."""
+        self.player = player
+        self.item = item
+        self.amount = amount
+        self.confirm_response = \
+            ResponseDialogue("31", player, player,
+                             replace=[str(amount * item.sell_price)])
+        self.is_dead = False
+        self.sub_event = None
+
+    def draw(self, draw_surface):
+        """Draws the sub event if it exists. Otherwise draw the response
+        dialogue."""
+        if self.sub_event is not None:
+            self.sub_event.draw(draw_surface)
+        else:
+            self.confirm_response.draw(draw_surface)
+
+    def handle_event(self, event):
+        """Pass control to sub event if it exists, otherwise let the response
+        dialogue handle control."""
+        if self.sub_event is not None:
+            self.sub_event.handle_event(event)
+        else:
+            self.confirm_response.handle_event(event)
+
+    def update(self, ticks):
+        """Update the sub event if it exists. Otherwise update the resposne
+        dialogue. Get response from response dialogue and respond
+        accordingly."""
+        if self.sub_event is not None:
+            self.sub_event.update(ticks)
+            if self.sub_event.is_dead:
+                self.is_dead = True
+            return
+
+        # No sub event exists.
+        self.confirm_response.update(ticks)
+        if self.confirm_response.response is not None:
+            # User decides to go through with the sale
+            if self.confirm_response.response == 0:
+                self.sub_event = SellConfirmed(self.player, self.item,
+                                               self.amount)
+            # User decides to not sell items
+            else:
+                self.is_dead = True
+
+
+class SellConfirmed():
+    def __init__(self, player, item, amount):
+        """Sub event which tells the user they sold the items. Actually
+        complete the transaction on the back end."""
+        self.player = player
+        self.item = item
+        self.amount = amount
+        self.is_dead = False
+
+        self.confirmed_dialogue = \
+            Dialogue("32", self.player, self.player,
+                     replace=[item.name.upper(),
+                              str(amount * item.sell_price)],
+                     show_curs=False)
+
+    def draw(self, draw_surface):
+        """Draw the confirmed dialogue."""
+        self.confirmed_dialogue.draw(draw_surface)
+
+    def handle_event(self, event):
+        """Pass control to the confirmed dialogue."""
+        self.confirmed_dialogue.handle_event(event)
+
+    def update(self, ticks):
+        """Update the confirmed dialogue. Once the confirmed dialogue is over
+        complete transaction on the backend and end the sub event."""
+        self.confirmed_dialogue.update(ticks)
+        if self.confirmed_dialogue.is_over():
+            self.player.money += self.amount * self.item.sell_price
+            self.player.bag.subtract_item(self.item, num=self.amount)
+            self.is_dead = True
