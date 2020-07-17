@@ -134,15 +134,20 @@ class FrameManager(object):
          return self[fileName]
 
       def _loadImage(self, fileName, sheet=False):
+
+         if fileName[:9] == "tile sets":
+            fullImage = image.load(fileName)
+
          # Load the full image
-         try:
-            fullImage = image.load(join(FrameManager._FM._IMAGE_FOLDER, fileName))
-         except Exception as e:
-            print(e)
-            print()
-            # This allows me to dynamically load each level's foreground and background without having
-            # to specify the frame size of each.
-            fullImage = image.load(join("levels", fileName))
+         else:
+            try:
+               fullImage = image.load(join(FrameManager._FM._IMAGE_FOLDER, fileName))
+            except Exception as e:
+               print(e)
+               print()
+               # This allows me to dynamically load each level's foreground and background without having
+               # to specify the frame size of each.
+               fullImage = image.load(join("levels", fileName))
 
          # Look up some information about the image to be loaded
          transparent = fileName in FrameManager._FM._TRANSPARENCY
@@ -159,6 +164,8 @@ class FrameManager(object):
 
             self[fileName] = []
             spriteSize = FrameManager._FM._FRAME_SIZES.get(fileName, FrameManager._FM._DEFAULT_FRAME)
+            if fileName[:9] == "tile sets":
+               spriteSize = [16, 16]
 
             sheetDimensions = fullImage.get_size()
 

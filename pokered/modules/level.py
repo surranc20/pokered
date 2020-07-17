@@ -8,6 +8,7 @@ from .npc import NPC
 from .pokemon import Pokemon
 from .utils.scripting_engine import ScriptingEngine
 from .utils.UI.drawable import Drawable
+from .utils.UI.tileset_tile import TilesetTile
 from .utils.vector2D import Vector2
 from .utils.stat_calc import StatCalculator
 from .utils.managers.soundManager import SoundManager
@@ -27,11 +28,6 @@ class Level():
         # Dictionary to track all trainers on the map
         self.trainers = {}
 
-        # We need a foreground and background to add a 3d effect to the game.
-        self.foreground = Drawable(join(level_name, "level_foreground.png"),
-                                   (0, 0))
-        self.background = Drawable(join(level_name, "level_background.png"),
-                                   (0, 0))
 
         # Load the data for the level.
         with open(join("levels", level_name, "meta.json"), "r") as level_json:
@@ -44,10 +40,7 @@ class Level():
         # Tile the level up into 16x16 tiles.
         self.tiles = self._tile()
 
-        # Add borders to the foreground and background if the level is smaller
-        # than the screen size.
-        self.foreground.center_with_border(screen_size)
-        self.background.center_with_border(screen_size)
+
 
         # Populate the level with its trainers.
         self.populate_trainers()
@@ -66,21 +59,49 @@ class Level():
                 ScriptingEngine("entry_script.json", self)
 
     def _tile(self):
-        """Returns the level's 2d array of tiles."""
-        tile_dims = (self._level_size[0] // self.TILE_SIZE,
-                     self._level_size[1] // self.TILE_SIZE)
+        # """Returns the level's 2d array of tiles."""
+        # tile_dims = (self._level_size[0] // self.TILE_SIZE,
+        #              self._level_size[1] // self.TILE_SIZE)
+        # tiles = []
+        # for y in range(tile_dims[1]):
+        #     row = []
+        #     for x in range(tile_dims[0]):
+        #         row.append(Tile((x, y), self._colide_list[y][x], None,
+        #                    self._more_info.get("(" + str(x) + "," + str(y) + ")")))
+        #     tiles.append(row)
+        # for tile_row in tiles:
+        #     for tile in tile_row:
+        #         if tile.link is not False:
+        #             tile.link = tiles[tile.link[1]][tile.link[0]]
+        # return tiles
         tiles = []
-        for y in range(tile_dims[1]):
-            row = []
-            for x in range(tile_dims[0]):
-                row.append(Tile((x, y), self._colide_list[y][x], None,
-                           self._more_info.get("(" + str(x) + "," + str(y) + ")")))
-            tiles.append(row)
+        with open(join("levels", self.level_name, "elite_four_1_tiled.json"), "r") as tile_map_json:
+            tile_map = json.load(tile_map_json)
+            for y, map_row in enumerate(tile_map):
+                row = []
+                if len(map_row) < 15:
+                    x_offset = 1
+                else:
+                    x_offset = 0
+                for x, tile in enumerate(map_row):
+                    row.append(Tile((x + x_offset, y), self._colide_list[y][x], None, self._more_info.get("(" + str(x) + "," + str(y) + ")"), tile['tileBackground'] ))
+                if x_offset == 1:
+                    row.insert(0, BlackTile((0, y)))
+                    row.append(BlackTile((len(row), y)))
+                tiles.append(row)
+
         for tile_row in tiles:
             for tile in tile_row:
                 if tile.link is not False:
                     tile.link = tiles[tile.link[1]][tile.link[0]]
+
+        for tile_row in tiles:
+            print([str(tile.collidable).ljust(5, ' ') for tile in tile_row])
+
+
         return tiles
+
+
 
     def play_music(self):
         """Play the level's music. Can be called by the level manager."""
@@ -152,11 +173,22 @@ class Level():
 
     def draw(self, draw_surface):
         """Draws the level. Calls draw on each of the tiles in the level."""
-        self.background.draw(draw_surface)
+        # self.background.draw(draw_surface)
+        # for row in self.tiles:
+        #     for tile in row:
+        #         tile.draw(draw_surface)
+        # self.foreground.draw(draw_surface)
+
         for row in self.tiles:
             for tile in row:
-                tile.draw(draw_surface)
-        self.foreground.draw(draw_surface)
+                tile.draw_background(draw_surface)
+
+        for row in self.tiles:
+            for tile in row:
+                tile.draw_obj(draw_surface)
+
+
+
 
     def update(self, ticks):
         """Updates the level. Updates each of the tiles in the level. If there
@@ -191,8 +223,8 @@ class Level():
 
     def tile_within_map(self, pos):
         """Returns whether or not a tile is within the size of the map."""
-        tile_dims = (self._level_size[0] // self.TILE_SIZE,
-                     self._level_size[1] // self.TILE_SIZE)
+        tile_dims = (len(self.tiles[0]),
+                     len(self.tiles))
         if pos[0] < 0 or pos[1] < 0:
             return False
         elif pos[0] >= tile_dims[0] or pos[1] >= tile_dims[1]:
@@ -204,15 +236,15 @@ class Level():
         """The player is 22 pixels high so we need to adjust his position down
         a little when first loading the level. """
         if is_player:
-            return Vector2(pos[0] * self.TILE_SIZE + self.foreground._x_off,
+            return Vector2(pos[0] * self.TILE_SIZE,
                            pos[1] * self.TILE_SIZE - 6)
         else:
-            return Vector2(pos[0] * self.TILE_SIZE + self.foreground._x_off,
+            return Vector2(pos[0] * self.TILE_SIZE,
                            pos[1] * self.TILE_SIZE - 8)
 
 
 class Tile:
-    def __init__(self, pos, collidable, obj, more_info):
+    def __init__(self, pos, collidable, obj, more_info, background_info):
         """Simple class representing a tile on the map. While commenting this
         I realized that I spelt collidable wrong. I will fix this later."""
         self.pos = pos
@@ -238,6 +270,9 @@ class Tile:
                 self.link = more_info.split("-")[1].split(",")
                 self.link = tuple(int(x) for x in self.link)
 
+        # TILEMAP BELOW
+        self.background_tile = TilesetTile(background_info, [pos[0] * 16, pos[1] * 16])
+
     def add_obj(self, obj):
         """Adds an object to a tile. Usually a player or a trainer. If a tile
         has an object than it becomes colidable."""
@@ -258,8 +293,11 @@ class Tile:
         collidable."""
         return not self.collidable
 
-    def draw(self, draw_surface):
-        """Draws the tile's obj if one exists."""
+    def draw_background(self, draw_surface):
+        """Draws the tile's obj if one exists. First draw background then draw obj."""
+        self.background_tile.draw(draw_surface)
+
+    def draw_obj(self, draw_surface):
         if self._obj is not None:
             self._obj.draw(draw_surface)
 
@@ -297,3 +335,9 @@ class Tile:
         """Allows the tile to be printed in a nice format."""
         string = str(self.pos) + "is clear: " + str(self.is_clear())
         return string
+
+
+class BlackTile(Tile):
+    def __init__(self, pos):
+        background_info = {'tileRowNum': 0, 'tileColNum': 0, 'tileSetName': 'black.png'}
+        super().__init__(pos, 1, None, None, background_info)
