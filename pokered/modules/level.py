@@ -76,7 +76,7 @@ class Level():
         # return tiles
         tiles = []
         with open(join("levels", self.level_name, "elite_four_1_tiled.json"), "r") as tile_map_json:
-            tile_map = json.load(tile_map_json)
+            tile_map = json.load(tile_map_json)['mapArray']
             for y, map_row in enumerate(tile_map):
                 row = []
                 if len(map_row) < 15:
@@ -339,5 +339,5 @@ class Tile:
 
 class BlackTile(Tile):
     def __init__(self, pos):
-        background_info = {'tileRowNum': 0, 'tileColNum': 0, 'tileSetName': 'black.png'}
+        background_info = {'rowNum': 0, 'columnNum': 0, 'tileSetName': 'black.png'}
         super().__init__(pos, 1, None, None, background_info)
