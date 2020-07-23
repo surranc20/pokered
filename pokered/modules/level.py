@@ -84,7 +84,7 @@ class Level():
                 else:
                     x_offset = 0
                 for x, tile in enumerate(map_row):
-                    row.append(Tile((x + x_offset, y), self._colide_list[y][x], None, self._more_info.get("(" + str(x) + "," + str(y) + ")"), tile['tileBackground'] ))
+                    row.append(Tile((x + x_offset, y), tile['collidable'], None, self._more_info.get("(" + str(x) + "," + str(y) + ")"), tile['tileBackground'] ))
                 if x_offset == 1:
                     row.insert(0, BlackTile((0, y)))
                     row.append(BlackTile((len(row), y)))
@@ -257,7 +257,7 @@ class Tile:
         self._base_colidable = collidable
         # A tile is a warp if occupying it sends the player to another level.
         self._is_warp = False
-        self.collidable = True if collidable == 1 else False
+        self.collidable = collidable
         self.link = False
         # Some tiles have extra information
         if more_info is not None:
