@@ -65,13 +65,19 @@ class ScriptingEngine():
         if len(args) != 2:
             raise Exception("Expected args of len 2:", args)
 
+        # Second argument is always the target tile
         target_pos = make_tuple(args[1])
 
+        # Some levels are so small that they need to be padded with black
+        # empty tiles. This adds the offset amount to the position supplied
+        # via the script.
+        corrected_pos = (target_pos[0] + self._level.x_offset, target_pos[1])
+
         if args[0] == "PLAYER":
-            response = self._level.player.move_to_tile(target_pos)
+            response = self._level.player.move_to_tile(corrected_pos)
         else:
             response = \
-                self._level.trainers[args[0]].move_to_tile(target_pos)
+                self._level.trainers[args[0]].move_to_tile(corrected_pos)
 
         return response is True
 

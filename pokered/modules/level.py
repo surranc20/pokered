@@ -1,4 +1,5 @@
 import json
+from math import ceil
 from os.path import join
 from .trainer import Trainer
 from .player import Player
@@ -80,12 +81,17 @@ class Level():
             for y, map_row in enumerate(tile_map):
                 row = []
                 if len(map_row) < 15:
-                    x_offset = 1
+                    self.x_offset = ceil((15 - len(map_row)) / 2)
                 else:
-                    x_offset = 0
+                    self.x_offset = 0
                 for x, tile in enumerate(map_row):
-                    row.append(Tile((x + x_offset, y), tile['collidable'], None, self._more_info.get("(" + str(x) + "," + str(y) + ")"), tile['tileBackground'] ))
-                if x_offset == 1:
+                    row.append(Tile(
+                        (x + self.x_offset, y),
+                        tile['collidable'], None,
+                        self._more_info.get("(" + str(x) + "," + str(y) + ")"),
+                        tile['tileBackground']))
+
+                for _ in range(self.x_offset):
                     row.insert(0, BlackTile((0, y)))
                     row.append(BlackTile((len(row), y)))
                 tiles.append(row)
@@ -94,10 +100,6 @@ class Level():
             for tile in tile_row:
                 if tile.link is not False:
                     tile.link = tiles[tile.link[1]][tile.link[0]]
-
-        for tile_row in tiles:
-            print([str(tile.collidable).ljust(5, ' ') for tile in tile_row])
-
 
         return tiles
 
@@ -116,9 +118,10 @@ class Level():
         """Adds the level's trainers to the level (including the player)."""
         # Add the player to the level by getting the player's start position
         # from the level's meta data.
-        self.player.setPosition(self.correct_border_and_heightpos(self._level_meta["start_location"], True))
-        self.tiles[self._level_meta["start_location"][1]][self._level_meta["start_location"][0]].add_obj(self.player)
-        self.player.current_tile = self.tiles[self._level_meta["start_location"][1]][self._level_meta["start_location"][0]]
+        start_pos = self._level_meta["start_location"]
+        self.player.setPosition(self.correct_border_and_heightpos(start_pos, True))
+        self.tiles[self._level_meta["start_location"][1]][start_pos[0] + self.x_offset].add_obj(self.player)
+        self.player.current_tile = self.tiles[start_pos[1]][start_pos[0] + self.x_offset]
 
         # Add the rest of the trainers to the level. Get's data from the
         # level's meta data.
@@ -166,9 +169,9 @@ class Level():
                         train.pokemon_team.append(new_pokemon)
 
             # Add the trainer to the tile.
-            self.tiles[trainer_args["pos"][1]][trainer_args["pos"][0]].add_obj(train)
+            self.tiles[trainer_args["pos"][1]][trainer_args["pos"][0] + self.x_offset].add_obj(train)
             train.current_tile = \
-                self.tiles[trainer_args["pos"][1]][trainer_args["pos"][0]]
+                self.tiles[trainer_args["pos"][1]][trainer_args["pos"][0] + self.x_offset]
             self.trainers[train.name] = train
 
     def draw(self, draw_surface):
@@ -236,10 +239,10 @@ class Level():
         """The player is 22 pixels high so we need to adjust his position down
         a little when first loading the level. """
         if is_player:
-            return Vector2(pos[0] * self.TILE_SIZE,
+            return Vector2((pos[0] + self.x_offset) * self.TILE_SIZE,
                            pos[1] * self.TILE_SIZE - 6)
         else:
-            return Vector2(pos[0] * self.TILE_SIZE,
+            return Vector2((pos[0] + self.x_offset) * self.TILE_SIZE,
                            pos[1] * self.TILE_SIZE - 8)
 
 
