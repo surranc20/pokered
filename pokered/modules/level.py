@@ -76,7 +76,7 @@ class Level():
         #             tile.link = tiles[tile.link[1]][tile.link[0]]
         # return tiles
         tiles = []
-        with open(join("levels", self.level_name, "elite_four_1_tiled.json"), "r") as tile_map_json:
+        with open(join("levels", self.level_name, f"{self.level_name}_tiled.json"), "r") as tile_map_json:
             tile_map = json.load(tile_map_json)['mapArray']
             for y, map_row in enumerate(tile_map):
                 row = []
