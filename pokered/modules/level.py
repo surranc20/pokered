@@ -5,7 +5,6 @@ from .trainer import Trainer
 from .player import Player
 from .nurse import Nurse
 from .clerk import Clerk
-from .npc import NPC
 from .pokemon import Pokemon
 from .utils.scripting_engine import ScriptingEngine
 from .utils.UI.drawable import Drawable
@@ -29,7 +28,6 @@ class Level():
         # Dictionary to track all trainers on the map
         self.trainers = {}
 
-
         # Load the data for the level.
         with open(join("levels", level_name, "meta.json"), "r") as level_json:
             self._level_meta = json.load(level_json)
@@ -40,8 +38,6 @@ class Level():
 
         # Tile the level up into 16x16 tiles.
         self.tiles = self._tile()
-
-
 
         # Populate the level with its trainers.
         self.populate_trainers()
@@ -102,8 +98,6 @@ class Level():
                     tile.link = tiles[tile.link[1]][tile.link[0]]
 
         return tiles
-
-
 
     def play_music(self):
         """Play the level's music. Can be called by the level manager."""
@@ -190,6 +184,10 @@ class Level():
             for tile in row:
                 tile.draw_obj(draw_surface)
 
+        for row in self.tiles:
+            for tile in row:
+                tile.draw_foreground(draw_surface)
+
 
 
 
@@ -274,7 +272,13 @@ class Tile:
                 self.link = tuple(int(x) for x in self.link)
 
         # TILEMAP BELOW
-        self.background_tile = TilesetTile(background_info, [pos[0] * 16, pos[1] * 16])
+        self.background_tile = TilesetTile(background_info,
+                                           [pos[0] * 16, pos[1] * 16])
+        self.foreground_tile = self.background_tile.create_foreground()
+        print(self.foreground_tile)
+
+
+
 
     def add_obj(self, obj):
         """Adds an object to a tile. Usually a player or a trainer. If a tile
@@ -299,6 +303,10 @@ class Tile:
     def draw_background(self, draw_surface):
         """Draws the tile's obj if one exists. First draw background then draw obj."""
         self.background_tile.draw(draw_surface)
+
+    def draw_foreground(self, draw_surface):
+        if self.foreground_tile is not None:
+            self.foreground_tile.draw(draw_surface)
 
     def draw_obj(self, draw_surface):
         if self._obj is not None:
@@ -336,8 +344,7 @@ class Tile:
 
     def __repr__(self):
         """Allows the tile to be printed in a nice format."""
-        string = str(self.pos) + "is clear: " + str(self.is_clear())
-        return string
+        return str(self.pos)
 
 
 class BlackTile(Tile):
