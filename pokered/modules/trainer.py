@@ -170,7 +170,8 @@ class Trainer(NPC):
     def update(self, ticks, nearby_tiles, current_tile):
         """Updates the trainer class's position"""
         if not self.is_enemy:
-            print(current_tile)
+            # print(current_tile)
+            pass
         self.current_tile = current_tile
         if self._move_script_active is not None:
             self._move_to_tile(self._move_script_active)
