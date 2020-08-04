@@ -9,6 +9,7 @@ from .pokemon import Pokemon
 from .utils.scripting_engine import ScriptingEngine
 from .utils.UI.drawable import Drawable
 from .utils.UI.tileset_tile import TilesetTile
+from .utils.UI.tileset_animated_tile import TilesetAnimatedTile
 from .utils.vector2D import Vector2
 from .utils.stat_calc import StatCalculator
 from .utils.managers.soundManager import SoundManager
@@ -35,6 +36,12 @@ class Level():
                                 self.TILE_SIZE * self._level_meta["size"][1])
             self._colide_list = self._level_meta["collide_map"]
             self._more_info = self._level_meta.get("more_info", {})
+            self._doors = self._level_meta.get("doors")
+
+        # Get all door dependent tiles
+        self._door_dependents = set()
+        for _, door_dependents in self._doors.items():
+            self._door_dependents.update([tuple(door) for door in door_dependents])
 
         # Tile the level up into 16x16 tiles.
         self.tiles = self._tile()
@@ -56,21 +63,6 @@ class Level():
                 ScriptingEngine("entry_script.json", self)
 
     def _tile(self):
-        # """Returns the level's 2d array of tiles."""
-        # tile_dims = (self._level_size[0] // self.TILE_SIZE,
-        #              self._level_size[1] // self.TILE_SIZE)
-        # tiles = []
-        # for y in range(tile_dims[1]):
-        #     row = []
-        #     for x in range(tile_dims[0]):
-        #         row.append(Tile((x, y), self._colide_list[y][x], None,
-        #                    self._more_info.get("(" + str(x) + "," + str(y) + ")")))
-        #     tiles.append(row)
-        # for tile_row in tiles:
-        #     for tile in tile_row:
-        #         if tile.link is not False:
-        #             tile.link = tiles[tile.link[1]][tile.link[0]]
-        # return tiles
         tiles = []
         with open(join("levels", self.level_name, f"{self.level_name}_tiled.json"), "r") as tile_map_json:
             tile_map = json.load(tile_map_json)['mapArray']
@@ -81,11 +73,18 @@ class Level():
                 else:
                     self.x_offset = 0
                 for x, tile in enumerate(map_row):
-                    row.append(Tile(
-                        (x + self.x_offset, y),
-                        tile['collidable'], None,
-                        self._more_info.get("(" + str(x) + "," + str(y) + ")"),
-                        tile['tileBackground']))
+                    if "(" + str(x) + "," + str(y) + ")" in self._doors:
+                        row.append(DoorMaster((x + self.x_offset, y), tile['tileBackground'], self._doors["(" + str(x) + "," + str(y) + ")"]))
+
+                    elif (x, y) in self._door_dependents:
+                        row.append(DoorDependent((x + self.x_offset, y), tile['tileBackground']))
+
+                    else:
+                        row.append(Tile(
+                            (x + self.x_offset, y),
+                            tile['collidable'], None,
+                            self._more_info.get("(" + str(x) + "," + str(y) + ")"),
+                            tile['tileBackground']))
 
                 for _ in range(self.x_offset):
                     row.insert(0, BlackTile((0, y)))
@@ -170,12 +169,6 @@ class Level():
 
     def draw(self, draw_surface):
         """Draws the level. Calls draw on each of the tiles in the level."""
-        # self.background.draw(draw_surface)
-        # for row in self.tiles:
-        #     for tile in row:
-        #         tile.draw(draw_surface)
-        # self.foreground.draw(draw_surface)
-
         for row in self.tiles:
             for tile in row:
                 tile.draw_background(draw_surface)
@@ -187,9 +180,6 @@ class Level():
         for row in self.tiles:
             for tile in row:
                 tile.draw_foreground(draw_surface)
-
-
-
 
     def update(self, ticks):
         """Updates the level. Updates each of the tiles in the level. If there
@@ -275,10 +265,6 @@ class Tile:
         self.background_tile = TilesetTile(background_info,
                                            [pos[0] * 16, pos[1] * 16])
         self.foreground_tile = self.background_tile.create_foreground()
-        print(self.foreground_tile)
-
-
-
 
     def add_obj(self, obj):
         """Adds an object to a tile. Usually a player or a trainer. If a tile
@@ -349,5 +335,33 @@ class Tile:
 
 class BlackTile(Tile):
     def __init__(self, pos):
-        background_info = {'rowNum': 0, 'columnNum': 0, 'tileSetName': 'black.png'}
+        background_info = {'rowNum': 0, 'columnNum': 0,
+                           'tileSetName': 'black.png'}
         super().__init__(pos, 1, None, None, background_info)
+
+
+class DoorTile(Tile):
+    def __init__(self, pos, background_info):
+        self.open = False
+        self.opening = True
+        super().__init__(pos, 1, None, None, background_info)
+
+        # Correct the door tile foreground background pixel
+        self.background_tile = TilesetAnimatedTile(background_info, [pos[0] * 16, pos[1] * 16])
+
+    def update(self, ticks, nearby_tiles):
+        if self.opening:
+            self.background_tile.update(ticks)
+
+        super().update(ticks, nearby_tiles)
+
+
+class DoorMaster(DoorTile):
+    def __init__(self, pos, background_info, dependents):
+        super().__init__(pos, background_info)
+        self.dependents = dependents
+
+
+class DoorDependent(DoorTile):
+    def __init__(self, pos, background_info):
+        super().__init__(pos, background_info)
