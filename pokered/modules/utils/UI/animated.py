@@ -11,7 +11,7 @@ class Animated(Drawable):
       super().__init__(imageName, location, offset)
 
       self._frame = 0
-      self._row = 0
+      self._row = 0 if offset is None else offset[1]
       self._animationTimer = 0
       self._framesPerSecond = 10.0
       self._nFrames = 2
