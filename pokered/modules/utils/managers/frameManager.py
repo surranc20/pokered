@@ -134,9 +134,13 @@ class FrameManager(object):
          return self[fileName]
 
       def _loadImage(self, fileName, sheet=False):
-
+         spriteSize = None
          if fileName[:9] == "tile sets":
             fullImage = image.load(fileName)
+            spriteSize = [16, 16]
+         elif fileName[:5] == "doors":
+            fullImage = image.load(join("images", fileName))
+            spriteSize = [16, 16]
 
          # Load the full image
          else:
@@ -150,7 +154,7 @@ class FrameManager(object):
                fullImage = image.load(join("levels", fileName))
 
          # Look up some information about the image to be loaded
-         transparent = fileName in FrameManager._FM._TRANSPARENCY or "_t" in fileName
+         transparent = fileName in FrameManager._FM._TRANSPARENCY or "_transparent" in fileName
          colorKey = fileName in FrameManager._FM._COLOR_KEY
 
          # Detect if a transparency is needed
@@ -163,9 +167,10 @@ class FrameManager(object):
          if sheet:
 
             self[fileName] = []
-            spriteSize = FrameManager._FM._FRAME_SIZES.get(fileName, FrameManager._FM._DEFAULT_FRAME)
-            if fileName[:9] == "tile sets":
-               spriteSize = [16, 16]
+            if spriteSize is None:
+               spriteSize = FrameManager._FM._FRAME_SIZES.get(fileName, FrameManager._FM._DEFAULT_FRAME)
+
+
 
             sheetDimensions = fullImage.get_size()
 
