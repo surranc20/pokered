@@ -1,6 +1,7 @@
 import pygame
 import pickle
 import json
+import logging
 from os.path import join
 from modules.utils.vector2D import Vector2
 from modules.player import Player
@@ -105,6 +106,19 @@ def main():
     running = True
     game_clock = pygame.time.Clock()
 
+    # Create logger
+    logging.basicConfig(filename="log.log",
+                        filemode='a',
+                        format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                        datefmt='%H:%M:%S',
+                        level=logging.DEBUG)
+    logger = logging.getLogger("Main Logger")
+    handler = logging.FileHandler("log.log")
+    logger.addHandler(handler)
+
+
+
+
     # Main loop
     while running:
         # Draw everything from level
@@ -147,6 +161,10 @@ def main():
         # Update everything
         ticks = game_clock.get_time() / 1000
         response = game.update(ticks)
+        fps = game_clock.get_fps()
+        print(fps)
+        if fps < 55:
+            logger.info(fps)
 
         if response == "RESTART" and running:
             main()
