@@ -7,7 +7,9 @@ class TilesetTile(Drawable):
         "tileset_66.png": {
             (0, 0): (0, 0),
             (1, 0): (1, 0),
-            (1, 32): (2, 0)
+            (1, 32): (2, 0),
+            (2, 32): (3, 0),
+            (0, 10): (4, 0)
         },
         "black.png": {}
     }
@@ -24,11 +26,11 @@ class TilesetTile(Drawable):
         super().__init__(tile_file_name, pos, offset=offset)
 
     def create_foreground(self):
-        tile_file_name = f"{self.tile_file_name[:-4]}_t.png"
-        offset = self.FOREGROUND_LINK[self.tile_info["tileSetName"]].get(self.offset)
+        tile_file_name = f"{self.tile_file_name[:-4]}_transparent.png"
+        offset = \
+            self.FOREGROUND_LINK[self.tile_info["tileSetName"]].get(self.offset)
 
         if offset is None:
             return None
         else:
             return Drawable(tile_file_name, self.pos, offset=offset)
-
