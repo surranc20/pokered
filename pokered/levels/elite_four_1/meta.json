@@ -36,5 +36,9 @@
         [1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1]
     ],
+    "doors": {
+        "(6,2)": {"destination": "elite_four_2", "dependents": [[6, 1]]},
+        "(6,11)": {"destination": null, "dependents": [[6, 12], [5, 11], [5, 12], [7, 11], [7, 12]]}
+    },
     "scripts": ["entry_script.json", "defeat_script.json"]
 }
