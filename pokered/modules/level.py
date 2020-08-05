@@ -41,7 +41,7 @@ class Level():
         # Get all door dependent tiles
         self._door_dependents = set()
         for _, door_dependents in self._doors.items():
-            self._door_dependents.update([tuple(door) for door in door_dependents])
+            self._door_dependents.update([tuple(door) for door in door_dependents["dependents"]])
 
         # Tile the level up into 16x16 tiles.
         self.tiles = self._tile()
@@ -74,7 +74,7 @@ class Level():
                     self.x_offset = 0
                 for x, tile in enumerate(map_row):
                     if "(" + str(x) + "," + str(y) + ")" in self._doors:
-                        row.append(DoorMaster((x + self.x_offset, y), tile['tileBackground'], self._doors["(" + str(x) + "," + str(y) + ")"]))
+                        row.append(DoorMaster((x + self.x_offset, y), tile['tileBackground'], self._doors["(" + str(x) + "," + str(y) + ")"]["dependents"], self._doors["(" + str(x) + "," + str(y) + ")"]["destination"]))
 
                     elif (x, y) in self._door_dependents:
                         row.append(DoorDependent((x + self.x_offset, y), tile['tileBackground']))
@@ -95,6 +95,11 @@ class Level():
             for tile in tile_row:
                 if tile.link is not False:
                     tile.link = tiles[tile.link[1]][tile.link[0]]
+
+        # for door_tile_master, door_tile_info in self._doors.items():
+        #     master_loc = tuple(door_tile_master.strip("(").strip(")").split(","))
+        #     for tile in door_tile_info['dependents']:
+        #         tiles[int(master_loc[1])][int(master_loc[0]) + self.x_offset].dependents.append(tiles[tile[1]][tile[0]])
 
         return tiles
 
@@ -342,24 +347,44 @@ class BlackTile(Tile):
 
 class DoorTile(Tile):
     def __init__(self, pos, background_info):
-        self.open = False
-        self.opening = True
         super().__init__(pos, 1, None, None, background_info)
 
         # Correct the door tile foreground background pixel
         self.background_tile = TilesetAnimatedTile(background_info, [pos[0] * 16, pos[1] * 16])
+        self.foreground_tile = self.background_tile.create_foreground()
+        self.background_tile._animate = False
+        self.foreground_tile._animate = False
 
     def update(self, ticks, nearby_tiles):
-        if self.opening:
-            self.background_tile.update(ticks)
+        if self.background_tile._animate:
+            if self.background_tile._frame == self.background_tile._nFrames - 1:
+                self.background_tile._animationTimer = 0
+                self.background_tile._animate = False
+                self.foreground_tile._animationTimer = 0
+                self.foreground_tile._animate = False
+                self.collidable = False
+            else:
+                self.background_tile.update(ticks)
+                self.foreground_tile.update(ticks)
 
         super().update(ticks, nearby_tiles)
 
+    def open_door(self):
+        self.background_tile._animate = True
+        self.foreground_tile._animate = True
+
+    def close_door(self):
+        self.background_tile._animate = True
+        self.foreground_tile._animate = True
+
 
 class DoorMaster(DoorTile):
-    def __init__(self, pos, background_info, dependents):
+    def __init__(self, pos, background_info, dependents, warp_destination):
         super().__init__(pos, background_info)
         self.dependents = dependents
+        if warp_destination is not None:
+            self.set_warp(warp_destination)
+        self.collidable = True
 
 
 class DoorDependent(DoorTile):

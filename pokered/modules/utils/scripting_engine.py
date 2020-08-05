@@ -20,7 +20,7 @@ class ScriptingEngine():
     SCRIPTING_COMMANDS = ["MOVE", "DIALOGUE", "BATTLE", "TURN", "PLAY_MUSIC",
                           "FOREGROUND_CHANGE", "BACKGROUND_CHANGE", "LOCK",
                           "RELEASE", "PLAY_SOUND", "SET_WARP",
-                          "SET_COLLIDE_STATUS"]
+                          "SET_COLLIDE_STATUS", "CLOSE_DOOR", "OPEN_DOOR"]
 
     def __init__(self, script_name, level):
         """Creates the scripting engine for a given script"""
@@ -113,6 +113,24 @@ class ScriptingEngine():
 
         SoundManager.getInstance().playSound(args[0], sound=1)
         return True
+
+    def open_door(self, args):
+        print(len(args))
+        if len(args) != 1:
+            raise Exception("Expected args of len 1:", args)
+
+        door_pos = make_tuple(args[0])
+
+        self._level.tiles[door_pos[1]][door_pos[0] + self._level.x_offset].open_door()
+        dependents = self._level.tiles[door_pos[1]][door_pos[0] + self._level.x_offset].dependents
+
+        for door_tile in dependents:
+            self._level.tiles[door_tile[1]][door_tile[0] + self._level.x_offset].open_door()
+            print("herez")
+        print("wasdfa")
+
+    def close_door(self, args):
+        pass
 
     def foreground_change(self, args):
         """Changes the foreground image to the one specefied in args"""
