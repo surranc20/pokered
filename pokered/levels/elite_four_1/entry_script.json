@@ -1,5 +1,5 @@
 [
     "MOVE PLAYER (6,7)",
-    "FOREGROUND_CHANGE level_foreground_closed.png",
+    "OPEN_DOOR (6,2)",
     "PLAY_SOUND firered_0026.wav"
 ]
