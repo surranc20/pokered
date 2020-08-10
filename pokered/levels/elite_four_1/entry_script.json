@@ -1,5 +1,4 @@
 [
     "MOVE PLAYER (6,7)",
-    "OPEN_DOOR (6,2)",
-    "PLAY_SOUND firered_0026.wav"
+    "CLOSE_DOOR (6,11)"
 ]
