@@ -6,7 +6,7 @@ from .drawable import Drawable
 
 class Animated(Drawable):
 
-   def __init__(self, imageName, location, offset=(0,0)):
+   def __init__(self, imageName, location, offset=(0,0), backwards=False, instant=False):
       """Simple Animated class that extends drawable. Is the same as what we have used in class."""
       super().__init__(imageName, location, offset)
 
@@ -18,14 +18,25 @@ class Animated(Drawable):
       self._animate = True
       self._current_image_row = 0
       self._flip = False
+      self._instant = instant
+      self.backwards = backwards
+      if self.backwards:
+         self._frame = self._nFrames - 1
+
+      self._start_frame = self._frame
+
 
    def update(self, ticks):
       if self._animate:
          self._animationTimer += ticks
 
-         if self._animationTimer > 1 / self._framesPerSecond:
-            self._frame += 1
-            self._frame %= self._nFrames
+         if self._animationTimer > 1 / self._framesPerSecond or (self._frame == self._start_frame and self._instant):
+            if self.backwards:
+               self._frame -= 1
+               self._frame %= self._nFrames
+            else:
+               self._frame += 1
+               self._frame %= self._nFrames
             self._animationTimer -= 1 / self._framesPerSecond
             self._image = FRAMES.getFrame(self._imageName, (self._frame, self._row))
             self._current_image_row = self._row
@@ -38,6 +49,8 @@ class Animated(Drawable):
 
    def startAnimation(self):
       self._animate = True
+      if self._instant:
+         self._start_frame = self._frame
 
    def stopAnimation(self):
       self._animate = False
