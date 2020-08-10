@@ -34,14 +34,14 @@ class Level():
             self._level_meta = json.load(level_json)
             self._level_size = (self.TILE_SIZE * self._level_meta["size"][0],
                                 self.TILE_SIZE * self._level_meta["size"][1])
-            self._colide_list = self._level_meta["collide_map"]
             self._more_info = self._level_meta.get("more_info", {})
             self._doors = self._level_meta.get("doors")
 
         # Get all door dependent tiles
-        self._door_dependents = set()
+        self._door_dependents = {}
         for _, door_dependents in self._doors.items():
-            self._door_dependents.update([tuple(door) for door in door_dependents["dependents"]])
+            status = door_dependents.get("status", "closed")
+            self._door_dependents.update({tuple(door): status for door in door_dependents["dependents"]})
 
         # Tile the level up into 16x16 tiles.
         self.tiles = self._tile()
@@ -55,6 +55,7 @@ class Level():
         # Get the list of scripts for the level.
         self._scripts = self._level_meta["scripts"]
         self.current_scripting_engine = None
+        self.current_script_line_debug = 0
 
         # If the level has an entry script that activate the script at the
         # start of the level.
@@ -74,10 +75,15 @@ class Level():
                     self.x_offset = 0
                 for x, tile in enumerate(map_row):
                     if "(" + str(x) + "," + str(y) + ")" in self._doors:
-                        row.append(DoorMaster((x + self.x_offset, y), tile['tileBackground'], self._doors["(" + str(x) + "," + str(y) + ")"]["dependents"], self._doors["(" + str(x) + "," + str(y) + ")"]["destination"]))
+                        row.append(DoorMaster((x + self.x_offset, y),
+                                   tile['tileBackground'],
+                                   self._doors["(" + str(x) + "," + str(y) + ")"]["dependents"],
+                                   self._doors["(" + str(x) + "," + str(y) + ")"]["destination"],
+                                   status=self._doors["(" + str(x) + "," + str(y) + ")"].get("status", "closed")))
 
                     elif (x, y) in self._door_dependents:
-                        row.append(DoorDependent((x + self.x_offset, y), tile['tileBackground']))
+                        row.append(DoorDependent((x + self.x_offset, y),
+                                   tile['tileBackground'], status=self._door_dependents[(x, y)]))
 
                     else:
                         row.append(Tile(
@@ -95,11 +101,6 @@ class Level():
             for tile in tile_row:
                 if tile.link is not False:
                     tile.link = tiles[tile.link[1]][tile.link[0]]
-
-        # for door_tile_master, door_tile_info in self._doors.items():
-        #     master_loc = tuple(door_tile_master.strip("(").strip(")").split(","))
-        #     for tile in door_tile_info['dependents']:
-        #         tiles[int(master_loc[1])][int(master_loc[0]) + self.x_offset].dependents.append(tiles[tile[1]][tile[0]])
 
         return tiles
 
@@ -190,6 +191,10 @@ class Level():
         """Updates the level. Updates each of the tiles in the level. If there
         is a current script active, then also update that script."""
         if self.current_scripting_engine is not None:
+            print(ticks)
+            if self.current_script_line_debug != self.current_scripting_engine._script._current_line:
+                print("starting new task")
+                self.current_script_line_debug = self.current_scripting_engine._script._current_line
             response = self.current_scripting_engine.execute_script_line()
             if hasattr(response, "handle_event"):
                 return response
@@ -346,23 +351,66 @@ class BlackTile(Tile):
 
 
 class DoorTile(Tile):
-    def __init__(self, pos, background_info):
+
+    OPENING_SOUNDS = {
+        "tileset_66.png": {
+            (3, 10): "firered_0012.wav"
+        }
+    }
+    CLOSING_SOUNDS = {
+        "tileset_66.png": {
+            (3, 11): "firered_0026.wav",
+            (1, 30): "firered_0026.wav",
+            (4, 30): "firered_0026.wav",
+            (7, 30): "firered_0026.wav"
+        }
+    }
+
+    def __init__(self, pos, background_info, status):
         super().__init__(pos, 1, None, None, background_info)
 
         # Correct the door tile foreground background pixel
         self.background_tile = TilesetAnimatedTile(background_info, [pos[0] * 16, pos[1] * 16])
         self.foreground_tile = self.background_tile.create_foreground()
+
+        # Start the door off in the right position (opened or closed)
+        self.status = status
+        if self.status == "open":
+            self.background_tile._frame = self.background_tile._nFrames - 1
+            self.background_tile.get_current_frame()
+            self.foreground_tile._frame = self.foreground_tile._nFrames - 1
+            self.foreground_tile.get_current_frame()
+            self.collidable = False
+
+        # Doors should not start off animated
         self.background_tile._animate = False
         self.foreground_tile._animate = False
 
+        # Variable to keep track of if door is closing or opening
+        self.opening = False
+        self.closing = False
+
     def update(self, ticks, nearby_tiles):
         if self.background_tile._animate:
-            if self.background_tile._frame == self.background_tile._nFrames - 1:
+            # Door has finished opening
+            if self.opening and self.background_tile._frame == self.background_tile._nFrames - 1:
                 self.background_tile._animationTimer = 0
                 self.background_tile._animate = False
                 self.foreground_tile._animationTimer = 0
                 self.foreground_tile._animate = False
                 self.collidable = False
+                self.opening = False
+
+            # Door has finished closing
+            elif self.closing and self.background_tile._frame == 0:
+                self.background_tile._animationTimer = 0
+                self.background_tile._animate = False
+                self.foreground_tile._animationTimer = 0
+                self.foreground_tile._animate = False
+                self.collidable = True
+                self.closing = False
+                self.status = "closed"
+
             else:
                 self.background_tile.update(ticks)
                 self.foreground_tile.update(ticks)
@@ -370,23 +418,48 @@ class DoorTile(Tile):
         super().update(ticks, nearby_tiles)
 
     def open_door(self):
-        self.background_tile._animate = True
-        self.foreground_tile._animate = True
+        self.opening = True
+        self.background_tile.backwards = False
+        self.foreground_tile.backwards = False
+        self.background_tile.startAnimation()
+        self.foreground_tile.startAnimation()
 
     def close_door(self):
-        self.background_tile._animate = True
-        self.foreground_tile._animate = True
+        self.closing = True
+        self.foreground_tile.backwards = True
+        self.background_tile.backwards = True
+        self.background_tile.startAnimation()
+        self.foreground_tile.startAnimation()
 
 
 class DoorMaster(DoorTile):
-    def __init__(self, pos, background_info, dependents, warp_destination):
-        super().__init__(pos, background_info)
+    def __init__(self, pos, background_info, dependents, warp_destination, status="closed"):
+        super().__init__(pos, background_info, status)
         self.dependents = dependents
         if warp_destination is not None:
             self.set_warp(warp_destination)
-        self.collidable = True
+            if status == "closed":
+                self.collidable = True
+
+        # Get opening and closing sounds
+        door_key = (background_info["columnNum"], background_info["rowNum"])
+
+        self.opening_sound = self.OPENING_SOUNDS[background_info["tileSetName"]].get(door_key)
+        self.closing_sound = self.CLOSING_SOUNDS[background_info["tileSetName"]].get(door_key)
+
+    def update(self, ticks, nearby_tiles):
+        if self.closing and self.background_tile._frame == 0:
+            if self.closing_sound is not None:
+                SoundManager.getInstance().playSound(self.closing_sound, sound=1)
+
+        super().update(ticks, nearby_tiles)
+
+    def open_door(self):
+        if self.opening_sound is not None:
+            SoundManager.getInstance().playSound(self.opening_sound, sound=1)
+        super().open_door()
 
 
 class DoorDependent(DoorTile):
-    def __init__(self, pos, background_info):
-        super().__init__(pos, background_info)
+    def __init__(self, pos, background_info, status="closed"):
+        super().__init__(pos, background_info, status)
