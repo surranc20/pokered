@@ -1,6 +1,4 @@
 [
     "DIALOGUE AGATHA 10",
-    "BACKGROUND_CHANGE level_background_open.png",
-    "PLAY_SOUND firered_0012.wav",
-    "SET_WARP 6 2 elite_four_4"
+    "OPEN_DOOR (6,2)"
 ]
