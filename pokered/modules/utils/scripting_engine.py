@@ -115,22 +115,40 @@ class ScriptingEngine():
         return True
 
     def open_door(self, args):
-        print(len(args))
         if len(args) != 1:
             raise Exception("Expected args of len 1:", args)
 
         door_pos = make_tuple(args[0])
 
-        self._level.tiles[door_pos[1]][door_pos[0] + self._level.x_offset].open_door()
-        dependents = self._level.tiles[door_pos[1]][door_pos[0] + self._level.x_offset].dependents
+        self._level.tiles[door_pos[1]][door_pos[0] +
+                                       self._level.x_offset].open_door()
+        dependents = \
+            self._level.tiles[door_pos[1]][door_pos[0] +
+                                           self._level.x_offset].dependents
 
         for door_tile in dependents:
-            self._level.tiles[door_tile[1]][door_tile[0] + self._level.x_offset].open_door()
-            print("herez")
-        print("wasdfa")
+            self._level.tiles[door_tile[1]][door_tile[0] +
+                                            self._level.x_offset].open_door()
 
     def close_door(self, args):
-        pass
+        if len(args) != 1:
+            raise Exception("Expected args of len 1:", args)
+
+        door_pos = make_tuple(args[0])
+
+        self._level.tiles[door_pos[1]][door_pos[0] +
+                                       self._level.x_offset].close_door()
+        dependents = \
+            self._level.tiles[door_pos[1]][door_pos[0] +
+                                           self._level.x_offset].dependents
+
+        for door_tile in dependents:
+            self._level.tiles[door_tile[1]][door_tile[0] +
+                                            self._level.x_offset].close_door()
+
+        last_tile = self._level.tiles[dependents[0][1]][dependents[1][0] +
+                                                        self._level.x_offset]
+        return last_tile.status == "closed"
 
     def foreground_change(self, args):
         """Changes the foreground image to the one specefied in args"""
