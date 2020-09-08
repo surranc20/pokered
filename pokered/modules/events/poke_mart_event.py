@@ -8,7 +8,7 @@ from ..utils.UI.drawable import Drawable
 from ..utils.UI.quantity_cursor import QuantityCursor
 from ..utils.text_maker import TextMaker
 from ..utils.managers.frameManager import FRAMES
-from ..utils.misc import end_at
+from ..utils.misc import end_at, create_desc_surf as create_item_desc_surf
 from ..utils.UI.text_cursor import TextCursor
 from ..utils.cursor import Cursor
 from ..enumerated.battle_actions import BattleActions
@@ -245,6 +245,9 @@ class PokeMartMenu(Drawable):
         # Create the 5 item surfaces (which says the items name and price).
         self.create_item_surface()
 
+        # Get the description of the first item for sale.
+        self.create_item_desc_surf()
+
         # Instatiate the various sub events.
         self.select_count_event = None
         self.confirm_buy_response = None
@@ -356,6 +359,9 @@ class PokeMartMenu(Drawable):
             # Draw the items and prices.
             draw_surface.blit(self._item_surface, (0, 0))
 
+            # Draw the selected item description and image
+            draw_surface.blit(self.item_desc_surf, (40, 115))
+
             # Draw the cursors.
             self.draw_cursor.draw(draw_surface)
             self.down_bobbing_cursor.draw(draw_surface)
@@ -415,6 +421,7 @@ class PokeMartMenu(Drawable):
             # Update the item cursor and redraw items for sale.
             self.item_cursor.change_cursor_pos(event)
             self.create_item_surface()
+            self.create_item_desc_surf()
 
             # Activate or deactivate down bobbing cursors if neccessary
             self._update_cursor_status()
@@ -483,6 +490,10 @@ class PokeMartMenu(Drawable):
             self.up_bobbing_cursor.activate()
         else:
             self.up_bobbing_cursor.deactivate()
+
+    def create_item_desc_surf(self):
+        item = self._inventory_list[self.item_cursor.cursor]
+        self.item_desc_surf = create_item_desc_surf(item)
 
 
 class SelectCountEvent():
