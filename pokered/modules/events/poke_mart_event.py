@@ -23,7 +23,7 @@ class PokeMartEvent():
 
         # Tracks the status of the event.
         self._is_dead = False
-        self.turned = True
+        self.turned = False
 
         # Variable to track if the initial response box has been cleared.
         self._response_box_cleared = False
@@ -115,7 +115,6 @@ class PokeMartEvent():
                 MartResponseDialogue("21", self._player,
                                      self._clerk,
                                      response_string="BUY SELL SEE YA!")
-
 
     def draw(self, draw_surface):
         """Draws the poke mart menu event based on where the user is in the
