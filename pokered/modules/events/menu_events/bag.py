@@ -23,6 +23,7 @@ class Bag():
 
         self.update_bag_info()
         self.create_cursors()
+        self.create_desc_surf()
 
         self.do_what_response_menu = None
         self.do_what_response = None
@@ -104,6 +105,7 @@ class Bag():
             # Change cursor pos method will update the cursor's position if
             # necessary.
             self.item_cursor.change_cursor_pos(event)
+            self.create_desc_surf()
             self.create_items_surface()
             self.update_bobbbing_cursor_status()
 
@@ -122,6 +124,7 @@ class Bag():
         draw_surface.blit(self.open_bag_surf, (11, 40))
         draw_surface.blit(self.title_surf, (10, 8))
         draw_surface.blit(self.item_surface, (0, 0))
+        draw_surface.blit(self.desc_surf, (40, 115))
         self.draw_cursor.draw(draw_surface)
 
         self.up_bobbing_cursor.draw(draw_surface)
@@ -220,6 +223,16 @@ class Bag():
             self.right_bobbing_cursor.activate()
         else:
             self.right_bobbing_cursor.deactivate()
+
+    def create_desc_surf(self):
+        """Creates the desacription surface for the selected item"""
+        try:
+            description = self.item_list[self.item_cursor.cursor].description
+            text_maker = TextMaker(join("fonts", "menu_font.png"), 200)
+            self.desc_surf = text_maker.get_surface(description)
+
+        except AttributeError:
+            self.desc_surf = pygame.Surface((0, 0))
 
     def _create_title_surf(self):
         """Creates the title surface based on which bag is open."""
