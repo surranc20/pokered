@@ -1,6 +1,6 @@
 import pygame
 from os.path import join
-from ...utils.misc import end_at
+from ...utils.misc import end_at, create_desc_surf as create_item_desc_surf
 from ...utils.cursor import Cursor
 from ...utils.text_maker import TextMaker
 from ...utils.managers.frameManager import FRAMES
@@ -226,13 +226,8 @@ class Bag():
 
     def create_desc_surf(self):
         """Creates the desacription surface for the selected item"""
-        try:
-            description = self.item_list[self.item_cursor.cursor].description
-            text_maker = TextMaker(join("fonts", "menu_font.png"), 200)
-            self.desc_surf = text_maker.get_surface(description)
-
-        except AttributeError:
-            self.desc_surf = pygame.Surface((0, 0))
+        self.desc_surf = \
+            create_item_desc_surf(self.item_list[self.item_cursor.cursor])
 
     def _create_title_surf(self):
         """Creates the title surface based on which bag is open."""
