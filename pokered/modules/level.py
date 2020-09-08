@@ -316,6 +316,7 @@ class Tile:
     def talk_event(self, player):
         """Returns tile's talk event. Will returned linked tile's talk event
         if a link exists."""
+        print(self.background_tile.tile_info)
         if self.link is not False:
             return self.link.talk_event(player)
         elif self._obj is not None and self._obj is not player:
