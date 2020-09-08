@@ -1,3 +1,5 @@
+import json
+from os.path import join
 from .enumerated.item_types import ItemTypes
 
 
@@ -193,6 +195,10 @@ class Item():
         self.name = name
         self.type = self.ITEM_TYPES_DICT[name.lower()]
         self.sell_price = 300
+
+        with open(join("jsons", "item_descriptions.json"), "r") as item_desc_json:
+            descriptions = json.load(item_desc_json)
+            self.description = descriptions[name.lower()]
 
     def __eq__(self, other):
         return isinstance(other, Item) and self.name == other.name
