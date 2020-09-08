@@ -156,13 +156,15 @@ def main():
                 # change the value to False, to exit the main loop
                 running = False
             if (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP):
+                if event.key == pygame.K_m:
+                    pygame.mixer.music.pause()
                 game.handle_event(event)
 
         # Update everything
         ticks = game_clock.get_time() / 1000
         response = game.update(ticks)
         fps = game_clock.get_fps()
-        print(fps)
+        # print(fps)
         if fps < 55:
             logger.info(fps)
 
