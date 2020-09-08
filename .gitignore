@@ -4,5 +4,6 @@ pokered/modules/__pycache__/
 pokered/intro_folder/
 pokered/outro_folder/
 pokered/psd/
+pokered/log.log
 *.py[cod]
 
