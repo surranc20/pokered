@@ -9,7 +9,8 @@ from ..enumerated.battle_actions import BattleActions
 
 
 class ResponseDialogue(Dialogue):
-    def __init__(self, dialogue_id, player, npc, box=0, gender="male", response_string="YES NO", replace=None, dy=0):
+    def __init__(self, dialogue_id, player, npc, box=0, gender="male",
+                 response_string="YES NO", replace=None, dy=0):
         """Creates a Dialogue instance. The dialogue tells the object which
         lines the dialogue consists off. It requires the player and npc to
         passed in so that a battle can be created if necessary. Also, the
@@ -17,7 +18,8 @@ class ResponseDialogue(Dialogue):
         Dialogue will end with a text box question and will store said
         response."""
         self._response_string = response_string
-        super().__init__(dialogue_id, player, npc, box=box, gender=gender, replace=replace, dy=dy)
+        super().__init__(dialogue_id, player, npc, box=box, gender=gender,
+                         replace=replace, dy=dy)
 
         self.response = None
         self.response_menu = None
@@ -54,8 +56,10 @@ class ResponseDialogue(Dialogue):
     def _blit_response(self):
         """Blit the response box as well as the two prompts"""
         self.response_menu = ResizableMenu(2, width=5).menu_surface
-        text_maker = TextMaker(join("fonts", "party_txt_font.png"), max=15, line_height=12)
-        self.response_menu.blit(text_maker.get_surface(self._response_string), (15, 11))
+        text_maker = TextMaker(join("fonts", "party_txt_font.png"), max=15,
+                               line_height=12)
+        self.response_menu.blit(text_maker.get_surface(self._response_string),
+                                (15, 11))
         self.cursor = Cursor(2, initial_pos=(156, 79))
 
     def is_over(self):
