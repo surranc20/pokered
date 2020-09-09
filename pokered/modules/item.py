@@ -1,6 +1,7 @@
 import json
 from os.path import join
 from .enumerated.item_types import ItemTypes
+from .utils.managers.frameManager import FRAMES
 
 
 class Item():
@@ -196,9 +197,16 @@ class Item():
         self.type = self.ITEM_TYPES_DICT[name.lower()]
         self.sell_price = 300
 
-        with open(join("jsons", "item_descriptions.json"), "r") as item_desc_json:
+        with open(join("jsons", "item_descriptions.json"), "r") as \
+                item_desc_json:
             descriptions = json.load(item_desc_json)
             self.description = descriptions[name.lower()]
+
+        with open(join("jsons", "item_offsets.json"), "r") as offsets_json:
+            offset_lookup = json.load(offsets_json)
+            offset = tuple(offset_lookup[name.lower()])
+
+        self.item_surf = FRAMES.getFrame("item_icons.png", offset)
 
     def __eq__(self, other):
         return isinstance(other, Item) and self.name == other.name
@@ -207,4 +215,3 @@ class Item():
         """Hashing is here so that the "same" item is not added to the bag
         multiple times when using an item object as a key."""
         return hash(self.name)
-
