@@ -26,3 +26,12 @@ def create_desc_surf(item):
 
     except AttributeError:
         return pygame.Surface((0, 0))
+
+
+def create_pic_surf(item):
+    """Creates the picture description for the given item"""
+    try:
+        return item.item_surf
+
+    except AttributeError:
+        return pygame.Surface((0, 0))

@@ -1,6 +1,7 @@
 import pygame
 from os.path import join
 from ...utils.misc import end_at, create_desc_surf as create_item_desc_surf
+from ...utils.misc import create_pic_surf as create_item_pic_surf
 from ...utils.cursor import Cursor
 from ...utils.text_maker import TextMaker
 from ...utils.managers.frameManager import FRAMES
@@ -24,6 +25,7 @@ class Bag():
         self.update_bag_info()
         self.create_cursors()
         self.create_desc_surf()
+        self.create_pic_surf()
 
         self.do_what_response_menu = None
         self.do_what_response = None
@@ -106,6 +108,7 @@ class Bag():
             # necessary.
             self.item_cursor.change_cursor_pos(event)
             self.create_desc_surf()
+            self.create_pic_surf()
             self.create_items_surface()
             self.update_bobbbing_cursor_status()
 
@@ -125,6 +128,7 @@ class Bag():
         draw_surface.blit(self.title_surf, (10, 8))
         draw_surface.blit(self.item_surface, (0, 0))
         draw_surface.blit(self.desc_surf, (40, 115))
+        draw_surface.blit(self.pic_surf, (8, 124))
         self.draw_cursor.draw(draw_surface)
 
         self.up_bobbing_cursor.draw(draw_surface)
@@ -225,9 +229,14 @@ class Bag():
             self.right_bobbing_cursor.deactivate()
 
     def create_desc_surf(self):
-        """Creates the desacription surface for the selected item"""
+        """Creates the description surface for the selected item."""
         self.desc_surf = \
             create_item_desc_surf(self.item_list[self.item_cursor.cursor])
+
+    def create_pic_surf(self):
+        """Creates the picture surface for the selected item."""
+        self.pic_surf = \
+            create_item_pic_surf(self.item_list[self.item_cursor.cursor])
 
     def _create_title_surf(self):
         """Creates the title surface based on which bag is open."""
