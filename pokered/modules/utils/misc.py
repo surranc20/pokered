@@ -1,4 +1,3 @@
-import pygame
 from os.path import join
 from .managers.frameManager import FRAMES
 from .text_maker import TextMaker
@@ -19,13 +18,13 @@ def end_at(surf, end_coord):
 
 def create_desc_surf(item):
     """Creates the desacription surface for the given item"""
+    text_maker = TextMaker(join("fonts", "menu_font.png"), 200)
     try:
         description = item.description
-        text_maker = TextMaker(join("fonts", "menu_font.png"), 200)
         return text_maker.get_surface(description)
 
     except AttributeError:
-        return pygame.Surface((0, 0))
+        return text_maker.get_surface("CLOSE BAG")
 
 
 def create_pic_surf(item):
