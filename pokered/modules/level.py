@@ -79,6 +79,7 @@ class Level():
                                    tile['tileBackground'],
                                    self._doors["(" + str(x) + "," + str(y) + ")"]["dependents"],
                                    self._doors["(" + str(x) + "," + str(y) + ")"]["destination"],
+                                   self._doors["(" + str(x) + "," + str(y) + ")"].get("warp_sound"),
                                    status=self._doors["(" + str(x) + "," + str(y) + ")"].get("status", "closed")))
 
                     elif (x, y) in self._door_dependents:
@@ -271,6 +272,10 @@ class Tile:
                 self.link = more_info.split("-")[1].split(",")
                 self.link = tuple(int(x) for x in self.link)
 
+            elif "warp" in more_info:
+                warp_info = more_info.split("-")
+                self.set_warp(warp_info[1], warp_info[2])
+
         # TILEMAP BELOW
         self.background_tile = TilesetTile(background_info,
                                            [pos[0] * 16, pos[1] * 16])
@@ -324,12 +329,17 @@ class Tile:
         else:
             return None
 
-    def set_warp(self, level_name):
+    def set_warp(self, level_name, sound=None):
         """Sets a tile as a warp tile, requires being passed in a level name
         that the player will warp into."""
         self.collidable = False
         self._is_warp = True
         self._warp_level = level_name
+        if sound is not None:
+            if sound == "default":
+                self.warp_sound = "firered_0009.wav"
+            else:
+                self.warp_sound = sound
 
     def warp_triggered(self):
         """Determines if a warp has been triggered."""
@@ -337,6 +347,10 @@ class Tile:
 
     def get_warp_level(self):
         """Return the warp tiles warp level."""
+        try:
+            SoundManager.getInstance().playSound(self.warp_sound, sound=1)
+        except AttributeError:
+            pass
         return self._warp_level
 
     def __repr__(self):
@@ -434,7 +448,8 @@ class DoorTile(Tile):
 
 
 class DoorMaster(DoorTile):
-    def __init__(self, pos, background_info, dependents, warp_destination, status="closed"):
+    def __init__(self, pos, background_info, dependents, warp_destination,
+                 warp_sound, status="closed"):
         super().__init__(pos, background_info, status)
         self.dependents = dependents
         if warp_destination is not None:
@@ -442,11 +457,18 @@ class DoorMaster(DoorTile):
             if status == "closed":
                 self.collidable = True
 
+        if warp_sound is not None:
+            self.warp_sound = warp_sound
+            if self.warp_sound == "default":
+                self.warp_sound = "firered_0009.wav"
+
         # Get opening and closing sounds
         door_key = (background_info["columnNum"], background_info["rowNum"])
 
         self.opening_sound = self.OPENING_SOUNDS[background_info["tileSetName"]].get(door_key)
         self.closing_sound = self.CLOSING_SOUNDS[background_info["tileSetName"]].get(door_key)
+
+
 
     def update(self, ticks, nearby_tiles):
         if self.closing and self.background_tile._frame == 0:

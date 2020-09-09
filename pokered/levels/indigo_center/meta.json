@@ -28,13 +28,12 @@
             }
         }
     ],
-    "doors": {
-
-    },
+    "doors": {},
     "more_info": {
         "(14,11)": "link-14,10",
         "(2,7)": "link-1,7",
-        "(1,8)": "link-1,7"
+        "(1,8)": "link-1,7",
+        "(5,1)": "warp-elite_four_1-default"
     },
-    "scripts": ["entry_script.json"]
+    "scripts": []
 }
