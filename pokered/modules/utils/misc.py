@@ -1,6 +1,6 @@
 import pygame
 from os.path import join
-
+from .managers.frameManager import FRAMES
 from .text_maker import TextMaker
 
 
@@ -34,4 +34,4 @@ def create_pic_surf(item):
         return item.item_surf
 
     except AttributeError:
-        return pygame.Surface((0, 0))
+        return FRAMES.getFrame("back_arrow.png")
