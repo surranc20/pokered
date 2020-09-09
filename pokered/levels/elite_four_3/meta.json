@@ -22,7 +22,7 @@
         }
     ],
     "doors": {
-        "(6,2)": {"destination": "elite_four_4", "dependents": [[6, 1]]},
+        "(6,2)": {"destination": "elite_four_4", "dependents": [[6, 1]], "warp_sound": "default"},
         "(6,11)": {"destination": null, "dependents": [[6, 12], [5, 11], [5, 12], [7, 11], [7, 12]], "status": "open"}
     },
     "scripts": ["entry_script.json", "defeat_script.json"]
