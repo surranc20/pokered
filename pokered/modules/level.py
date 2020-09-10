@@ -6,6 +6,7 @@ from .player import Player
 from .nurse import Nurse
 from .clerk import Clerk
 from .pokemon import Pokemon
+from .events.pc_event import PC_Event
 from .utils.scripting_engine import ScriptingEngine
 from .utils.UI.drawable import Drawable
 from .utils.UI.tileset_tile import TilesetTile
@@ -261,6 +262,7 @@ class Tile:
         self._is_warp = False
         self.collidable = collidable
         self.link = False
+        self.pc = False
         # Some tiles have extra information
         if more_info is not None:
 
@@ -275,6 +277,9 @@ class Tile:
             elif "warp" in more_info:
                 warp_info = more_info.split("-")
                 self.set_warp(warp_info[1], warp_info[2])
+
+            elif "pc" == more_info:
+                self.pc = True
 
         # TILEMAP BELOW
         self.background_tile = TilesetTile(background_info,
@@ -321,11 +326,13 @@ class Tile:
     def talk_event(self, player):
         """Returns tile's talk event. Will returned linked tile's talk event
         if a link exists."""
-        print(self.background_tile.tile_info)
+        print(self.pos)
         if self.link is not False:
             return self.link.talk_event(player)
         elif self._obj is not None and self._obj is not player:
             return self._obj.talk_event(player)
+        elif self.pc:
+            return PC_Event(player)
         else:
             return None
 
