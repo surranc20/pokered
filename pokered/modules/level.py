@@ -6,7 +6,7 @@ from .player import Player
 from .nurse import Nurse
 from .clerk import Clerk
 from .pokemon import Pokemon
-from .events.pc_event import PC_Event
+from .events.pc_event import PCEvent
 from .utils.scripting_engine import ScriptingEngine
 from .utils.UI.drawable import Drawable
 from .utils.UI.tileset_tile import TilesetTile
@@ -380,7 +380,7 @@ class PCTile(Tile):
 
     def talk_event(self, player):
         self.is_on = True
-        return PC_Event(player, self.pos)
+        return PCEvent(player, self.pos)
 
 
 class DoorTile(Tile):
