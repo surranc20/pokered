@@ -181,4 +181,49 @@ class ChoosePC():
 
 
 class BillsPC():
+    def __init__(self, player):
+        self.player = player
+        self.is_dead = False
+        self.super_kill = False
+
+        # Create the initial prompt to ask user what they want to do in pc
+        self.box_options = ["WITHDRAW POKéMON", "DEPOSIT POKéMON",
+                            "MOVE POKéMON", "MOVE ITEMS", "SEE YA!"]
+        self.response_box = ResponseBox(self.box_options, (1, 1),
+                                        width=16)
+
+        self.dialogue = Dialogue("pc0", self.player, self.player,
+                                 gender=self.player.gender, show_curs=False,
+                                 turn=False)
+
+    def draw(self, draw_surface):
+        self.response_box.draw(draw_surface)
+        self.dialogue.draw(draw_surface)
+
+    def update(self, ticks):
+        self.response_box.update(ticks)
+
+    def handle_event(self, event):
+        if event.type != pygame.KEYDOWN:
+            return
+
+        self.response_box.handle_event(event)
+        self.dialogue = Dialogue(f'pc{self.response_box.cursor.cursor}',
+                                 self.player, self.player,
+                                 gender=self.player.gender, show_curs=False,
+                                 turn=False)
+
+        if self.response_box.is_dead:
+            if self.box_options[self.response_box.cursor.cursor] == "SEE YA!":
+                self.end_event = ChoosePC(self.player)
+            elif self.box_options[self.response_box.cursor.cursor] == \
+                    "WITHDRAW POKéMON":
+                self.end_event = Box(self.player)
+            self.is_dead = True
+
+    def is_over(self):
+        return self.is_dead
+
+
+class Box():
     pass
