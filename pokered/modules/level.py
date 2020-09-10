@@ -37,6 +37,7 @@ class Level():
                                 self.TILE_SIZE * self._level_meta["size"][1])
             self._more_info = self._level_meta.get("more_info", {})
             self._doors = self._level_meta.get("doors")
+            self._pcs = self._level_meta.get("pcs", {})
 
         # Get all door dependent tiles
         self._door_dependents = {}
@@ -87,6 +88,12 @@ class Level():
                         row.append(DoorDependent((x + self.x_offset, y),
                                    tile['tileBackground'], status=self._door_dependents[(x, y)]))
 
+                    elif "(" + str(x) + "," + str(y) + ")" in self._pcs:
+                        row.append(PCTile(
+                            (x + self.x_offset, y),
+                            tile['collidable'], None,
+                            self._more_info.get("(" + str(x) + "," + str(y) + ")"),
+                            tile['tileBackground']))
                     else:
                         row.append(Tile(
                             (x + self.x_offset, y),
@@ -278,9 +285,6 @@ class Tile:
                 warp_info = more_info.split("-")
                 self.set_warp(warp_info[1], warp_info[2])
 
-            elif "pc" == more_info:
-                self.pc = True
-
         # TILEMAP BELOW
         self.background_tile = TilesetTile(background_info,
                                            [pos[0] * 16, pos[1] * 16])
@@ -326,13 +330,11 @@ class Tile:
     def talk_event(self, player):
         """Returns tile's talk event. Will returned linked tile's talk event
         if a link exists."""
-        print(self.pos)
+        print(self.pos, self.background_tile.tile_info)
         if self.link is not False:
             return self.link.talk_event(player)
         elif self._obj is not None and self._obj is not player:
             return self._obj.talk_event(player)
-        elif self.pc:
-            return PC_Event(player)
         else:
             return None
 
@@ -370,6 +372,15 @@ class BlackTile(Tile):
         background_info = {'rowNum': 0, 'columnNum': 0,
                            'tileSetName': 'black.png'}
         super().__init__(pos, 1, None, None, background_info)
+
+
+class PCTile(Tile):
+    def __init__(self, pos, collidable, obj, more_info, background_info):
+        super().__init__(pos, collidable, obj, more_info, background_info)
+
+    def talk_event(self, player):
+        self.is_on = True
+        return PC_Event(player, self.pos)
 
 
 class DoorTile(Tile):
