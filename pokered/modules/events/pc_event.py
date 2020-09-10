@@ -4,10 +4,13 @@ from ..utils.UI.tileset_tile import TilesetTile
 from ..utils.managers.soundManager import SoundManager
 
 
-class PC_Event():
+class PCEvent():
     def __init__(self, player, pc_pos):
         self.player = player
         self.is_dead = False
+        self.shutting_down = False
+        self.turned = True
+
         self.pc_pos = pc_pos
 
         # Create the initial prompt to ask user what they want to do in pc
@@ -20,8 +23,14 @@ class PC_Event():
         self.active_sub_event.update(ticks)
 
         if self.active_sub_event.is_over():
-            if self.active_sub_event.super_kill:
+            if self.shutting_down:
                 self.is_dead = True
+
+            elif self.active_sub_event.super_kill:
+                self.shutting_down = True
+                self.turned = False
+                self.active_sub_event = TurnOff(self.player, self.pc_pos)
+
             else:
                 self.active_sub_event = self.active_sub_event.end_event
 
@@ -36,6 +45,41 @@ class PC_Event():
 
     def get_end_event(self):
         return "Level"
+
+
+class TurnOff():
+    def __init__(self, player, pc_pos):
+        self.player = player
+        self.is_dead = False
+        self.super_kill = False
+        self.end_event = None
+
+        self.end_timer = .2
+
+        self.pc_pos = pc_pos
+        self.screen_tile_info = {"rowNum": 12, "columnNum": 3,
+                                 "tileSetName": "tileset_12.png"}
+
+        self.screen = TilesetTile(self.screen_tile_info,
+                                  [pc_pos[0] * 16, pc_pos[1] * 16])
+
+        SoundManager.getInstance().playSound("firered_0003.wav", sound=1)
+
+    def draw(self, draw_surface):
+        self.screen.draw(draw_surface)
+        self.player.draw(draw_surface)
+
+    def update(self, ticks):
+        if self.end_timer > 0:
+            self.end_timer -= ticks
+        else:
+            self.is_dead = True
+
+    def handle_event(self, event):
+        pass
+
+    def is_over(self):
+        return self.is_dead
 
 
 class TurnOn():

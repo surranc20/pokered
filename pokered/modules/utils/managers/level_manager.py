@@ -4,6 +4,7 @@ from ...battle.battle import Battle
 from ...events.dialogue import Dialogue
 from ...events.nurse_heal import NurseHeal
 from ...events.poke_mart_event import PokeMartEvent
+from ...events.pc_event import PCEvent
 from ...events.menu import Menu
 from ...events.movie import Movie
 from ..scripting_engine import ScriptingEngine
@@ -36,7 +37,8 @@ class LevelManager(object):
         else:
             # Need to redraw once after starting a dialogue so we can draw the
             # turned npc
-            if type(self._active_event) in [Dialogue, NurseHeal, PokeMartEvent] and \
+            if type(self._active_event) in [Dialogue, NurseHeal, PokeMartEvent,
+                                            PCEvent] and \
                     self._active_event.turned is False:
                 print(f"turned!: {self._active_event}")
                 self._level.draw(draw_surface)
