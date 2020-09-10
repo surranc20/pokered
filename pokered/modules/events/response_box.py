@@ -51,3 +51,6 @@ class ResponseBox():
         elif event.key == BattleActions.SELECT.value:
             self.response = self.cursor.cursor
             self.is_dead = True
+
+    def update(self, ticks):
+        pass
