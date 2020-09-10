@@ -31,5 +31,10 @@
     "30": ["<replace>? How many would you like to sell?", "False"],
     "31": ["I can pay <replace>. Would that be okay?", "False"],
     "32": ["Turned over the <replace>(s) worth <replace>.", "False"],
-    "33": ["Which PC should be accessed?", "False"]
+    "33": ["Which PC should be accessed?", "False"],
+    "pc0": ["You can withdraw a POKéMON if you have any in a BOX.", "False"],
+    "pc1": ["You can deposit your party POKéMON in any BOX.", "False"],
+    "pc2": ["You can move POKéMON that are stored in any BOX.", "False"],
+    "pc3": ["You can move items held by any POKéMON in a BOX or your party.", "False"],
+    "pc4": ["See you later!", "False"]
 }
