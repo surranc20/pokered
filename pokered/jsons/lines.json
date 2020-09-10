@@ -30,5 +30,6 @@
     "29": ["<replace>? Oh, no. I can't buy that.", "False"],
     "30": ["<replace>? How many would you like to sell?", "False"],
     "31": ["I can pay <replace>. Would that be okay?", "False"],
-    "32": ["Turned over the <replace>(s) worth <replace>.", "False"]
+    "32": ["Turned over the <replace>(s) worth <replace>.", "False"],
+    "33": ["Which PC should be accessed?", "False"]
 }
