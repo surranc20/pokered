@@ -33,8 +33,8 @@
         "(14,11)": "link-14,10",
         "(2,7)": "link-1,7",
         "(1,8)": "link-1,7",
-        "(5,1)": "warp-elite_four_1-default",
-        "(18,9)": "pc"
+        "(5,1)": "warp-elite_four_1-default"
     },
+    "pcs": {"(18,9)":""},
     "scripts": []
 }
