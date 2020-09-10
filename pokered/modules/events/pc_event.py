@@ -1,5 +1,6 @@
 import pygame
 from .response_box import ResponseBox
+from .dialogue import Dialogue
 from ..utils.UI.tileset_tile import TilesetTile
 from ..utils.managers.soundManager import SoundManager
 
@@ -147,12 +148,15 @@ class ChoosePC():
         self.super_kill = False
 
         # Create the initial prompt to ask user what they want to do in pc
-        self.response_box = ResponseBox(["BILL'S PC", "PLAYER's PC",
-                                         "PROF. OAK's PC", "HALL OF FAME",
-                                         "LOG OFF"], (1, 1), width=16)
+        self.response_box = ResponseBox(self.player.pc_options, (1, 1),
+                                        width=16)
+        self.dialogue = Dialogue("33", self.player, self.player,
+                                 gender=self.player.gender, show_curs=False,
+                                 turn=False)
 
     def draw(self, draw_surface):
         self.response_box.draw(draw_surface)
+        self.dialogue.draw(draw_surface)
 
     def update(self, ticks):
         self.response_box.update(ticks)
@@ -164,10 +168,17 @@ class ChoosePC():
         self.response_box.handle_event(event)
 
         if self.response_box.is_dead:
-            if self.response_box.cursor.cursor == \
-                    self.response_box.cursor._max_value - 1:
+            if self.player.pc_options[self.response_box.cursor.cursor] == \
+                    "LOG OFF":
                 self.super_kill = True
+            elif self.player.pc_options[self.response_box.cursor.cursor] == \
+                    "BILL'S PC":
+                self.end_event = BillsPC(self.player)
             self.is_dead = True
 
     def is_over(self):
         return self.is_dead
+
+
+class BillsPC():
+    pass
