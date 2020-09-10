@@ -140,7 +140,7 @@ class FrameManager(object):
          if fileName[:9] == "tile sets":
             fullImage = image.load(fileName)
             spriteSize = [16, 16]
-         elif fileName[:5] == "doors":
+         elif fileName[:8] == "animated":
             fullImage = image.load(join("images", fileName))
             spriteSize = [16, 16]
 
