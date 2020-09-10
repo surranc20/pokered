@@ -34,6 +34,10 @@ class Player(Trainer):
         self.has_first_pokemon = True
         self.bag = Bag()
 
+        self.pc_options = ["BILL'S PC", f"{name.upper()}'s PC",
+                           "PROF. OAK's PC", "HALL OF FAME",
+                           "LOG OFF"]
+
     def handle_event(self, event, nearby_tiles):
         """Handles the events from the level manager. Is capable of taking
         control away from the player if a movement scipt is active."""
