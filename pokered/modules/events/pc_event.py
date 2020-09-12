@@ -1,8 +1,15 @@
 import pygame
+from os.path import join
 from .response_box import ResponseBox
 from .dialogue import Dialogue
+from ..battle.battle_menus.poke_party import BouncingPokemon
 from ..utils.UI.tileset_tile import TilesetTile
+from ..utils.UI.text_cursor import TextCursor
 from ..utils.managers.soundManager import SoundManager
+from ..utils.managers.frameManager import FRAMES
+from ..utils.text_maker import TextMaker
+from ..utils.misc import center
+from ..enumerated.battle_actions import BattleActions
 
 
 class PCEvent():
@@ -218,12 +225,153 @@ class BillsPC():
                 self.end_event = ChoosePC(self.player)
             elif self.box_options[self.response_box.cursor.cursor] == \
                     "WITHDRAW POKéMON":
-                self.end_event = Box(self.player)
+                self.end_event = BoxScreen(self.player)
             self.is_dead = True
 
     def is_over(self):
         return self.is_dead
 
 
+class BoxScreen():
+    def __init__(self, player, box_number=0):
+        self.player = player
+        self.is_dead = False
+        self.super_kill = False
+
+        self.pc_background = FRAMES.getFrame(join("pc", "pc_background.png"))
+        self.box_header = BoxHeader(box_number)
+        self.close_box = BoxButton(join("pc", "close_box.png"), (170, 0))
+        self.box = Box(player, box_number)
+
+        self.party_pokemon = BoxButton(join("pc", "party_pokemon.png"),
+                                       (83, 0))
+
+    def draw(self, draw_surface):
+        draw_surface.blit(self.pc_background, (0, 0))
+        self.box_header.draw(draw_surface)
+        self.box.draw(draw_surface)
+        self.close_box.draw(draw_surface)
+        self.party_pokemon.draw(draw_surface)
+
+    def update(self, ticks):
+        self.box_header.update(ticks)
+
+    def handle_event(self, event):
+        self.box.handle_event(event)
+
+    def is_over(self):
+        return self.is_dead
+
+
 class Box():
-    pass
+    def __init__(self, player, box_number=0):
+        self.player = player
+        offset = (box_number % 4, box_number // 4)
+        self.box_background = \
+            FRAMES.getFrame(join("pc", "box_backgrounds.png"),
+                            offset)
+
+        self.cursor_pos = (0, 0)
+        self.create_pokemon_surface()
+
+        self.hand = FRAMES.getFrame(join("pc", "hands.png"), (0, 0))
+        self.cursor_pos = [0, 0]
+
+    def draw(self, draw_surface):
+        draw_surface.blit(self.box_background, (84, 43))
+        draw_surface.blit(self.pokemon_surface, (83, 25))
+        draw_surface.blit(self.hand,
+                          (90 + self.cursor_pos[0] * 25,
+                           25 + self.cursor_pos[1] * 24))
+
+    def create_pokemon_surface(self):
+        self.pokemon_surface = pygame.Surface((156, 130))
+        self.pokemon_surface.set_colorkey((0, 0, 0))
+        for y, row in enumerate(self.player.pc_boxes):
+            for x, pokemon in enumerate(row):
+                if pokemon is not None:
+                    poke = BouncingPokemon(pokemon, (25 * x, 24 * y))
+                    poke._world_bound = False
+                    poke.draw(self.pokemon_surface)
+
+    def handle_event(self, event):
+        if event.key == BattleActions.UP.value:
+            if self.cursor_pos[1] > 0:
+                self.cursor_pos[1] -= 1
+        elif event.key == BattleActions.DOWN.value:
+            if self.cursor_pos[1] < 4:
+                self.cursor_pos[1] += 1
+        elif event.key == BattleActions.LEFT.value:
+            if self.cursor_pos[0] > 0:
+                self.cursor_pos[0] -= 1
+        elif event.key == BattleActions.RIGHT.value:
+            if self.cursor_pos[0] < 5:
+                self.cursor_pos[0] += 1
+
+
+class BoxButton():
+    def __init__(self, button_path, pos):
+        self.pos = pos
+        self.button_path = button_path
+        self.selected = False
+
+        self.button_image = FRAMES.getFrame(button_path, offset=(0, 0))
+
+    def toggle(self):
+        self.selected = not self.selected
+        if self.selected:
+            self.button_image = \
+                FRAMES.getFrame(self.button_path, offset=(1, 0))
+        else:
+            self.button_image = \
+                FRAMES.getFrame(self.button_path, offset=(0, 0))
+
+    def draw(self, draw_surface):
+        draw_surface.blit(self.button_image, self.pos)
+
+
+class BoxHeader():
+    def __init__(self, box_number):
+        self.selected = False
+
+        offset = (box_number % 4, box_number // 4)
+        self.header_image = FRAMES.getFrame(join("pc", "box_headers.png"),
+                                            offset)
+
+        self.left_arrow = TextCursor((90, 23),
+                                     name=join("pc", "box_arrows.png"),
+                                     horizontal=True, offset=(0, 0),
+                                     invert=True)
+
+        self.right_arrow = TextCursor((226, 23),
+                                      name=join("pc", "box_arrows.png"),
+                                      horizontal=True, offset=(1, 0))
+
+        right_arrow_color_key = self.right_arrow._image.get_at((7, 0))
+        self.right_arrow._image.set_colorkey(right_arrow_color_key)
+
+        self.left_arrow.activate()
+        self.right_arrow.activate()
+
+        self.make_title_surf()
+
+    def draw(self, draw_surface):
+        draw_surface.blit(self.header_image, (100, 18))
+        self.left_arrow.draw(draw_surface)
+        self.right_arrow.draw(draw_surface)
+        draw_surface.blit(self.title_surf,
+                          center(self.title_surf, 100, 224, 22))
+
+    def update(self, ticks):
+        self.left_arrow.update(ticks)
+        self.right_arrow.update(ticks)
+
+    def toggle(self):
+        self.left_arrow.reset()
+        self.right_arrow.reset()
+        self.left_arrow.should_update = not self.left_arrow.should_update
+        self.right_arrow.should_update = not self.right_arrow.should_update
+
+    def make_title_surf(self):
+        text_maker = TextMaker(join("fonts", "menu_font.png"), 240)
+        self.title_surf = text_maker.get_surface("TESTING")
