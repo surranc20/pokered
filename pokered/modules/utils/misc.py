@@ -16,6 +16,11 @@ def end_at(surf, end_coord):
     return start_pos
 
 
+def center(surf, start_x, end_x, y):
+    width = end_x - start_x
+    return (((width - surf.get_width()) // 2) + start_x, y)
+
+
 def create_desc_surf(item):
     """Creates the desacription surface for the given item"""
     text_maker = TextMaker(join("fonts", "menu_font.png"), 200)
