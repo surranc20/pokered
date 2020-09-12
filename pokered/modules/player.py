@@ -1,6 +1,7 @@
 import pygame
 from .events.menu import Menu
 from .trainer import Trainer
+from .pokemon import Pokemon
 from .bag import Bag
 from .enumerated.cardinality import Cardinality
 from .enumerated.battle_actions import BattleActions
@@ -37,6 +38,9 @@ class Player(Trainer):
         self.pc_options = ["BILL'S PC", f"{name.upper()}'s PC",
                            "PROF. OAK's PC", "HALL OF FAME",
                            "LOG OFF"]
+
+        self.pc_boxes = [[Pokemon("pikachu")] * 6] * 5
+
 
     def handle_event(self, event, nearby_tiles):
         """Handles the events from the level manager. Is capable of taking
