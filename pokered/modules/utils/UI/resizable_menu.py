@@ -43,7 +43,6 @@ class ResizableMenu():
         top_right = FRAMES.getFrame("menu_parts.png", offset=(2, 0))
         self.menu_surface.blit(top_left, (0, 0))
 
-
         # Create the middle rows
         white_blob = FRAMES.getFrame("menu_parts.png", offset=(1, 1))
         mid_left = FRAMES.getFrame("menu_parts.png", offset=(0, 1))
@@ -74,4 +73,3 @@ class ResizableMenu():
             self.menu_surface.blit(bottom_mid, (width, current_y))
             width += 8
         self.menu_surface.blit(bottom_right, (width, current_y))
-

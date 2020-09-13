@@ -46,7 +46,7 @@ class TilesetTile(Drawable):
     def create_foreground(self):
         tile_file_name = f"{self.tile_file_name[:-4]}_transparent.png"
         offset = \
-            self.FOREGROUND_LINK[self.tile_info["tileSetName"]].get(self.offset)
+            self.FOREGROUND_LINK[self.tile_info["tileSetName"]].get(self.offset)  # NOQA
 
         if offset is None:
             return None
