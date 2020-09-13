@@ -70,6 +70,7 @@ class TextMaker():
                     text_surface.blit(font_char, (x_pos, y_pos + y_offset))
                     x_pos += self.SPACES_DICT[self._font_name].get(
                         str(char), default_char_len)
+
                 elif char.isalnum():
                     if char.isupper():
                         ascii_num = 65

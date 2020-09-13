@@ -41,7 +41,6 @@ class Player(Trainer):
 
         self.pc_boxes = [[Pokemon("pikachu")] * 6] * 5
 
-
     def handle_event(self, event, nearby_tiles):
         """Handles the events from the level manager. Is capable of taking
         control away from the player if a movement scipt is active."""
@@ -94,18 +93,15 @@ class Player(Trainer):
         # If no more wasd keys are held down then the player stops moving
         if event.type == pygame.KEYUP and event.key in \
                 [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d]:
-            if (event.key == pygame.K_w and self._orientation == Cardinality.NORTH) or \
-                    (event.key == pygame.K_s and self._orientation == Cardinality.SOUTH) or \
-                    (event.key == pygame.K_d and self._orientation == self._orientation.EAST) or \
-                    (event.key == pygame.K_a and self._orientation == Cardinality.WEST):
+            if self.input_matches_travel(event):
 
                 # Make sure that no other wasd key is pressed. If one is, then
                 # start moving in that direction.
                 still_pressed = [x for x in pygame.key.get_pressed() if x in
-                                 [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d]]
+                                 [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d]]  # NOQA
                 if still_pressed != []:
                     return self.move(pygame.event.Event(pygame.KEYDOWN,
-                                                        {key: still_pressed[0]}))
+                                                        {key: still_pressed[0]}))  # NOQA
                 else:
                     self._moving = False
                     self._key_down_timer = 0
@@ -150,3 +146,15 @@ class Player(Trainer):
         """Returns the level of the player's highest level pokemon (that
         is in their current party)."""
         return max(pokemon.lvl for pokemon in self.pokemon_team)
+
+    def input_matches_travel(self, event):
+        """Return true if the user is going up and pressing 'w' or 's' and
+        south...Otherwise return false."""
+        return (event.key == pygame.K_w and
+                self._orientation == Cardinality.NORTH) or \
+            (event.key == pygame.K_s and
+                self._orientation == Cardinality.SOUTH) or \
+            (event.key == pygame.K_d and
+                self._orientation == self._orientation.EAST) or \
+            (event.key == pygame.K_a and
+                self._orientation == Cardinality.WEST)

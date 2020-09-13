@@ -43,9 +43,3 @@ class Move:
     def reset_pp(self):
         """Refills the move's pp."""
         self.current_pp = self.max_pp
-
-
-
-
-
-

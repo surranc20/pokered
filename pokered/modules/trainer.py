@@ -122,7 +122,7 @@ class Trainer(NPC):
             if self.post_battle_dialogue_id is not None:
                 self.battle_image = \
                     Drawable(join("trainers", self.name.lower() + "_b.png"),
-                            Vector2(240, 10))
+                             Vector2(240, 10))
         else:
             self.battle_image = \
                 Drawable(join("battle", "trainer_toss_anim.png"),
@@ -274,5 +274,3 @@ class Trainer(NPC):
         """Returns the amount of money that the trainer type pays out after a
         loss."""
         return self.pokemon_team[-1].lvl * self.BASE_PAYOUT[self.trainer_type]
-
-
