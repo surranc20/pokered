@@ -12,7 +12,8 @@ class WhiteOut():
         presses enter."""
         self._player = player
         self._white_out_surface = pygame.Surface((240, 160))
-        self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"), 15)
+        self._font = pygame.font.Font(join("fonts", "pokemon_fire_red.ttf"),
+                                      15)
         self._blit_line()
         self._is_over = False
 

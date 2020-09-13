@@ -12,12 +12,14 @@ class Pokemon(Drawable):
     PLAYER_POKE_POS = Vector2(36, 48)
     ENEMY_POKE_POS = Vector2(148, 6)
 
-    def __init__(self, pokemon_name, enemy=False, gender="male", move_set=None):
+    def __init__(self, pokemon_name, enemy=False, gender="male",
+                 move_set=None):
         """Creates an instance of a pokemon. Requires the pokemon name in all
         lowercase as well as if the pokemon belongs to an enemy. Also requires
         the gender of the pokemon. Can provide a list of the pokemon's
         moves right in the constructor as well."""
-        with open(join("jsons", "pokemon_lookup.json"), "r") as pokemon_lookup_json:
+        with open(join("jsons",
+                       "pokemon_lookup.json"), "r") as pokemon_lookup_json:
             pokemon_lookup = json.load(pokemon_lookup_json)
             _lookup = tuple(pokemon_lookup[pokemon_name])
         _pos = self.PLAYER_POKE_POS if not enemy else self.ENEMY_POKE_POS
@@ -38,19 +40,19 @@ class Pokemon(Drawable):
         self.status = []
         self.enemy = enemy
         self.stats = {
-            "LVL" : 62,
+            "LVL": 62,
             "HP": 147,
-            "Current HP" : 147,
+            "Current HP": 147,
             "Attack": 49,
             "Defense": 49,
             "Sp. Attack": 100,
             "Sp. Defense": 117,
-            "Speed": 45
-        }
+            "Speed": 45}
 
         # Summary image
-        self.summary_image = FRAMES.getFrame(join("pokemon", "pokemon_big.png"),
-                                             offset=_lookup)
+        self.summary_image = \
+            FRAMES.getFrame(join("pokemon", "pokemon_big.png"),
+                            offset=_lookup)
 
         # Get the type of the pokemon.
         with open(join("jsons", "pokemon.json"), "r") as pokemon_json:

@@ -43,7 +43,8 @@ class Level():
         self._door_dependents = {}
         for _, door_dependents in self._doors.items():
             status = door_dependents.get("status", "closed")
-            self._door_dependents.update({tuple(door): status for door in door_dependents["dependents"]})
+            door_set = {tuple(door): status for door in door_dependents["dependents"]}  # NOQA
+            self._door_dependents.update(door_set)
 
         # Tile the level up into 16x16 tiles.
         self.tiles = self._tile()
@@ -67,7 +68,8 @@ class Level():
 
     def _tile(self):
         tiles = []
-        with open(join("levels", self.level_name, f"{self.level_name}_tiled.json"), "r") as tile_map_json:
+        with open(join("levels", self.level_name,
+                       f"{self.level_name}_tiled.json"), "r") as tile_map_json:
             tile_map = json.load(tile_map_json)['mapArray']
             for y, map_row in enumerate(tile_map):
                 row = []
@@ -76,29 +78,34 @@ class Level():
                 else:
                     self.x_offset = 0
                 for x, tile in enumerate(map_row):
-                    if "(" + str(x) + "," + str(y) + ")" in self._doors:
+                    more_info =\
+                         self._more_info.get("(" + str(x) + "," + str(y) + ")")
+                    str_location = "(" + str(x) + "," + str(y) + ")"
+                    if str_location in self._doors:
+                        door_entry = self._doors[str_location]
                         row.append(DoorMaster((x + self.x_offset, y),
                                    tile['tileBackground'],
-                                   self._doors["(" + str(x) + "," + str(y) + ")"]["dependents"],
-                                   self._doors["(" + str(x) + "," + str(y) + ")"]["destination"],
-                                   self._doors["(" + str(x) + "," + str(y) + ")"].get("warp_sound"),
-                                   status=self._doors["(" + str(x) + "," + str(y) + ")"].get("status", "closed")))
+                                   door_entry["dependents"],
+                                   door_entry["destination"],
+                                   door_entry.get("warp_sound"),
+                                   status=door_entry.get("status", "closed")))
 
                     elif (x, y) in self._door_dependents:
                         row.append(DoorDependent((x + self.x_offset, y),
-                                   tile['tileBackground'], status=self._door_dependents[(x, y)]))
+                                   tile['tileBackground'],
+                                   status=self._door_dependents[(x, y)]))
 
                     elif "(" + str(x) + "," + str(y) + ")" in self._pcs:
                         row.append(PCTile(
                             (x + self.x_offset, y),
                             tile['collidable'], None,
-                            self._more_info.get("(" + str(x) + "," + str(y) + ")"),
+                            more_info,
                             tile['tileBackground']))
                     else:
                         row.append(Tile(
                             (x + self.x_offset, y),
                             tile['collidable'], None,
-                            self._more_info.get("(" + str(x) + "," + str(y) + ")"),
+                            more_info,
                             tile['tileBackground']))
 
                 for _ in range(self.x_offset):
@@ -127,38 +134,42 @@ class Level():
         # Add the player to the level by getting the player's start position
         # from the level's meta data.
         start_pos = self._level_meta["start_location"]
-        self.player.setPosition(self.correct_border_and_heightpos(start_pos, True))
-        self.tiles[self._level_meta["start_location"][1]][start_pos[0] + self.x_offset].add_obj(self.player)
-        self.player.current_tile = self.tiles[start_pos[1]][start_pos[0] + self.x_offset]
+        self.player.setPosition(self.correct_border_and_heightpos(start_pos,
+                                                                  True))
+        tile = self.tiles[self._level_meta["start_location"][1]][start_pos[0] +
+                                                                 self.x_offset]
+        tile.add_obj(self.player)
+        self.player.current_tile = \
+            self.tiles[start_pos[1]][start_pos[0] + self.x_offset]
 
         # Add the rest of the trainers to the level. Get's data from the
         # level's meta data.
         for trainer_args in self._level_meta["trainers"]:
+            pos = self.correct_border_and_heightpos(trainer_args["pos"])
             if trainer_args["name"] == "nurse":
-                train = \
-                    Nurse(self.correct_border_and_heightpos(trainer_args["pos"]),
-                          trainer_args["orientation"])
+                train = Nurse(pos, trainer_args["orientation"])
+
             elif trainer_args["name"] == "clerk":
-                train = \
-                    Clerk(self.correct_border_and_heightpos(trainer_args["pos"]),
-                          trainer_args["orientation"],
-                          trainer_args["inventory"])
-            # elif trainer_args["name"] in ["guard"]:
-            #     train = \
-            #         NPC(trainer_args["name"], trainer_args["pos"],
-            #             trainer_args["orientation"])
+                train = Clerk(pos, trainer_args["orientation"],
+                              trainer_args["inventory"])
             else:
+                # Break these out separately as to keep line lengths managable.
+                battle_dialogue_id = trainer_args.get("battle_dialogue")
+                post_battle_dialogue_id = \
+                    trainer_args.get("post_battle_dialogue")
+                train_type = \
+                    trainer_args.get("trainer_type", trainer_args["name"])
+
                 train = \
-                    Trainer(self.correct_border_and_heightpos(trainer_args["pos"]),
+                    Trainer(pos,
                             trainer_args["name"],
                             trainer_args["orientation"],
                             enemy=True,
                             dialogue_id=trainer_args.get("dialogue"),
-                            battle_dialogue_id=trainer_args.get("battle_dialogue"),
-                            post_battle_dialogue_id=trainer_args.get("post_battle_dialogue"),
+                            battle_dialogue_id=battle_dialogue_id,
+                            post_battle_dialogue_id=post_battle_dialogue_id,
                             gender=trainer_args.get("gender", "male"),
-                            train_type=trainer_args.get("trainer_type", trainer_args["name"])
-                            )
+                            train_type=train_type)
 
                 # If the trainer has an event specified in the meta data then
                 # add that event.
@@ -172,14 +183,15 @@ class Level():
                         new_pokemon = Pokemon(pokemon[0],
                                               enemy=True,
                                               move_set=pokemon[1])
-                        new_pokemon.stats = stat_calc.calculate_main(new_pokemon,
-                                                                     pokemon[2])
+                        new_pokemon.stats = \
+                            stat_calc.calculate_main(new_pokemon, pokemon[2])
                         train.pokemon_team.append(new_pokemon)
 
             # Add the trainer to the tile.
-            self.tiles[trainer_args["pos"][1]][trainer_args["pos"][0] + self.x_offset].add_obj(train)
-            train.current_tile = \
-                self.tiles[trainer_args["pos"][1]][trainer_args["pos"][0] + self.x_offset]
+            tile = self.tiles[trainer_args["pos"][1]][trainer_args["pos"][0] +
+                                                      self.x_offset]
+            tile.add_obj(train)
+            train.current_tile = tile
             self.trainers[train.name] = train
 
     def draw(self, draw_surface):
@@ -200,10 +212,10 @@ class Level():
         """Updates the level. Updates each of the tiles in the level. If there
         is a current script active, then also update that script."""
         if self.current_scripting_engine is not None:
-            print(ticks)
-            if self.current_script_line_debug != self.current_scripting_engine._script._current_line:
-                print("starting new task")
-                self.current_script_line_debug = self.current_scripting_engine._script._current_line
+            if self.current_script_line_debug != \
+                    self.current_scripting_engine._script._current_line:
+                self.current_script_line_debug = \
+                    self.current_scripting_engine._script._current_line
             response = self.current_scripting_engine.execute_script_line()
             if hasattr(response, "handle_event"):
                 return response
@@ -311,7 +323,8 @@ class Tile:
         return not self.collidable
 
     def draw_background(self, draw_surface):
-        """Draws the tile's obj if one exists. First draw background then draw obj."""
+        """Draws the tile's obj if one exists. First draw background then draw
+        obj."""
         self.background_tile.draw(draw_surface)
 
     def draw_foreground(self, draw_surface):
@@ -369,17 +382,19 @@ class Tile:
 
 class BlackTile(Tile):
     def __init__(self, pos):
+        """Creates a black tile."""
         background_info = {'rowNum': 0, 'columnNum': 0,
                            'tileSetName': 'black.png'}
         super().__init__(pos, 1, None, None, background_info)
 
 
 class PCTile(Tile):
+    """Creates a tile which holds a pc."""
     def __init__(self, pos, collidable, obj, more_info, background_info):
         super().__init__(pos, collidable, obj, more_info, background_info)
 
     def talk_event(self, player):
-        self.is_on = True
+        """Returns a PCEvent."""
         return PCEvent(player, self.pos)
 
 
@@ -400,10 +415,15 @@ class DoorTile(Tile):
     }
 
     def __init__(self, pos, background_info, status):
+        """Creates a door tile. Needs to know its position in the tile map,
+        background info (which contains the tile to use from the tileset), and
+        a status (which tells us whether or not the door is open/closed by
+        default)."""
         super().__init__(pos, 1, None, None, background_info)
 
         # Correct the door tile foreground background pixel
-        self.background_tile = TilesetAnimatedTile(background_info, [pos[0] * 16, pos[1] * 16])
+        self.background_tile = TilesetAnimatedTile(background_info,
+                                                   [pos[0] * 16, pos[1] * 16])
         self.foreground_tile = self.background_tile.create_foreground()
 
         # Start the door off in the right position (opened or closed)
@@ -424,9 +444,11 @@ class DoorTile(Tile):
         self.closing = False
 
     def update(self, ticks, nearby_tiles):
+        """Updates the door's opening/closing animation."""
         if self.background_tile._animate:
             # Door has finished opening
-            if self.opening and self.background_tile._frame == self.background_tile._nFrames - 1:
+            if self.opening and self.background_tile._frame == \
+                    self.background_tile._nFrames - 1:
                 self.background_tile._animationTimer = 0
                 self.background_tile._animate = False
                 self.foreground_tile._animationTimer = 0
@@ -451,6 +473,8 @@ class DoorTile(Tile):
         super().update(ticks, nearby_tiles)
 
     def open_door(self):
+        """Opens the door. Tells the animation to go forwards instead of
+        backwards"""
         self.opening = True
         self.background_tile.backwards = False
         self.foreground_tile.backwards = False
@@ -458,6 +482,8 @@ class DoorTile(Tile):
         self.foreground_tile.startAnimation()
 
     def close_door(self):
+        """Closes the door. Tells the animation to roll backwards instead of
+        forwards."""
         self.closing = True
         self.foreground_tile.backwards = True
         self.background_tile.backwards = True
@@ -468,12 +494,15 @@ class DoorTile(Tile):
 class DoorMaster(DoorTile):
     def __init__(self, pos, background_info, dependents, warp_destination,
                  warp_sound, status="closed"):
+        """Creates the tile which is primarilly responsible for controlling
+        all parts of a door (some doors can span multiple tiles)."""
         super().__init__(pos, background_info, status)
         self.dependents = dependents
         if warp_destination is not None:
             self.set_warp(warp_destination)
-            if status == "closed":
-                self.collidable = True
+
+        if status == "closed":
+            self.collidable = True
 
         if warp_sound is not None:
             self.warp_sound = warp_sound
@@ -483,19 +512,22 @@ class DoorMaster(DoorTile):
         # Get opening and closing sounds
         door_key = (background_info["columnNum"], background_info["rowNum"])
 
-        self.opening_sound = self.OPENING_SOUNDS[background_info["tileSetName"]].get(door_key)
-        self.closing_sound = self.CLOSING_SOUNDS[background_info["tileSetName"]].get(door_key)
-
-
+        self.opening_sound = \
+            self.OPENING_SOUNDS[background_info["tileSetName"]].get(door_key)
+        self.closing_sound = \
+            self.CLOSING_SOUNDS[background_info["tileSetName"]].get(door_key)
 
     def update(self, ticks, nearby_tiles):
+        """Updates the door."""
         if self.closing and self.background_tile._frame == 0:
             if self.closing_sound is not None:
-                SoundManager.getInstance().playSound(self.closing_sound, sound=1)
+                SoundManager.getInstance().playSound(self.closing_sound,
+                                                     sound=1)
 
         super().update(ticks, nearby_tiles)
 
     def open_door(self):
+        """Opens the door."""
         if self.opening_sound is not None:
             SoundManager.getInstance().playSound(self.opening_sound, sound=1)
         super().open_door()
@@ -503,4 +535,5 @@ class DoorMaster(DoorTile):
 
 class DoorDependent(DoorTile):
     def __init__(self, pos, background_info, status="closed"):
+        """Creates a door tile which is part of a multi-tile door."""
         super().__init__(pos, background_info, status)
