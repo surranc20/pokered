@@ -35,6 +35,13 @@ class TextCursor(Drawable):
         self._position = pos
         self._anchored_pos = pos
 
+    def set_pos_no_off(self, pos):
+        """Sets the position of the cursor. The parameter expects the position
+        passed in to be the cursors position in the text box. Does not include
+        an offset."""
+        self._position = pos
+        self._anchored_pos = pos
+
     def draw(self, draw_surface):
         """Draws the cursor."""
         if self._is_active:
