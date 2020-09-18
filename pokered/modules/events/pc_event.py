@@ -267,7 +267,7 @@ class BillsPC():
                 self.end_event = ChoosePC(self.player)
             elif self.box_options[self.response_box.cursor.cursor] == \
                     "WITHDRAW POKéMON":
-                self.end_event = BoxScreen(self.player)
+                self.end_event = MoveScreen(self.player)
             self.is_dead = True
 
     def is_over(self):
@@ -275,7 +275,7 @@ class BillsPC():
         return self.is_dead
 
 
-class BoxScreen():
+class MoveScreen():
     def __init__(self, player, box_number=0):
         """The event that takes place when a user is inside a box."""
         self.player = player
@@ -284,27 +284,57 @@ class BoxScreen():
 
         self.pc_background = FRAMES.getFrame(join("pc", "pc_background.png"))
         self.box_header = BoxHeader(box_number)
-        self.close_box = BoxButton(join("pc", "close_box.png"), (170, 0))
+        self.close_box = BoxButtonClose(join("pc", "close_box.png"), (170, 0))
         self.box = Box(player, box_number)
+        self.box.is_dead = False
 
-        self.party_pokemon = BoxButton(join("pc", "party_pokemon.png"),
-                                       (83, 0))
+        self.party_pokemon = BoxButtonParty(join("pc", "party_pokemon.png"),
+                                            (83, 0))
+
+        self.active_event = self.box
+
+        self.move_count = 0
 
     def draw(self, draw_surface):
         """Draws everything."""
         draw_surface.blit(self.pc_background, (0, 0))
+        self.move_count += 1
+        if self.move_count == 240:
+            self.pc_background = FRAMES.reload(join("pc", "pc_background.png"))
+            self.move_count = 0
         self.box_header.draw(draw_surface)
         self.box.draw(draw_surface)
         self.close_box.draw(draw_surface)
         self.party_pokemon.draw(draw_surface)
 
+        if type(self.active_event) == BoxSwitch:
+            self.active_event.draw(draw_surface)
+
     def update(self, ticks):
         """Updates the box header (for the bobbing arrows)."""
-        self.box_header.update(ticks)
+        self.pc_background.scroll(dx=-1, dy=-1)
+        self.active_event.update(ticks)
+        if self.active_event.is_dead:
+            next_event = self.active_event.end_event
+            if type(self.active_event) == BoxSwitch:
+                self.box = self.active_event.new_box
+                self.box_header = self.active_event.new_header
+            if next_event == "BoxHeader":
+                self.active_event = self.box_header
+            elif next_event == "Box":
+                self.active_event = self.box
+            elif next_event == "PartyPokemon":
+                self.active_event = self.party_pokemon
+            elif next_event == "CloseBox":
+                self.active_event = self.close_box
+            elif next_event == "BoxSwitch":
+                self.active_event = BoxSwitch(self.active_event.direction,
+                                              self.box, self.box_header)
+            self.active_event.toggle()
 
     def handle_event(self, event):
         """WIP."""
-        self.box.handle_event(event)
+        self.active_event.handle_event(event)
 
     def is_over(self):
         """Tells PCEvent whether or not the box screen event is over."""
@@ -317,6 +347,8 @@ class Box():
         inside of the box. Also keeps track of the cursor and moves it
         around."""
         self.player = player
+        self.box_number = box_number
+        self.box_pos = [84, 43]
         offset = (box_number % 4, box_number // 4)
         self.box_background = \
             FRAMES.getFrame(join("pc", "box_backgrounds.png"),
@@ -327,14 +359,18 @@ class Box():
 
         self.hand = FRAMES.getFrame(join("pc", "hands.png"), (0, 0))
         self.cursor_pos = [0, 0]
+        self.is_dead = True
 
     def draw(self, draw_surface):
         """Draws everything."""
-        draw_surface.blit(self.box_background, (84, 43))
-        draw_surface.blit(self.pokemon_surface, (83, 25))
-        draw_surface.blit(self.hand,
-                          (90 + self.cursor_pos[0] * 25,
-                           25 + self.cursor_pos[1] * 24))
+        draw_surface.blit(self.box_background, self.box_pos)
+        draw_surface.blit(self.pokemon_surface,
+                          (self.box_pos[0] - 1, self.box_pos[1] - 18))
+
+        if not self.is_dead:
+            draw_surface.blit(self.hand,
+                              (90 + self.cursor_pos[0] * 25,
+                               20 + self.cursor_pos[1] * 24))
 
     def create_pokemon_surface(self):
         """Create the surface that displays all of the pokemon in the box."""
@@ -352,6 +388,9 @@ class Box():
         if event.key == BattleActions.UP.value:
             if self.cursor_pos[1] > 0:
                 self.cursor_pos[1] -= 1
+            else:
+                self.is_dead = True
+                self.end_event = "BoxHeader"
         elif event.key == BattleActions.DOWN.value:
             if self.cursor_pos[1] < 4:
                 self.cursor_pos[1] += 1
@@ -362,21 +401,28 @@ class Box():
             if self.cursor_pos[0] < 5:
                 self.cursor_pos[0] += 1
 
+    def toggle(self):
+        self.is_dead = not self.is_dead
+
+    def update(self, ticks):
+        pass
+
 
 class BoxButton():
     def __init__(self, button_path, pos):
         """Creates a box button (close box/party pokemon)."""
         self.pos = pos
         self.button_path = button_path
-        self.selected = False
+        self.is_dead = True
 
         self.button_image = FRAMES.getFrame(button_path, offset=(0, 0))
+        self.hand = FRAMES.getFrame(join("pc", "hands.png"), (1, 0))
 
     def toggle(self):
         """Image changes appearance based on whether or not the box is
         currently selected. This function toggles the image."""
-        self.selected = not self.selected
-        if self.selected:
+        self.is_dead = not self.is_dead
+        if not self.is_dead:
             self.button_image = \
                 FRAMES.getFrame(self.button_path, offset=(1, 0))
         else:
@@ -387,41 +433,100 @@ class BoxButton():
         """Draws the button."""
         draw_surface.blit(self.button_image, self.pos)
 
+    def update(self, ticks):
+        pass
+
+
+class BoxButtonClose(BoxButton):
+    def __init__(self, button_path, pos):
+        """Custom class for the close button which extends the BoxButton
+        class."""
+        super().__init__(button_path, pos)
+
+    def handle_event(self, event):
+        """Handles events while the user is on the button."""
+        if event.key == BattleActions.DOWN.value:
+            self.toggle()
+            self.end_event = "BoxHeader"
+        elif event.key == BattleActions.LEFT.value:
+            self.toggle()
+            self.end_event = "PartyPokemon"
+
+    def draw(self, draw_surface):
+        """Draw the button and the hand if the button is active."""
+        super().draw(draw_surface)
+        if not self.is_dead:
+            draw_surface.blit(self.hand, (200, 12))
+
+
+class BoxButtonParty(BoxButton):
+    def __init__(self, button_path, pos):
+        """Custom class for the party button which extends the BoxButton
+        class."""
+        super().__init__(button_path, pos)
+
+    def draw(self, draw_surface):
+        """Draws the button and the hand if the button is active."""
+        super().draw(draw_surface)
+        if not self.is_dead:
+            draw_surface.blit(self.hand, (115, 12))
+
+    def handle_event(self, event):
+        """Handles the event for the button."""
+        if event.key == BattleActions.DOWN.value:
+            self.toggle()
+            self.end_event = "BoxHeader"
+        elif event.key == BattleActions.RIGHT.value:
+            self.toggle()
+            self.end_event = "CloseBox"
+
 
 class BoxHeader():
-    def __init__(self, box_number):
+    def __init__(self, box_number, header_pos=[100, 18]):
         """Creates the box header. Depending on whether or not the header is
         selected the arrows on the side will bob in and out."""
-        self.selected = False
+        self.is_dead = True
+        self.header_pos = header_pos
 
+        # Create the surfaces needed for the header
         offset = (box_number % 4, box_number // 4)
         self.header_image = FRAMES.getFrame(join("pc", "box_headers.png"),
                                             offset)
 
-        self.left_arrow = TextCursor((90, 23),
+        self.left_arrow = TextCursor((self.header_pos[0] - 10, 23),
                                      name=join("pc", "box_arrows.png"),
                                      horizontal=True, offset=(0, 0),
                                      invert=True)
 
-        self.right_arrow = TextCursor((226, 23),
+        self.right_arrow = TextCursor((self.header_pos[0] + 126, 23),
                                       name=join("pc", "box_arrows.png"),
                                       horizontal=True, offset=(1, 0))
 
+        self.hand = FRAMES.getFrame(join("pc", "hands.png"), (0, 0))
+
+        # The right arrow needs to set the color key manually because the top
+        # left pixel is part of the image.
         right_arrow_color_key = self.right_arrow._image.get_at((7, 0))
         self.right_arrow._image.set_colorkey(right_arrow_color_key)
 
+        # Activate both cursors so they draw.
         self.left_arrow.activate()
         self.right_arrow.activate()
 
+        # Create the title surface of the box.
         self.make_title_surf()
+        self.title_pos = list(center(self.title_surf, self.header_pos[0],
+                                     self.header_pos[0] + 124, 22))
 
     def draw(self, draw_surface):
         """Draws the header, title of box, and the two arrows."""
-        draw_surface.blit(self.header_image, (100, 18))
+        draw_surface.blit(self.header_image, self.header_pos)
         self.left_arrow.draw(draw_surface)
         self.right_arrow.draw(draw_surface)
-        draw_surface.blit(self.title_surf,
-                          center(self.title_surf, 100, 224, 22))
+        draw_surface.blit(self.title_surf, self.title_pos)
+
+        if not self.is_dead:
+            draw_surface.blit(self.hand, (153, 4))
 
     def update(self, ticks):
         """Updates the bobbing arrows."""
@@ -430,12 +535,86 @@ class BoxHeader():
 
     def toggle(self):
         """Toggles the arrows and resets them back to their start position."""
+        self.is_dead = not self.is_dead
         self.left_arrow.reset()
         self.right_arrow.reset()
-        self.left_arrow.should_update = not self.left_arrow.should_update
-        self.right_arrow.should_update = not self.right_arrow.should_update
 
     def make_title_surf(self):
         """Creates the title of the box."""
         text_maker = TextMaker(join("fonts", "menu_font.png"), 240)
         self.title_surf = text_maker.get_surface("TESTING")
+
+    def handle_event(self, event):
+        if event.key == BattleActions.LEFT.value:
+            self.toggle()
+            self.end_event = "BoxSwitch"
+            self.direction = "left"
+        elif event.key == BattleActions.RIGHT.value:
+            self.toggle()
+            self.end_event = "BoxSwitch"
+            self.direction = "right"
+        elif event.key == BattleActions.UP.value:
+            self.toggle()
+            self.end_event = "PartyPokemon"
+        elif event.key == BattleActions.DOWN.value:
+            self.toggle()
+            self.end_event = "Box"
+
+    def change_pos(self, delta):
+        """Change the positions of all elements of the header."""
+        self.header_pos[0] += delta
+        self.title_pos[0] += delta
+        self.left_arrow.set_pos_no_off([self.left_arrow._position[0] + delta,
+                                        self.left_arrow._position[1]])
+
+        self.right_arrow.set_pos_no_off([self.right_arrow._position[0] + delta,
+                                         self.right_arrow._position[1]])
+
+
+class BoxSwitch():
+    def __init__(self, direction, box, header):
+        """Create a box switch event which transitions between boxes."""
+        self.is_dead = False
+        self.direction = 1 if direction == "right" else -1
+
+        # Grab the header and box that are currently on display
+        self.box = box
+        self.header = header
+
+        # Grab the box that is being transitioned to.
+        box_number = (self.box.box_number + self.direction) % 12
+        header_pos = [270, 18] if direction == "right" else [-70, 18]
+        self.new_header = BoxHeader(box_number, header_pos=header_pos)
+        self.new_box = Box(self.box.player, box_number)
+        self.new_box.box_pos = [254, 43] if direction == "right" else [-86, 43]
+
+        self.timer = 0
+        self.fps = 45
+
+    def draw(self, draw_surface):
+        """Draw the new boxes that are sliding in."""
+        self.new_box.draw(draw_surface)
+        self.new_header.draw(draw_surface)
+
+    def handle_event(self, event):
+        """The player should not be able to do anything during the
+        transition."""
+        pass
+
+    def update(self, ticks):
+        """Updates the positions of the boxes and headers."""
+        self.timer += ticks
+        if self.timer > 1 / self.fps:
+            self.timer -= 1 / self.fps
+            self.box.box_pos[0] -= 5 * self.direction
+            self.new_box.box_pos[0] -= 5 * self.direction
+            self.header.change_pos(-5 * self.direction)
+            self.new_header.change_pos(-5 * self.direction)
+
+        if self.new_box.box_pos[0] == 84:
+            self.is_dead = True
+            self.end_event = "BoxHeader"
+
+    def toggle(self):
+        """Toggle does not need to do anything this event."""
+        pass
