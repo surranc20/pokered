@@ -211,7 +211,7 @@ class FrameManager(object):
          """This is a hack that I currently need becuase of the way PokeInfo is implemented.
          It resets the surfaces for a given filename"""
          self._surfaces.pop(fileName)
-         return self.getFrame(fileName, offset=offset)
+         return self.getFrame(fileName, offset=offset if offset is not False else None)
 
       def get_frame_size(self, file_name):
          return self._FRAME_SIZES[file_name]
