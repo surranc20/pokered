@@ -36,5 +36,6 @@
     "pc1": ["You can deposit your party POKéMON in any BOX.", "False"],
     "pc2": ["You can move POKéMON that are stored in any BOX.", "False"],
     "pc3": ["You can move items held by any POKéMON in a BOX or your party.", "False"],
-    "pc4": ["See you later!", "False"]
+    "pc4": ["See you later!", "False"],
+    "34": ["Exit from the BOX.", "False"]
 }
