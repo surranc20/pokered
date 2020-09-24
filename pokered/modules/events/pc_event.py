@@ -5,6 +5,7 @@ from .dialogue import Dialogue
 from ..battle.battle_menus.poke_party import BouncingPokemon
 from ..utils.UI.tileset_tile import TilesetTile
 from ..utils.UI.text_cursor import TextCursor
+from ..utils.UI.animated import Animated
 from ..utils.managers.soundManager import SoundManager
 from ..utils.managers.frameManager import FRAMES
 from ..utils.text_maker import TextMaker
@@ -286,7 +287,7 @@ class MoveScreen():
         self.box_header = BoxHeader(box_number)
         self.close_box = BoxButtonClose(join("pc", "close_box.png"), (170, 0))
         self.box = Box(player, box_number)
-        self.box.is_dead = False
+        self.box.toggle()
 
         self.party_pokemon = BoxButtonParty(join("pc", "party_pokemon.png"),
                                             (83, 0))
@@ -303,11 +304,13 @@ class MoveScreen():
             self.pc_background = FRAMES.reload(join("pc", "pc_background.png"))
             self.move_count = 0
         self.box_header.draw(draw_surface)
+        if type(self.active_event) is BoxSwitch:
+            self.active_event.draw(draw_surface)
         self.box.draw(draw_surface)
         self.close_box.draw(draw_surface)
         self.party_pokemon.draw(draw_surface)
 
-        if type(self.active_event) == BoxSwitch:
+        if type(self.active_event) is Exit:
             self.active_event.draw(draw_surface)
 
     def update(self, ticks):
@@ -330,6 +333,8 @@ class MoveScreen():
             elif next_event == "BoxSwitch":
                 self.active_event = BoxSwitch(self.active_event.direction,
                                               self.box, self.box_header)
+            elif next_event == "Exit":
+                self.active_event = Exit(self.player)
             self.active_event.toggle()
 
     def handle_event(self, event):
@@ -339,6 +344,42 @@ class MoveScreen():
     def is_over(self):
         """Tells PCEvent whether or not the box screen event is over."""
         return self.is_dead
+
+
+class PokemonData():
+    def __init__(self, pokemon):
+        self.pokemon = pokemon
+        self.create_surface()
+
+    def draw(self, draw_surface):
+        draw_surface.blit(self.surface, (0, 0))
+        self.lightning_l.draw(draw_surface)
+        self.lightning_r.draw(draw_surface)
+
+    def update(self, ticks):
+        # if self.pokemon is not None:
+        self.lightning_l.update(ticks)
+        self.lightning_r.update(ticks)
+
+    def create_surface(self):
+        self.surface = pygame.Surface((80, 158))
+        self.surface.set_colorkey((0, 0, 0))
+        self.surface.blit(FRAMES.getFrame(join("pc", "pokemon_data.png")),
+                          (0, 2))
+
+        if self.pokemon is not None:
+            self.fill_data()
+        self.lightning_l = Animated(join("pc", "lightning_l.png"), (2, 6))
+        self.lightning_r = Animated(join("pc", "lightning_r.png"), (67, 6))
+        self.lightning_l._nFrames = 3
+        self.lightning_l._framesPerSecond = 7
+        self.lightning_r._nFrames = 3
+        self.lightning_r._framesPerSecond = 7
+        self.lightning_l._world_bound = False
+        self.lightning_r._world_bound = False
+
+    def fill_data(self):
+        self.surface.blit(self.pokemon.summary_image, (10, 10))
 
 
 class Box():
@@ -354,11 +395,12 @@ class Box():
             FRAMES.getFrame(join("pc", "box_backgrounds.png"),
                             offset)
 
-        self.cursor_pos = (0, 0)
+        self.cursor_pos = [0, 0]
         self.create_pokemon_surface()
 
         self.hand = FRAMES.getFrame(join("pc", "hands.png"), (0, 0))
-        self.cursor_pos = [0, 0]
+        self.pokemon_data = PokemonData(None)
+
         self.is_dead = True
 
     def draw(self, draw_surface):
@@ -366,6 +408,8 @@ class Box():
         draw_surface.blit(self.box_background, self.box_pos)
         draw_surface.blit(self.pokemon_surface,
                           (self.box_pos[0] - 1, self.box_pos[1] - 18))
+
+        self.pokemon_data.draw(draw_surface)
 
         if not self.is_dead:
             draw_surface.blit(self.hand,
@@ -385,27 +429,43 @@ class Box():
 
     def handle_event(self, event):
         """Handles the updating of the cursor."""
+        pokemon_changed = False
         if event.key == BattleActions.UP.value:
             if self.cursor_pos[1] > 0:
                 self.cursor_pos[1] -= 1
+                pokemon_changed = True
             else:
-                self.is_dead = True
+                self.toggle()
                 self.end_event = "BoxHeader"
         elif event.key == BattleActions.DOWN.value:
             if self.cursor_pos[1] < 4:
                 self.cursor_pos[1] += 1
+                pokemon_changed = True
         elif event.key == BattleActions.LEFT.value:
             if self.cursor_pos[0] > 0:
                 self.cursor_pos[0] -= 1
+                pokemon_changed = True
         elif event.key == BattleActions.RIGHT.value:
             if self.cursor_pos[0] < 5:
                 self.cursor_pos[0] += 1
+                pokemon_changed = True
+
+        if pokemon_changed:
+            pokemon = \
+                self.player.pc_boxes[self.cursor_pos[1]][self.cursor_pos[0]]
+            self.pokemon_data = PokemonData(pokemon)
 
     def toggle(self):
         self.is_dead = not self.is_dead
+        if self.pokemon_data.pokemon is None:
+            pokemon = \
+                self.player.pc_boxes[self.cursor_pos[1]][self.cursor_pos[0]]
+            self.pokemon_data = PokemonData(pokemon)
+        else:
+            self.pokemon_data = PokemonData(None)
 
     def update(self, ticks):
-        pass
+        self.pokemon_data.update(ticks)
 
 
 class BoxButton():
@@ -451,6 +511,9 @@ class BoxButtonClose(BoxButton):
         elif event.key == BattleActions.LEFT.value:
             self.toggle()
             self.end_event = "PartyPokemon"
+        elif event.key == BattleActions.SELECT.value:
+            self.toggle()
+            self.end_event = "Exit"
 
     def draw(self, draw_surface):
         """Draw the button and the hand if the button is active."""
@@ -593,8 +656,8 @@ class BoxSwitch():
 
     def draw(self, draw_surface):
         """Draw the new boxes that are sliding in."""
-        self.new_box.draw(draw_surface)
         self.new_header.draw(draw_surface)
+        self.new_box.draw(draw_surface)
 
     def handle_event(self, event):
         """The player should not be able to do anything during the
@@ -618,3 +681,28 @@ class BoxSwitch():
     def toggle(self):
         """Toggle does not need to do anything this event."""
         pass
+
+
+class Exit():
+    def __init__(self, player):
+        self.is_dead = False
+        self.player = player
+
+        # Confirm that the user wants to leave the PC
+        self.response_box = ResponseBox(["Yes", "No"], (175, 100))
+        self.dialogue = Dialogue("34", self.player, self.player,
+                                 gender=self.player.gender, show_curs=False,
+                                 turn=False)
+
+    def draw(self, draw_surface):
+        self.response_box.draw(draw_surface)
+        self.dialogue.draw(draw_surface)
+
+    def handle_event(self, event):
+        self.response_box.handle_event(event)
+
+    def toggle(self):
+        pass
+
+    def update(self, ticks):
+        self.response_box.update(ticks)
