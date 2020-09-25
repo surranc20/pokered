@@ -461,7 +461,7 @@ class SecondaryPokemon(PokemonMenuPokemon):
 
 
 class BouncingPokemon(Animated):
-    def __init__(self, pokemon, position):
+    def __init__(self, pokemon, position, item=True):
         """Creates a simple bouncing pokemon object. This appear on the left
         of the pokemon cards/objects"""
         self._pokemon = pokemon
@@ -476,6 +476,7 @@ class BouncingPokemon(Animated):
         self._nFrames = 2
         self._row = _lookup
         self._framesPerSecond = 8
+        self._item = item
 
         self.create_held_item_surf()
 
@@ -488,7 +489,7 @@ class BouncingPokemon(Animated):
     def create_held_item_surf(self):
         """Determines if the pokemon has an item and need to display item
         surface."""
-        if self._pokemon.held_item is not None:
+        if self._pokemon.held_item is not None and self._item:
             self._item_pos = (self._position[0] + 20, self._position[1] + 24)
             self.item_surf = FRAMES.getFrame("party_item.png")
         else:
