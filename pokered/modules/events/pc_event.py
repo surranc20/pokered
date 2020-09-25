@@ -729,6 +729,7 @@ class BoxSwitch():
 
 class Exit():
     def __init__(self, player):
+        """Create the exit dialogue event."""
         self.is_dead = False
         self.player = player
 
@@ -737,10 +738,12 @@ class Exit():
         self.dialogue = FRAMES.getFrame(join("pc", "exit_box.png"))
 
     def draw(self, draw_surface):
+        """Draw the response box and question."""
         self.response_box.draw(draw_surface)
         draw_surface.blit(self.dialogue, (84, 131))
 
     def handle_event(self, event):
+        """Handle the response box events."""
         self.response_box.handle_event(event)
 
         if self.response_box.is_dead:
@@ -754,4 +757,5 @@ class Exit():
         pass
 
     def update(self, ticks):
+        """Update the response box."""
         self.response_box.update(ticks)
