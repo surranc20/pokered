@@ -50,6 +50,8 @@ class PCEvent():
 
             else:
                 self.active_sub_event = self.active_sub_event.end_event
+                if type(self.active_sub_event) == BillsPC:
+                    self.turned = False
 
     def handle_event(self, event):
         """Passes control of event handling to the active sub event."""
@@ -335,6 +337,9 @@ class MoveScreen():
                                               self.box, self.box_header)
             elif next_event == "Exit":
                 self.active_event = Exit(self.player)
+            elif next_event == "ConfirmExit":
+                self.is_dead = True
+                self.end_event = BillsPC(self.player)
             self.active_event.toggle()
 
     def handle_event(self, event):
@@ -728,17 +733,22 @@ class Exit():
         self.player = player
 
         # Confirm that the user wants to leave the PC
-        self.response_box = ResponseBox(["Yes", "No"], (175, 100))
-        self.dialogue = Dialogue("34", self.player, self.player,
-                                 gender=self.player.gender, show_curs=False,
-                                 turn=False)
+        self.response_box = ResponseBox(["Yes", "No"], (185, 90), width=7)
+        self.dialogue = FRAMES.getFrame(join("pc", "exit_box.png"))
 
     def draw(self, draw_surface):
         self.response_box.draw(draw_surface)
-        self.dialogue.draw(draw_surface)
+        draw_surface.blit(self.dialogue, (84, 131))
 
     def handle_event(self, event):
         self.response_box.handle_event(event)
+
+        if self.response_box.is_dead:
+            self.is_dead = True
+            if self.response_box.response == 0:
+                self.end_event = "ConfirmExit"
+            else:
+                self.end_event = "CloseBox"
 
     def toggle(self):
         pass
