@@ -9,7 +9,7 @@ from ..utils.UI.animated import Animated
 from ..utils.managers.soundManager import SoundManager
 from ..utils.managers.frameManager import FRAMES
 from ..utils.text_maker import TextMaker
-from ..utils.misc import center
+from ..utils.misc import center, end_at
 from ..enumerated.battle_actions import BattleActions
 
 
@@ -348,20 +348,24 @@ class MoveScreen():
 
 class PokemonData():
     def __init__(self, pokemon):
+        """Creates the pokemon data sidebar which displays the stats/name of
+        the currently selected pokemon."""
         self.pokemon = pokemon
         self.create_surface()
 
     def draw(self, draw_surface):
+        """Draws the side panel and lightning bolts."""
         draw_surface.blit(self.surface, (0, 0))
         self.lightning_l.draw(draw_surface)
         self.lightning_r.draw(draw_surface)
 
     def update(self, ticks):
-        # if self.pokemon is not None:
+        """Updates the lightning bolts."""
         self.lightning_l.update(ticks)
         self.lightning_r.update(ticks)
 
     def create_surface(self):
+        """Creates the side panel."""
         self.surface = pygame.Surface((80, 158))
         self.surface.set_colorkey((0, 0, 0))
         self.surface.blit(FRAMES.getFrame(join("pc", "pokemon_data.png")),
@@ -369,17 +373,49 @@ class PokemonData():
 
         if self.pokemon is not None:
             self.fill_data()
-        self.lightning_l = Animated(join("pc", "lightning_l.png"), (2, 6))
-        self.lightning_r = Animated(join("pc", "lightning_r.png"), (67, 6))
-        self.lightning_l._nFrames = 3
-        self.lightning_l._framesPerSecond = 7
-        self.lightning_r._nFrames = 3
-        self.lightning_r._framesPerSecond = 7
-        self.lightning_l._world_bound = False
-        self.lightning_r._world_bound = False
+
+        self.create_lightning_bolts()
 
     def fill_data(self):
+        """Fills in the data for the side panel."""
+        # TODO: Neet different fonts here
+        text_maker = TextMaker(join("fonts", "menu_font.png"), 240)
         self.surface.blit(self.pokemon.summary_image, (10, 10))
+
+        nick_name = text_maker.get_surface(self.pokemon.nick_name)
+        self.surface.blit(nick_name, end_at(nick_name, (70, 86)))
+
+        name = text_maker.get_surface("/" + self.pokemon.name.upper())
+        self.surface.blit(name, (7, 100))
+
+        font_index = 0 if self.pokemon.gender == "male" else 1
+        gender = \
+            FRAMES.getFrame("gender_t.png", offset=(font_index, 0))
+        self.surface.blit(gender, (20, 112))
+
+        level = text_maker.get_surface("Lv" + str(self.pokemon.stats["LVL"]))
+        self.surface.blit(level, (32, 113))
+
+        item = "" if self.pokemon.held_item is None else \
+            self.pokemon.held_item.name.upper()
+
+        item_surf = text_maker.get_surface(item)
+        self.surface.blit(item_surf, (7, 130))
+
+    def create_lightning_bolts(self):
+        """Creates the two lightning bolts."""
+        self.lightning_l = Animated(join("pc", "lightning_l.png"), (2, 6))
+        self.lightning_r = Animated(join("pc", "lightning_r.png"), (67, 6))
+        self.create_bolt(self.lightning_l)
+        self.create_bolt(self.lightning_r)
+
+    def create_bolt(self, bolt):
+        """Creates an individual lightning bolt."""
+        bolt._nFrames = 3
+        bolt._framesPerSecond = 7
+        bolt._frame = 1
+        bolt._world_bound = False
+        bolt.get_current_frame()
 
 
 class Box():
@@ -423,7 +459,8 @@ class Box():
         for y, row in enumerate(self.player.pc_boxes):
             for x, pokemon in enumerate(row):
                 if pokemon is not None:
-                    poke = BouncingPokemon(pokemon, (25 * x, 24 * y))
+                    poke = BouncingPokemon(pokemon, (25 * x, 24 * y),
+                                           item=False)
                     poke._world_bound = False
                     poke.draw(self.pokemon_surface)
 
@@ -456,6 +493,7 @@ class Box():
             self.pokemon_data = PokemonData(pokemon)
 
     def toggle(self):
+        """Toggles the box on and off."""
         self.is_dead = not self.is_dead
         if self.pokemon_data.pokemon is None:
             pokemon = \
@@ -465,6 +503,7 @@ class Box():
             self.pokemon_data = PokemonData(None)
 
     def update(self, ticks):
+        """Updates the pokemon data side bar."""
         self.pokemon_data.update(ticks)
 
 
