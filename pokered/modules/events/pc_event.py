@@ -340,6 +340,8 @@ class MoveScreen():
             elif next_event == "ConfirmExit":
                 self.is_dead = True
                 self.end_event = BillsPC(self.player)
+            elif next_event == "BoxMoveEvent":
+                self.active_event = BoxMoveEvent(self.active_event)
             self.active_event.toggle()
 
     def handle_event(self, event):
@@ -437,11 +439,18 @@ class Box():
                             offset)
 
         self.cursor_pos = [0, 0]
+
+        self.pokemon_grabbed = [-1, -1]
+
         self.create_pokemon_surface()
 
-        self.hand = FRAMES.getFrame(join("pc", "hands.png"), (0, 0))
+        self.hand = BoxHand()
+        self.hand._position = (83 + self.cursor_pos[0] * 25,
+                               17 + self.cursor_pos[1] * 24)
+
         self.pokemon_data = PokemonData(None)
 
+        self.sub_event = None
         self.is_dead = True
 
     def draw(self, draw_surface):
@@ -453,9 +462,7 @@ class Box():
         self.pokemon_data.draw(draw_surface)
 
         if not self.is_dead:
-            draw_surface.blit(self.hand,
-                              (90 + self.cursor_pos[0] * 25,
-                               20 + self.cursor_pos[1] * 24))
+            self.hand.draw(draw_surface)
 
     def create_pokemon_surface(self):
         """Create the surface that displays all of the pokemon in the box."""
@@ -463,7 +470,7 @@ class Box():
         self.pokemon_surface.set_colorkey((0, 0, 0))
         for y, row in enumerate(self.player.pc_boxes):
             for x, pokemon in enumerate(row):
-                if pokemon is not None:
+                if pokemon is not None and self.pokemon_grabbed != [x, y]:
                     poke = BouncingPokemon(pokemon, (25 * x, 24 * y),
                                            item=False)
                     poke._world_bound = False
@@ -471,6 +478,12 @@ class Box():
 
     def handle_event(self, event):
         """Handles the updating of the cursor."""
+        if self.sub_event is not None:
+            self.sub_event.handle_event(event)
+            return
+        self._handle_event_helper(event)
+
+    def _handle_event_helper(self, event):
         pokemon_changed = False
         if event.key == BattleActions.UP.value:
             if self.cursor_pos[1] > 0:
@@ -491,6 +504,11 @@ class Box():
             if self.cursor_pos[0] < 5:
                 self.cursor_pos[0] += 1
                 pokemon_changed = True
+        elif event.key == BattleActions.SELECT.value:
+            self.sub_event = BoxMoveEvent(self)
+
+        self.hand._position = (83 + self.cursor_pos[0] * 25,
+                               17 + self.cursor_pos[1] * 24)
 
         if pokemon_changed:
             pokemon = \
@@ -510,6 +528,7 @@ class Box():
     def update(self, ticks):
         """Updates the pokemon data side bar."""
         self.pokemon_data.update(ticks)
+        self.hand.update(ticks)
 
 
 class BoxButton():
@@ -759,3 +778,100 @@ class Exit():
     def update(self, ticks):
         """Update the response box."""
         self.response_box.update(ticks)
+
+
+class BoxMoveEvent():
+    def __init__(self, box):
+        self.box = box
+        self.is_dead = False
+        self.box.pokemon_grabbed = self.box.cursor_pos
+        self.box.hand.grab()
+
+    def draw(self, draw_surface):
+        pass
+
+    def update(self, ticks):
+        pass
+
+    def handle_event(self, event):
+        if self.box.hand.grabbing or self.box.hand.placing:
+            return
+
+        if event.key == BattleActions.SELECT.value:
+            self.box.hand.place()
+        else:
+            self.box._handle_event_helper(event)
+
+    def is_over(self):
+        return self.is_dead
+
+    def toggle(self):
+        pass
+
+
+class BoxHand(Animated):
+    def __init__(self):
+        """Creates a box hand capable of picking up / putting down a
+        pokemon."""
+        super().__init__(join("pc", "box_hand.png"), [0, 0])
+        self._world_bound = False
+        self._framesPerSecond = 8
+        self._nFrames = 4
+        self.grabbing = False
+        self.placing = False
+        self.motion = "none"
+        self.stopAnimation()
+
+    def update(self, ticks):
+        """Update the update function to add support for a grabbing
+        animation."""
+        frame = self._frame
+        super().update(ticks)
+
+        # Handle grabs
+        if self.grabbing:
+            if self._frame != frame or self.motion == "up":
+                delta = 2 if self.motion == "down" else -2
+                self._position = (self._position[0], self._position[1] + delta)
+
+                if self._frame == self._nFrames - 1:
+                    if self.motion == "down":
+                        self.motion = "up"
+                        self.stopAnimation()
+
+            if self._position == self.return_pos and self.motion == "up":
+                self.grabbing = False
+                self._frame = self._nFrames - 1
+                self.get_current_frame()
+
+        # Handle placing
+        elif self.placing:
+            if self._frame != frame or self.motion == "down":
+                delta = 2 if self.motion == "down" else -2
+                self._position = (self._position[0],
+                                  self._position[1] + delta)
+
+                if self._position == (self.return_pos[0],
+                                      self.return_pos[1] + 8):
+                    self.motion = "up"
+                    self.startAnimation()
+                    self.backwards = True
+
+            if self._position == self.return_pos and self.motion == "up":
+                self.placing = False
+                self.backwards = False
+                self._frame = 0
+                self.stopAnimation()
+
+    def grab(self):
+        """Trigger a grabbing animation."""
+        self.grabbing = True
+        self.return_pos = self._position
+        self.motion = "down"
+        self.startAnimation()
+
+    def place(self):
+        """Trigger a placing animation."""
+        self.placing = True
+        self.return_pos = self._position
+        self.motion = "down"
