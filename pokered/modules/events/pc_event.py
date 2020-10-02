@@ -487,8 +487,9 @@ class Box():
                 self.sub_event = self.sub_event.end_event
                 if type(self.sub_event) == PokemonMoveEvent:
                     self.pokemon_grabbed = self.cursor_pos
-                    self.create_pokemon_surface()
+                self.create_pokemon_surface()
             return
+
         self._handle_event_helper(event)
 
     def _handle_event_helper(self, event):
@@ -791,15 +792,16 @@ class Exit():
 
 
 class PokemonSelectedEvent():
-    def __init__(self, box):
+    def __init__(self, box, option="MOVE"):
         self.box = box
         self.is_dead = False
         self.pokemon_selected = \
             box.player.pc_boxes[box.pokemon_grabbed[1]][box.pokemon_grabbed[0]]
 
-        options = ["MOVE", "SUMMARY", "WITHDRAW", "MARK", "RELEASE", "CANCEL"]
+        self.options = [option] + ["SUMMARY", "WITHDRAW", "MARK", "RELEASE",
+                                   "CANCEL"]
         self.options_box = \
-            ResponseBox(options, (240, 128), width=9, end_at=True)
+            ResponseBox(self.options, (240, 128), width=9, end_at=True)
         self.create_dialogue_box()
 
     def draw(self, draw_surface):
@@ -815,8 +817,13 @@ class PokemonSelectedEvent():
             response = self.options_box.response
             self.is_dead = True
             if response == 0:
-                self.end_event = \
-                    PokemonMoveEvent(self.box, self.pokemon_selected)
+                if self.options[0] == "MOVE":
+                    self.end_event = \
+                        PokemonMoveEvent(self.box, self.pokemon_selected)
+                elif self.options[0] == "PLACE":
+                    self.end_event = "place"
+                else:
+                    self.end_event = None
             elif response == 1:
                 pass
             elif response == 2:
@@ -873,18 +880,39 @@ class PokemonMoveEvent():
         # Start the grabbing process.
         self.box.hand.grab(self.pokemon_selected_img)
 
+        self.sub_event = None
+
     def draw(self, draw_surface):
         self.pokemon_selected_img.draw(draw_surface)
 
+        if self.sub_event is not None:
+            self.sub_event.draw(draw_surface)
+
     def update(self, ticks):
-        pass
+        if self.sub_event is not None:
+            self.sub_event.update(ticks)
 
     def handle_event(self, event):
         if self.box.hand.grabbing or self.box.hand.placing:
             return
 
+        if self.sub_event is not None:
+            self.sub_event.handle_event(event)
+            if self.sub_event.is_dead:
+                next_event = self.sub_event.end_event
+                if next_event == "place":
+                    self.box.hand.place(self.pokemon_selected_img)
+                    self.end_event = None
+                    self.box.pokemon_grabbed = [-1, -1]
+
+                    x, y = self.box.cursor_pos
+                    self.box.player.pc_boxes[y][x] = self.pokemon_selected
+                    self.is_dead = True
+
+            return
+
         if event.key == BattleActions.SELECT.value:
-            self.box.hand.place()
+            self.sub_event = PokemonSelectedEvent(self.box, option="PLACE")
         else:
             self.box._handle_event_helper(event)
 
@@ -893,7 +921,7 @@ class PokemonMoveEvent():
             x, y = self.box.cursor_pos
             pos = tuple(sum(x) for x in zip((25 * x, 24 * y),
                                             (self.box.box_pos[0] - 1,
-                                             self.box.box_pos[1] - 18)))
+                                             self.box.box_pos[1] - 26)))
             self.pokemon_selected_img._position = pos
 
     def is_over(self):
@@ -977,8 +1005,9 @@ class BoxHand(Animated):
         self.pokemon = pokemon
         self.startAnimation()
 
-    def place(self):
+    def place(self, pokemon):
         """Trigger a placing animation."""
         self.placing = True
         self.return_pos = self._position
         self.motion = "down"
+        self.pokemon = pokemon
