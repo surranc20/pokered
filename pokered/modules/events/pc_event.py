@@ -925,24 +925,35 @@ class PokemonMoveEvent():
         # Start the grab animation.
         self.box.hand.grab(self.pokemon_selected_img)
 
+        # Will only exist when two pokemon are being swapped
+        self.top_pokemon = None
+        self.redraw_on_switch = False
+
         self.sub_event = None
 
     def draw(self, draw_surface):
         """Draw the pokemon being held and the active subevent if it
         exists."""
         self.pokemon_selected_img.draw(draw_surface)
+        if self.top_pokemon is not None:
+            self.top_pokemon.draw(draw_surface)
 
         if self.sub_event is not None:
             self.sub_event.draw(draw_surface)
 
     def update(self, ticks):
         """Update the subevent if it exists."""
+        if self.redraw_on_switch and not self.box.hand.switching:
+            self.redraw_on_switch = False
+            self.box.create_pokemon_surface()
+
         if self.sub_event is not None:
             self.sub_event.update(ticks)
 
     def handle_event(self, event):
         """Handle events. Respond accordingly once events are finished. """
-        if self.box.hand.grabbing or self.box.hand.placing:
+        if self.box.hand.grabbing or self.box.hand.placing or \
+                self.box.hand.switching:
             return
 
         if self.sub_event is not None:
@@ -967,17 +978,25 @@ class PokemonMoveEvent():
                     x, y = self.box.cursor_pos  # Coords for the current spot.
                     poke2 = self.box.player.pc_boxes[y][x]  # The new pokemon.
 
-                    # Animate the switch
-                    self.box.hand.switch(self.pokemon_selected, poke2)
+                    # Clear the pokemon in the spot and then redraw.
+                    self.box.player.pc_boxes[y][x] = None
+                    self.box.create_pokemon_surface()
 
-                    # Switch what is in hand and put what is in hand in the s
-                    # pot that is being clicked on.
+                    # Hold for the time being so it can be passed to the hand
+                    # to animate the switch.
+                    self.top_pokemon = self.pokemon_selected_img
+
+                    # Switch what is in hand and put what is in hand in the
+                    # spot that is being clicked on.
                     self.box.player.pc_boxes[y][x] = self.pokemon_selected
                     self.pokemon_selected = poke2
-
-                    # Redraw the box and create the image for the new pokemon.
-                    self.box.create_pokemon_surface()
                     self._create_bouncing()
+
+                    # Animate the switch
+                    self.box.hand.switch(self.top_pokemon,
+                                         self.pokemon_selected_img)
+
+                    self.redraw_on_switch = True
 
                     self.sub_event = None
 
@@ -1033,7 +1052,7 @@ class BoxHand(Animated):
         self._nFrames = 4
         self.grabbing = False
         self.placing = False
-        self.switching = True
+        self.switching = False
         self.motion = "none"
         self.stopAnimation()
 
@@ -1090,6 +1109,17 @@ class BoxHand(Animated):
                 self._frame = 0
                 self.stopAnimation()
 
+        # Handle swapping
+        elif self.switching:
+            self.switch_timer += ticks
+            if self.switch_timer > .05:
+                self.switch_timer -= .05
+                if len(self.poke1_coords) > 0:
+                    self.pokemon1._position = self.poke1_coords.pop(0)
+                    self.pokemon2._position = self.poke2_coords.pop(0)
+                else:
+                    self.switching = False
+
     def grab(self, pokemon):
         """Trigger a grabbing animation."""
         self.grabbing = True
@@ -1106,5 +1136,23 @@ class BoxHand(Animated):
         self.pokemon = pokemon
 
     def switch(self, pokemon1, pokemon2):
+        """Trigger the switch animation."""
         self.switching = True
-        print(pokemon1, pokemon2)
+        self.pokemon1 = pokemon1
+        self.pokemon2 = pokemon2
+        self.switch_timer = 0
+
+        # Create the paths that the pokemon will follow.
+
+        # Top pokemon
+        start_x, start_y = pokemon1._position
+        self.poke1_coords = [
+            (start_x - 3, start_y + 1), (start_x - 4, start_y + 5),
+            (start_x - 3, start_y + 7), (start_x, start_y + 8)
+        ]
+        # Bottom pokemon
+        start_x, start_y = pokemon2._position
+        self.poke2_coords = [
+            (start_x + 3, start_y - 1), (start_x + 4, start_y - 5),
+            (start_x + 3, start_y - 7), (start_x, start_y - 8)
+        ]
