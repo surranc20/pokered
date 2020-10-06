@@ -39,7 +39,9 @@ class Player(Trainer):
                            "PROF. OAK's PC", "HALL OF FAME",
                            "LOG OFF"]
 
-        self.pc_boxes = [[Pokemon("pikachu")] * 6] * 5
+        poke = Pokemon("pikachu")
+        poke2 = Pokemon("squirtle")
+        self.pc_boxes = [[poke, poke, poke, poke, poke2, None]] * 5
 
     def handle_event(self, event, nearby_tiles):
         """Handles the events from the level manager. Is capable of taking
