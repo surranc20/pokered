@@ -286,7 +286,7 @@ class MoveScreen():
         self.super_kill = False
 
         self.pc_background = FRAMES.getFrame(join("pc", "pc_background.png"))
-        self.box_header = BoxHeader(box_number)
+        self.box_header = BoxHeader(box_number, header_pos=[100, 18])
         self.close_box = BoxButtonClose(join("pc", "close_box.png"), (170, 0))
         self.box = Box(player, box_number)
         self.box.toggle()
@@ -340,6 +340,8 @@ class MoveScreen():
             elif next_event == "ConfirmExit":
                 self.is_dead = True
                 self.end_event = BillsPC(self.player)
+                self.pc_background = \
+                    FRAMES.reload(join("pc", "pc_background.png"))
             elif next_event == "PokemonSelectedEvent":
                 self.active_event = PokemonSelectedEvent(self.active_event)
             self.active_event.toggle()
@@ -664,7 +666,6 @@ class BoxHeader():
         self.left_arrow.draw(draw_surface)
         self.right_arrow.draw(draw_surface)
         draw_surface.blit(self.title_surf, self.title_pos)
-
         if not self.is_dead:
             draw_surface.blit(self.hand, (153, 4))
 
