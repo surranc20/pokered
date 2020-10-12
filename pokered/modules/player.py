@@ -1,4 +1,5 @@
 import pygame
+import random
 from .events.menu import Menu
 from .trainer import Trainer
 from .pokemon import Pokemon
@@ -39,9 +40,15 @@ class Player(Trainer):
                            "PROF. OAK's PC", "HALL OF FAME",
                            "LOG OFF"]
 
-        poke = Pokemon("pikachu")
-        poke2 = Pokemon("squirtle")
-        self.pc_boxes = [[poke, poke, poke, poke, poke2, None]] * 5
+        self.pc_boxes = []
+        for x in range(5):
+            self.pc_boxes.append([None] * 6)
+
+        # Temporary code for test box
+        pokes = ["charizard", "pikachu", "bulbasaur", "raichu"]
+        for row in range(5):
+            for slot in range(5):
+                self.pc_boxes[row][slot] = Pokemon(random.choice(pokes))
 
     def handle_event(self, event, nearby_tiles):
         """Handles the events from the level manager. Is capable of taking
