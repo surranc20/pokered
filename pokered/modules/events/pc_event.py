@@ -463,11 +463,25 @@ class Box():
 
         self.pokemon_data.draw(draw_surface)
 
-        if self.sub_event is not None:
-            self.sub_event.draw(draw_surface)
-
         if not self.is_dead:
-            self.hand.draw(draw_surface)
+            # This monstrosity is necessary in order to draw the hand and the
+            # events in the correct order. Based on what is happening the hand
+            # might need to be infront of or behind the event.
+            hand_drawn = False
+            if self._should_draw_hand():
+                self.hand.draw(draw_surface)
+                hand_drawn = True
+            if self.sub_event is not None:
+                self.sub_event.draw(draw_surface)
+            if not hand_drawn:
+                self.hand.draw(draw_surface)
+
+    def _should_draw_hand(self):
+        """Helper function that decides if the hand should be drawn before or
+        after the current subevent."""
+        return self.cursor_pos[1] > 0 and self.cursor_pos[0] > 2 and \
+            not(type(self.sub_event) is PokemonMoveEvent and
+                self.sub_event.sub_event is None)
 
     def create_pokemon_surface(self):
         """Create the surface that displays all of the pokemon in the box."""
