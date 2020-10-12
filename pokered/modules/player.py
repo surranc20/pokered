@@ -40,15 +40,12 @@ class Player(Trainer):
                            "PROF. OAK's PC", "HALL OF FAME",
                            "LOG OFF"]
 
-        self.pc_boxes = []
-        for x in range(5):
-            self.pc_boxes.append([None] * 6)
-
+        self._create_pc_box()
         # Temporary code for test box
         pokes = ["charizard", "pikachu", "bulbasaur", "raichu"]
         for row in range(5):
             for slot in range(5):
-                self.pc_boxes[row][slot] = Pokemon(random.choice(pokes))
+                self.pc_boxes[0][row][slot] = Pokemon(random.choice(pokes))
 
     def handle_event(self, event, nearby_tiles):
         """Handles the events from the level manager. Is capable of taking
@@ -167,3 +164,12 @@ class Player(Trainer):
                 self._orientation == self._orientation.EAST) or \
             (event.key == pygame.K_a and
                 self._orientation == Cardinality.WEST)
+
+    def _create_pc_box(self):
+        """Creates the player's pc box."""
+        self.pc_boxes = []
+        for x in range(14):
+            box = []
+            for x in range(5):
+                box.append([None] * 6)
+            self.pc_boxes.append(box)
