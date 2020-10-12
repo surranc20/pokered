@@ -434,11 +434,18 @@ class Box():
         around."""
         self.player = player
         self.box_number = box_number
+        print(self.box_number)
         self.box_pos = [84, 43]
-        offset = (box_number % 4, box_number // 4)
+
+        # There are only 12 box designs so grab correct design and handle
+        # overflow. The % 4 is here because the designs are in rows of 4 in
+        # the sprite sheet.
+        offset = ((box_number % 12) % 4, (box_number % 12) // 4)
         self.box_background = \
             FRAMES.getFrame(join("pc", "box_backgrounds.png"),
                             offset)
+
+        self.box = self.player.pc_boxes[self.box_number]
 
         self.cursor_pos = [0, 0]
 
@@ -487,7 +494,7 @@ class Box():
         """Create the surface that displays all of the pokemon in the box."""
         self.pokemon_surface = pygame.Surface((156, 130))
         self.pokemon_surface.set_colorkey((0, 0, 0))
-        for y, row in enumerate(self.player.pc_boxes):
+        for y, row in enumerate(self.box):
             for x, pokemon in enumerate(row):
                 if pokemon is not None:
                     poke = BouncingPokemon(pokemon, (25 * x, 24 * y),
@@ -538,7 +545,7 @@ class Box():
         if pokemon_changed:
             try:
                 x, y = self.cursor_pos
-                pokemon = self.player.pc_boxes[y][x]
+                pokemon = self.box[y][x]
                 self.pokemon_data = PokemonData(pokemon)
             except IndexError:
                 self.pokemon_data = PokemonData(None)
@@ -548,7 +555,7 @@ class Box():
         self.is_dead = not self.is_dead
         if self.pokemon_data.pokemon is None:
             pokemon = \
-                self.player.pc_boxes[self.cursor_pos[1]][self.cursor_pos[0]]
+                self.box[self.cursor_pos[1]][self.cursor_pos[0]]
             self.pokemon_data = PokemonData(pokemon)
         else:
             self.pokemon_data = PokemonData(None)
@@ -648,7 +655,11 @@ class BoxHeader():
         self.header_pos = header_pos
 
         # Create the surfaces needed for the header
-        offset = (box_number % 4, box_number // 4)
+
+        # There are only 12 box designs so grab correct design and handle
+        # overflow. The % 4 is here because the designs are in rows of 4 in
+        # the sprite sheet.
+        offset = ((box_number % 12) % 4, (box_number % 12) // 4)
         self.header_image = FRAMES.getFrame(join("pc", "box_headers.png"),
                                             offset)
 
@@ -722,11 +733,11 @@ class BoxHeader():
         """Change the positions of all elements of the header."""
         self.header_pos[0] += delta
         self.title_pos[0] += delta
-        self.left_arrow.set_pos_no_off([self.left_arrow._position[0] + delta,
-                                        self.left_arrow._position[1]])
+        self.left_arrow.set_pos_no_off((self.left_arrow._position[0] + delta,
+                                        self.left_arrow._position[1]))
 
-        self.right_arrow.set_pos_no_off([self.right_arrow._position[0] + delta,
-                                         self.right_arrow._position[1]])
+        self.right_arrow.set_pos_no_off((self.right_arrow._position[0] + delta,
+                                         self.right_arrow._position[1]))
 
 
 class BoxSwitch():
@@ -739,8 +750,9 @@ class BoxSwitch():
         self.box = box
         self.header = header
 
-        # Grab the box that is being transitioned to.
-        box_number = (self.box.box_number + self.direction) % 12
+        # Grab the box that is being transitioned to. There are only 14 boxes
+        # so go back to 1/14 when overflowing.
+        box_number = (self.box.box_number + self.direction) % 14
         header_pos = [270, 18] if direction == "right" else [-70, 18]
         self.new_header = BoxHeader(box_number, header_pos=header_pos)
         self.new_box = Box(self.box.player, box_number)
@@ -824,7 +836,7 @@ class PokemonSelectedEvent():
         # Grab the pokemon that the player selected
         try:
             x, y = box.pokemon_grabbed
-            self.pokemon_selected = box.player.pc_boxes[y][x]
+            self.pokemon_selected = box.box[y][x]
 
         except IndexError:
             # Catch the case when a pokemon does not exist at the spot
@@ -943,7 +955,7 @@ class PokemonMoveEvent():
 
         # Remove pokemon from previous spot.
         x, y = self.grabbed_location
-        self.box.player.pc_boxes[y][x] = None
+        self.box.box[y][x] = None
 
         # Create the small pokemon image that the hand will grab and carry
         # around.
@@ -995,7 +1007,7 @@ class PokemonMoveEvent():
                     x1, y1 = self.grabbed_location  # Pokemon's old pos.
 
                     # Place the pokemon
-                    self.box.player.pc_boxes[y1][x1], self.box.player.pc_boxes[y][x] \
+                    self.box.box[y1][x1], self.box.box[y][x] \
                         = None, self.pokemon_selected
 
                     self.end_event = None
@@ -1003,10 +1015,10 @@ class PokemonMoveEvent():
 
                 if next_event == "shift":
                     x, y = self.box.cursor_pos  # Coords for the current spot.
-                    poke2 = self.box.player.pc_boxes[y][x]  # The new pokemon.
+                    poke2 = self.box.box[y][x]  # The new pokemon.
 
                     # Clear the pokemon in the spot and then redraw.
-                    self.box.player.pc_boxes[y][x] = None
+                    self.box.box[y][x] = None
                     self.box.create_pokemon_surface()
 
                     # Hold for the time being so it can be passed to the hand
@@ -1015,7 +1027,7 @@ class PokemonMoveEvent():
 
                     # Switch what is in hand and put what is in hand in the
                     # spot that is being clicked on.
-                    self.box.player.pc_boxes[y][x] = self.pokemon_selected
+                    self.box.box[y][x] = self.pokemon_selected
                     self.pokemon_selected = poke2
                     self._create_bouncing()
 
