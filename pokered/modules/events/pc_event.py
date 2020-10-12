@@ -545,6 +545,9 @@ class Box():
         self.hand.update(ticks)
         if self.sub_event is not None:
             self.sub_event.update(ticks)
+            if self.sub_event.is_dead:
+                if self.sub_event.end_event is None:
+                    self.sub_event = None
 
 
 class BoxButton():
@@ -797,6 +800,8 @@ class Exit():
 
 class PokemonSelectedEvent():
     def __init__(self, box, prev=None):
+        """Run as a subevent of either Box or MoveEvent. Allows the player to
+        choose what they want to do when they click on a box slot."""
         self.box = box
         self.is_dead = False
         if prev is None:
@@ -828,6 +833,11 @@ class PokemonSelectedEvent():
         # dialogue.
         if prev is not None:
             self.pokemon_selected = prev
+
+        if prev is None and self.pokemon_selected is None:
+            self.is_dead = True
+            self.end_event = None
+            return
 
         # Create the options box and dialogue.
         self.options_box = \
@@ -910,6 +920,8 @@ class PokemonSelectedEvent():
 
 class PokemonMoveEvent():
     def __init__(self, box, pokemon_selected):
+        """Event that controls what happens when a player is holding a pokemon
+        while inside the box. Run as a subevent of the Box event."""
         self.box = box
         self.is_dead = False
         self.grabbed_location = self.box.cursor_pos
