@@ -434,7 +434,6 @@ class Box():
         around."""
         self.player = player
         self.box_number = box_number
-        print(self.box_number)
         self.box_pos = [84, 43]
 
         # There are only 12 box designs so grab correct design and handle
@@ -968,6 +967,8 @@ class PokemonMoveEvent():
         self.top_pokemon = None
         self.redraw_on_switch = False
 
+        self.placing = False
+
         self.sub_event = None
 
     def draw(self, draw_surface):
@@ -988,6 +989,12 @@ class PokemonMoveEvent():
 
         if self.sub_event is not None:
             self.sub_event.update(ticks)
+
+        if self.placing:
+            if not self.box.hand.placing:
+                self.is_dead = True
+                self.placing = False
+                self.box.create_pokemon_surface()
 
     def handle_event(self, event):
         """Handle events. Respond accordingly once events are finished. """
@@ -1011,7 +1018,8 @@ class PokemonMoveEvent():
                         = None, self.pokemon_selected
 
                     self.end_event = None
-                    self.is_dead = True
+
+                    self.placing = True
 
                 if next_event == "shift":
                     x, y = self.box.cursor_pos  # Coords for the current spot.
@@ -1057,7 +1065,7 @@ class PokemonMoveEvent():
             x, y = self.box.cursor_pos
             pos = tuple(sum(x) for x in zip((25 * x, 24 * y),
                                             (self.box.box_pos[0] - 1,
-                                             self.box.box_pos[1] - 26)))
+                                             self.box.box_pos[1] - 24)))
             self.pokemon_selected_img._position = pos
 
     def _create_bouncing(self):
@@ -1095,6 +1103,8 @@ class BoxHand(Animated):
         self.motion = "none"
         self.stopAnimation()
 
+        self.last_pos = self._position
+
     def update(self, ticks):
         """Update the update function to add support for a grabbing
         animation."""
@@ -1131,7 +1141,8 @@ class BoxHand(Animated):
                                   self._position[1] + delta)
 
                 # Make sure to drop the pokemon off.
-                if delta > 0:
+                if delta > 0 and self.pokemon_moved < 6:
+                    self.pokemon_moved += delta
                     self.pokemon._position = \
                         (self.pokemon._position[0],
                          self.pokemon._position[1] + delta)
@@ -1173,6 +1184,7 @@ class BoxHand(Animated):
         self.return_pos = self._position
         self.motion = "down"
         self.pokemon = pokemon
+        self.pokemon_moved = 0
 
     def switch(self, pokemon1, pokemon2):
         """Trigger the switch animation."""
