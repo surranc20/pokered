@@ -428,7 +428,7 @@ class PokemonData():
 
 
 class Box():
-    def __init__(self, player, box_number=0):
+    def __init__(self, player, box_number=0, move_event=None):
         """Sub event which is responsible for drawing the box and all pokemon
         inside of the box. Also keeps track of the cursor and moves it
         around."""
@@ -457,9 +457,16 @@ class Box():
                                17 + self.cursor_pos[1] * 24)
 
         self.pokemon_data = PokemonData(None)
+        self.pokemon_held = None
 
         self.sub_event = None
         self.is_dead = True
+
+        if move_event is not None and not move_event.is_dead:
+            self.sub_event = move_event
+            self.sub_event.box_changed(self)
+
+        self.active_move_event = None
 
     def draw(self, draw_surface):
         """Draws everything."""
@@ -523,6 +530,9 @@ class Box():
             else:
                 self.toggle()
                 self.end_event = "BoxHeader"
+                if type(self.sub_event) is PokemonMoveEvent:
+                    self.pokemon_held = self.sub_event.pokemon_selected
+                    self.active_move_event = self.sub_event
         elif event.key == BattleActions.DOWN.value:
             if self.cursor_pos[1] < 4:
                 self.cursor_pos[1] += 1
@@ -754,7 +764,8 @@ class BoxSwitch():
         box_number = (self.box.box_number + self.direction) % 14
         header_pos = [270, 18] if direction == "right" else [-70, 18]
         self.new_header = BoxHeader(box_number, header_pos=header_pos)
-        self.new_box = Box(self.box.player, box_number)
+        self.new_box = Box(self.box.player, box_number,
+                           move_event=self.box.active_move_event)
         self.new_box.box_pos = [254, 43] if direction == "right" else [-86, 43]
 
         self.timer = 0
@@ -950,6 +961,7 @@ class PokemonMoveEvent():
         self.box = box
         self.is_dead = False
         self.grabbed_location = self.box.cursor_pos
+        self.grabbed_box = self.box.box_number
         self.pokemon_selected = pokemon_selected
 
         # Remove pokemon from previous spot.
@@ -986,6 +998,7 @@ class PokemonMoveEvent():
         if self.redraw_on_switch and not self.box.hand.switching:
             self.redraw_on_switch = False
             self.box.create_pokemon_surface()
+            self.top_pokemon = None
 
         if self.sub_event is not None:
             self.sub_event.update(ticks)
@@ -1009,43 +1022,11 @@ class PokemonMoveEvent():
                 if next_event == "place":
                     # Place the pokemon and remove it from its old spot in the
                     # box.
-                    self.box.hand.place(self.pokemon_selected_img)
-                    x, y = self.box.cursor_pos  # Pokemon's new pos.
-                    x1, y1 = self.grabbed_location  # Pokemon's old pos.
-
-                    # Place the pokemon
-                    self.box.box[y1][x1], self.box.box[y][x] \
-                        = None, self.pokemon_selected
-
-                    self.end_event = None
-
-                    self.placing = True
+                    self._prepare_place()
 
                 if next_event == "shift":
-                    x, y = self.box.cursor_pos  # Coords for the current spot.
-                    poke2 = self.box.box[y][x]  # The new pokemon.
-
-                    # Clear the pokemon in the spot and then redraw.
-                    self.box.box[y][x] = None
-                    self.box.create_pokemon_surface()
-
-                    # Hold for the time being so it can be passed to the hand
-                    # to animate the switch.
-                    self.top_pokemon = self.pokemon_selected_img
-
-                    # Switch what is in hand and put what is in hand in the
-                    # spot that is being clicked on.
-                    self.box.box[y][x] = self.pokemon_selected
-                    self.pokemon_selected = poke2
-                    self._create_bouncing()
-
-                    # Animate the switch
-                    self.box.hand.switch(self.top_pokemon,
-                                         self.pokemon_selected_img)
-
-                    self.redraw_on_switch = True
-
-                    self.sub_event = None
+                    # Switch the two pokemon.
+                    self._prepare_shift()
 
                 else:
                     self.sub_event = None
@@ -1053,6 +1034,7 @@ class PokemonMoveEvent():
 
         elif event.key == BattleActions.SELECT.value:
             # If the player selects a spot then create a select event.
+            self.box.pokemon_grabbed = self.box.cursor_pos
             self.sub_event = PokemonSelectedEvent(self.box,
                                                   prev=self.pokemon_selected)
         else:
@@ -1068,6 +1050,48 @@ class PokemonMoveEvent():
                                              self.box.box_pos[1] - 24)))
             self.pokemon_selected_img._position = pos
 
+    def _prepare_place(self):
+        """Place the pokemon and remove it from its old spot in the
+        box."""
+        self.box.hand.place(self.pokemon_selected_img)
+        x, y = self.box.cursor_pos  # Pokemon's new pos.
+        x1, y1 = self.grabbed_location  # Pokemon's old pos.
+
+        # Place the pokemon
+        self.box.player.pc_boxes[self.grabbed_box][y1][x1], self.box.box[y][x] = \
+            None, self.pokemon_selected
+
+        self.end_event = None
+
+        self.placing = True
+
+    def _prepare_shift(self):
+        """Switch the pokemon in your hand for the pokemon selected."""
+        x, y = self.box.cursor_pos  # Coords for the current spot.
+        poke2 = self.box.box[y][x]  # The new pokemon.
+
+        # Clear the pokemon in the spot and then redraw.
+        self.box.box[y][x] = None
+        self.box.create_pokemon_surface()
+
+        # Hold for the time being so it can be passed to the hand
+        # to animate the switch.
+        self.top_pokemon = self.pokemon_selected_img
+
+        # Switch what is in hand and put what is in hand in the
+        # spot that is being clicked on.
+        self.box.box[y][x] = self.pokemon_selected
+        self.pokemon_selected = poke2
+        self._create_bouncing()
+
+        # Animate the switch
+        self.box.hand.switch(self.top_pokemon,
+                             self.pokemon_selected_img)
+
+        self.redraw_on_switch = True
+
+        self.sub_event = None
+
     def _create_bouncing(self):
         """Create the pokemon image which will be grabbed by the hand"""
         x, y = self.box.cursor_pos
@@ -1081,6 +1105,16 @@ class PokemonMoveEvent():
         self.pokemon_selected_img = \
             BouncingPokemon(self.pokemon_selected, pos)
         self.pokemon_selected_img._world_bound = False
+
+    def box_changed(self, box):
+        """Runs whenever a move_event is still active whenever the box changes.
+        Puts pokemon and hand in correct spot."""
+        self.box = box
+        self._create_bouncing()
+        x, y = self.pokemon_selected_img._position
+        self.pokemon_selected_img._position = (x, y - 6)
+        self.box.hand._frame = self.box.hand._nFrames - 1
+        self.box.hand.get_current_frame()
 
     def is_over(self):
         return self.is_dead
@@ -1198,12 +1232,12 @@ class BoxHand(Animated):
         # Top pokemon
         start_x, start_y = pokemon1._position
         self.poke1_coords = [
-            (start_x - 3, start_y + 1), (start_x - 4, start_y + 5),
-            (start_x - 3, start_y + 7), (start_x, start_y + 8)
+            (start_x - 3, start_y + 1), (start_x - 4, start_y + 3),
+            (start_x - 3, start_y + 5), (start_x, start_y + 6)
         ]
         # Bottom pokemon
         start_x, start_y = pokemon2._position
         self.poke2_coords = [
-            (start_x + 3, start_y - 1), (start_x + 4, start_y - 5),
-            (start_x + 3, start_y - 7), (start_x, start_y - 8)
+            (start_x + 3, start_y - 1), (start_x + 4, start_y - 3),
+            (start_x + 3, start_y - 5), (start_x, start_y - 6)
         ]
