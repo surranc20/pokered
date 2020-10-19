@@ -4,6 +4,7 @@ from .events.menu import Menu
 from .trainer import Trainer
 from .pokemon import Pokemon
 from .bag import Bag
+from .move import Move
 from .enumerated.cardinality import Cardinality
 from .enumerated.battle_actions import BattleActions
 
@@ -48,6 +49,10 @@ class Player(Trainer):
                 self.pc_boxes[0][row][slot] = Pokemon(random.choice(pokes))
                 self.pc_boxes[0][row][slot].trainer_id = "65535"
                 self.pc_boxes[0][row][slot].original_trainer = "RED"
+                self.pc_boxes[0][row][slot].add_move(Move("Thunder"))
+                self.pc_boxes[0][row][slot].add_move(Move("Thunderbolt"))
+                self.pc_boxes[0][row][slot].add_move(Move("Thunder Wave"))
+                self.pc_boxes[0][row][slot].add_move(Move("Double Slap"))
 
     def handle_event(self, event, nearby_tiles):
         """Handles the events from the level manager. Is capable of taking

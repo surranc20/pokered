@@ -1,5 +1,7 @@
 from .summary_menu import SummaryMenu, PokemonSummaryMenu
 from ...utils.managers.soundManager import SoundManager
+from ...utils.UI.drawable import Drawable
+from ...utils.vector2D import Vector2
 from ...enumerated.battle_actions import BattleActions
 
 
@@ -14,9 +16,18 @@ class SummaryMenuPC(SummaryMenu):
         self._update_active_page()
         self.end_event = None
 
+        # Normal summary menu is coded under the assumption that the current
+        # offset is 0. Remember old offset so it can be reset when summary
+        # menu is closed.
+        self._old_offset = Drawable.WINDOW_OFFSET
+        Drawable.WINDOW_OFFSET = Vector2(0, 0)
+
     @property
     def is_dead(self):
         """Alias for self._is_dead"""
+        # Reset offset once summary menu is closed.
+        if self._is_dead:
+            Drawable.WINDOW_OFFSET = self._old_offset
         return self._is_dead
 
     def handle_event(self, event):
@@ -61,6 +72,13 @@ class SummaryMenuPC(SummaryMenu):
                 SoundManager.getInstance().playSound("firered_0005.wav")
                 self._hcursor_pos += 1
                 self._update_active_page()
+
+        elif event.key == BattleActions.SELECT.value:
+            if self._hcursor_pos == 0:
+                self._is_dead = True
+                SoundManager.getInstance().playSound("firered_0005.wav")
+            elif self._hcursor_pos == 2:
+                self._active_page.handle_event(event)
 
     def _up_exists(self):
         """Find the next pokemon in the box that comes before the current
