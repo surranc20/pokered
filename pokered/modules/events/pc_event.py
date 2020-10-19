@@ -11,6 +11,7 @@ from ..utils.managers.frameManager import FRAMES
 from ..utils.text_maker import TextMaker
 from ..utils.misc import center, end_at
 from ..enumerated.battle_actions import BattleActions
+from .menu_events.summary_menu_pc import SummaryMenuPC
 
 
 class PCEvent():
@@ -308,9 +309,9 @@ class MoveScreen():
         self.box_header.draw(draw_surface)
         if type(self.active_event) is BoxSwitch:
             self.active_event.draw(draw_surface)
-        self.box.draw(draw_surface)
         self.close_box.draw(draw_surface)
         self.party_pokemon.draw(draw_surface)
+        self.box.draw(draw_surface)
 
         if type(self.active_event) is Exit:
             self.active_event.draw(draw_surface)
@@ -324,6 +325,8 @@ class MoveScreen():
             if type(self.active_event) == BoxSwitch:
                 self.box = self.active_event.new_box
                 self.box_header = self.active_event.new_header
+            elif type(next_event) == SummaryMenuPC:
+                self.active_event = next_event
             if next_event == "BoxHeader":
                 self.active_event = self.box_header
             elif next_event == "Box":
@@ -470,6 +473,10 @@ class Box():
 
     def draw(self, draw_surface):
         """Draws everything."""
+        if type(self.sub_event) is SummaryMenuPC:
+            self.sub_event.draw(draw_surface)
+            return
+
         draw_surface.blit(self.box_background, self.box_pos)
         draw_surface.blit(self.pokemon_surface,
                           (self.box_pos[0] - 1, self.box_pos[1] - 18))
@@ -921,7 +928,8 @@ class PokemonSelectedEvent():
                 else:
                     self.end_event = "shift"
             elif response == 1:
-                pass
+                self.end_event = SummaryMenuPC(self.box.player, 0,
+                                               self.box.box)
             elif response == 2:
                 pass
             elif response == 3:

@@ -46,6 +46,8 @@ class Player(Trainer):
         for row in range(5):
             for slot in range(5):
                 self.pc_boxes[0][row][slot] = Pokemon(random.choice(pokes))
+                self.pc_boxes[0][row][slot].trainer_id = "65535"
+                self.pc_boxes[0][row][slot].original_trainer = "RED"
 
     def handle_event(self, event, nearby_tiles):
         """Handles the events from the level manager. Is capable of taking
