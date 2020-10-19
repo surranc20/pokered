@@ -11,5 +11,4 @@ class Types(Drawable):
 
     def __init__(self, type_name):
         _offset = self.TYPE_LOOKUP[type_name.lower()]
-        print(_offset)
         super().__init__("types.png", (0, 0), offset=_offset)
