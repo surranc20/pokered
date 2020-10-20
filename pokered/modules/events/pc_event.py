@@ -473,7 +473,8 @@ class Box():
 
     def draw(self, draw_surface):
         """Draws everything."""
-        if type(self.sub_event) is SummaryMenuPC:
+
+        if self._only_sub_event():
             self.sub_event.draw(draw_surface)
             return
 
@@ -495,6 +496,13 @@ class Box():
                 self.sub_event.draw(draw_surface)
             if not hand_drawn:
                 self.hand.draw(draw_surface)
+
+    def _only_sub_event(self):
+        """Helper function that decides if only the subevent should be
+        drawn."""
+        return type(self.sub_event) is SummaryMenuPC or \
+            (type(self.sub_event) is PokemonMoveEvent and
+             type(self.sub_event.sub_event) is SummaryMenuPC)
 
     def _should_draw_hand(self):
         """Helper function that decides if the hand should be drawn before or
@@ -842,7 +850,7 @@ class Exit():
 
 
 class PokemonSelectedEvent():
-    def __init__(self, box, prev=None):
+    def __init__(self, box, prev=None, prev_coord=None):
         """Run as a subevent of either Box or MoveEvent. Allows the player to
         choose what they want to do when they click on a box slot."""
         self.box = box
@@ -887,6 +895,8 @@ class PokemonSelectedEvent():
             ResponseBox(self.options, (240, 128), width=9, end_at=True)
         self.create_dialogue_box()
 
+        self.prev_coord = prev_coord
+
     def draw(self, draw_surface):
         """Draw the options box and the dialogue."""
         draw_surface.blit(self.dialogue_box, (84, 131))
@@ -928,8 +938,18 @@ class PokemonSelectedEvent():
                 else:
                     self.end_event = "shift"
             elif response == 1:
-                self.end_event = SummaryMenuPC(self.box.player, 0,
-                                               self.box.box)
+                if self.prev_coord is None:
+                    self.end_event = SummaryMenuPC(self.box.player, 0,
+                                                   self.box.box)
+                else:
+                    # Create a summary menu with the pokmeon currently held in
+                    # its original spot in the box.
+                    x, y = self.prev_coord
+                    box = self._get_copied_box()
+                    box[y][x] = self.pokemon_selected
+                    self.end_event = SummaryMenuPC(self.box.player, 0,
+                                                   box)
+
             elif response == 2:
                 pass
             elif response == 3:
@@ -938,6 +958,14 @@ class PokemonSelectedEvent():
                 pass
             else:
                 self.end_event = None
+
+    def _get_copied_box(self):
+        """Returns a deep copy of the box. Can't use python deepcopy method
+        because it can't handle the pokemon class."""
+        box = []
+        for row in self.box.box:
+            box.append(list(row))
+        return box
 
     def create_dialogue_box(self):
         """Create the dialogue box asking the player what they want to do with
@@ -968,7 +996,7 @@ class PokemonMoveEvent():
         while inside the box. Run as a subevent of the Box event."""
         self.box = box
         self.is_dead = False
-        self.grabbed_location = self.box.cursor_pos
+        self.grabbed_location = list(self.box.cursor_pos)
         self.grabbed_box = self.box.box_number
         self.pokemon_selected = pokemon_selected
 
@@ -1032,9 +1060,12 @@ class PokemonMoveEvent():
                     # box.
                     self._prepare_place()
 
-                if next_event == "shift":
+                elif next_event == "shift":
                     # Switch the two pokemon.
                     self._prepare_shift()
+
+                elif type(next_event) is SummaryMenuPC:
+                    self.sub_event = next_event
 
                 else:
                     self.sub_event = None
@@ -1043,8 +1074,10 @@ class PokemonMoveEvent():
         elif event.key == BattleActions.SELECT.value:
             # If the player selects a spot then create a select event.
             self.box.pokemon_grabbed = self.box.cursor_pos
-            self.sub_event = PokemonSelectedEvent(self.box,
-                                                  prev=self.pokemon_selected)
+            self.sub_event = \
+                PokemonSelectedEvent(self.box,
+                                     prev=self.pokemon_selected,
+                                     prev_coord=self.grabbed_location)
         else:
             # The player is moving the cursor around. Let the box handle the
             # movement.
