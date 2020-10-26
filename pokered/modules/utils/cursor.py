@@ -37,7 +37,13 @@ class Cursor(Drawable):
                 self.cursor += 1
                 SoundManager.getInstance().playSound("firered_0005.wav")
 
-        self._position = (178, 20 + self.cursor * 11)
+        self._position = (self._initial_pos[0],
+                          self._initial_pos[1] +
+                          self.cursor * self._line_height)
+
+    def set_cursor_pos(self, pos):
+        """Set cursor to pos and change postion accordingly."""
+        self.cursor = pos
         self._position = (self._initial_pos[0],
                           self._initial_pos[1] +
                           self.cursor * self._line_height)
