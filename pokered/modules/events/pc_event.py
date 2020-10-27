@@ -270,7 +270,7 @@ class BillsPC():
             if self.box_options[self.response_box.cursor.cursor] == "SEE YA!":
                 self.end_event = ChoosePC(self.player)
             elif self.box_options[self.response_box.cursor.cursor] == \
-                    "WITHDRAW POKéMON":
+                    "MOVE POKéMON":
                 self.end_event = MoveScreen(self.player)
             self.is_dead = True
 
