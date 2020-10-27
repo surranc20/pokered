@@ -952,9 +952,9 @@ class PokemonSelectedEvent():
                                                    box)
 
             elif response == 2:
-                pass
+                self.end_event = None
             elif response == 3:
-                pass
+                self.end_event = None
             elif response == 4:
                 self.end_event = Release(self.pokemon_selected, self.box,
                                          self.bouncing_pokemon)
