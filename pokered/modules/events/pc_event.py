@@ -850,10 +850,11 @@ class Exit():
 
 
 class PokemonSelectedEvent():
-    def __init__(self, box, prev=None, prev_coord=None):
+    def __init__(self, box, prev=None, prev_coord=None, bouncing_pokemon=None):
         """Run as a subevent of either Box or MoveEvent. Allows the player to
         choose what they want to do when they click on a box slot."""
         self.box = box
+        self.bouncing_pokemon = bouncing_pokemon
         self.is_dead = False
         if prev is None:
             box.pokemon_grabbed = box.cursor_pos
@@ -955,7 +956,8 @@ class PokemonSelectedEvent():
             elif response == 3:
                 pass
             elif response == 4:
-                pass
+                self.end_event = Release(self.pokemon_selected, self.box,
+                                         self.bouncing_pokemon)
             else:
                 self.end_event = None
 
@@ -1039,6 +1041,12 @@ class PokemonMoveEvent():
         if self.sub_event is not None:
             self.sub_event.update(ticks)
 
+            # This check needs to be added because the Release event can end
+            # based on a timer and not an event (player input).
+            if self.sub_event.is_dead and self.sub_event.end_event == "kill":
+                self.is_dead = True
+                self.end_event = None
+
         if self.placing:
             if not self.box.hand.placing:
                 self.is_dead = True
@@ -1064,6 +1072,9 @@ class PokemonMoveEvent():
                     # Switch the two pokemon.
                     self._prepare_shift()
 
+                elif type(next_event) is Release:
+                    self.sub_event = next_event
+
                 elif type(next_event) is SummaryMenuPC:
                     self.sub_event = next_event
 
@@ -1077,7 +1088,8 @@ class PokemonMoveEvent():
             self.sub_event = \
                 PokemonSelectedEvent(self.box,
                                      prev=self.pokemon_selected,
-                                     prev_coord=self.grabbed_location)
+                                     prev_coord=self.grabbed_location,
+                                     bouncing_pokemon=self.pokemon_selected_img) # NOQA
         else:
             # The player is moving the cursor around. Let the box handle the
             # movement.
@@ -1282,3 +1294,160 @@ class BoxHand(Animated):
             (start_x + 3, start_y - 1), (start_x + 4, start_y - 3),
             (start_x + 3, start_y - 5), (start_x, start_y - 6)
         ]
+
+
+class Release():
+    def __init__(self, pokemon, box, bouncing_pokemon=None):
+        """Event which allows the player to release a pokemon. If the bouncing
+        pokemon is None then that means this event is being run without a
+        pokemon being held in its hand. The release event will always release
+        the pokemon currently being held in the boxes hand."""
+        self.pokemon = pokemon
+        self.bouncing_pokemon = bouncing_pokemon
+        self.box = box
+
+        self.is_dead = False
+        self.end_event = None
+
+        self.create_dialogue()
+        self.response_box = ResponseBox(["Yes", "No"], (185, 90), width=7)
+        self.response_box.cursor.set_cursor_pos(1)
+
+    def handle_event(self, event):
+        """Handles events based on the current stage of the pokemon being
+        released."""
+        if not self.response_box.is_dead:
+            self.response_box.handle_event(event)
+            # Once a response is obtained either exit the event or begin
+            # shrinking
+            if self.response_box.is_dead:
+                response = self.response_box.response
+                if response == 0:
+                    # Get rid of the pokemon
+                    if self.bouncing_pokemon is None:
+                        x, y = self.box.pokemon_grabbed
+                        self.box.box[y][x] = None
+                        self.box.create_pokemon_surface()
+                    else:
+                        self.end_event = "kill"
+
+                    # Create the bouncing pokemon if it does not exist
+                    # otherwise use the pokemon passed in.
+                    if self.bouncing_pokemon is None:
+                        poke_pos = \
+                            self._calc_poke_pos(self.box.pokemon_grabbed)
+                        pokemon = \
+                            BouncingPokemon(self.pokemon, poke_pos, item=False)
+                        pokemon._world_bound = False
+                    else:
+                        pokemon = self.bouncing_pokemon
+
+                    # Now shrink the pokemon.
+                    self.shrink = ShrinkPokemon(pokemon, self.box)
+
+                else:
+                    self.is_dead = True
+
+        # Pass event handling to shrink event
+        elif not self.shrink.is_dead:
+            self.shrink.handle_event(event)
+
+        # During the last dialogue do nothing
+        else:
+            return
+
+    def update(self, ticks):
+        """Update the current sub event. Also updates the timer for the end
+        dialogue."""
+        if not self.response_box.is_dead:
+            self.response_box.update(ticks)
+        elif not self.shrink.is_dead:
+            self.shrink.update(ticks)
+            if self.shrink.is_dead:
+                self.create_dialogue(f"{self.pokemon.nick_name} was released.")
+                self.end_timer = 0
+
+                # Make sure to reset the hand to its normal position
+                # (it is no longer holding a pokemon)
+                self.box.hand._frame = 0
+                self.box.hand.get_current_frame()
+        else:
+            self.end_timer += ticks
+            if self.end_timer > 1:
+                self.is_dead = True
+
+    def draw(self, draw_surface):
+        """Draws the response box, dialogues, and the shrinking pokemon."""
+        if not self.response_box.is_dead:
+            draw_surface.blit(self.dialogue_box, (84, 131))
+            self.response_box.draw(draw_surface)
+        elif not self.shrink.is_dead:
+            self.shrink.draw(draw_surface)
+        else:
+            draw_surface.blit(self.dialogue_box, (84, 131))
+
+    def create_dialogue(self, string="Release this POKéMON"):
+        """Creates dialogue based on the input string."""
+        dialouge_box = FRAMES.getFrame(join("pc", "dialogue_box.png"))
+        self.dialogue_box = pygame.Surface(dialouge_box.get_size())
+        self.dialogue_box.set_colorkey((0, 0, 0))
+        self.dialogue_box.blit(dialouge_box, (0, 0))
+
+        # Create string and blit it to dialogue box
+        tm = TextMaker(join("fonts", "party_txt_font.png"), 240)
+        text_surf = \
+            tm.get_surface(string)
+        self.dialogue_box.blit(text_surf, (10, 11))
+
+    def _calc_poke_pos(self, position):
+        """Calculates the pokemon's position in the box so it can be drawn
+        correctly. Helper function used when creating bouncing pokemon."""
+        x, y = position
+        return tuple(sum(x) for x in zip((25 * x, 24 * y),
+                                         (self.box.box_pos[0] - 1,
+                                          self.box.box_pos[1] - 18)))
+
+
+class ShrinkPokemon():
+    def __init__(self, pokemon, box):
+        """Creates an event that shrinks a pokemon."""
+        self.box = box
+        self.pokemon = pokemon
+
+        # Shrinking stuff!
+        self.shrink_timer = 0
+        self.sps = 10  # shrinks per second
+        self.shrink_rate = 4
+        self.size = [32 - self.shrink_rate, 32 - self.shrink_rate]
+
+        self.is_dead = False
+        self.end_event = None
+
+    def handle_event(self, event):
+        """No actions should be undertaken during the shrink event."""
+        return
+
+    def update(self, ticks):
+        """Shrink the pokemon by the shrinkrate self.sps times per second."""
+        self.shrink_timer += ticks
+        if self.shrink_timer > 1 / self.sps:
+            self.shrink_timer -= 1 / self.sps
+
+            # shrink the pokemon and change its position (so it stays centered)
+            x, y = self.pokemon._position
+            self.pokemon._position = (x + self.shrink_rate // 2,
+                                      y + self.shrink_rate // 2)
+
+            self.pokemon._image = \
+                pygame.transform.scale(self.pokemon._image, (self.size))
+
+            self.size = [self.size[0] - self.shrink_rate,
+                         self.size[1] - self.shrink_rate]
+
+            # End the event once the pokemon has shrunk all the way.
+            if self.size[0] == 0:
+                self.is_dead = True
+
+    def draw(self, draw_surface):
+        """Draw the pokemon."""
+        self.pokemon.draw(draw_surface)
