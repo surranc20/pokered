@@ -272,6 +272,9 @@ class BillsPC():
             elif self.box_options[self.response_box.cursor.cursor] == \
                     "MOVE POKéMON":
                 self.end_event = MoveScreen(self.player)
+            elif self.box_options[self.response_box.cursor.cursor] == \
+                    "WITHDRAW POKéMON":
+                self.end_event = WithdrawScreen(self.player)
             self.is_dead = True
 
     def is_over(self):
@@ -1472,3 +1475,41 @@ class ShrinkPokemon():
     def draw(self, draw_surface):
         """Draw the pokemon."""
         self.pokemon.draw(draw_surface)
+
+
+class WithdrawScreen():
+    def __init__(self, player):
+        """Screen/event that displays when the player clicks withdraw in
+        'Bill's PC. Allows the user to withdraw pokemon from their box."""
+        self.player = player
+        self.sub_event = None
+
+        if len(self.player.pokemon_team) == 6:
+            self.sub_event = Dialogue("35", player, player, show_curs=False, auto_finish=True)
+            self.sub_event.end_event = "kill"
+            self.end_event = BillsPC(self.player)
+
+        self.is_dead = False
+        self.super_kill = False
+
+    def is_over(self):
+        """Returns whether or not the withdraw screen is over and should be
+        closed."""
+        return self.is_dead
+
+    def draw(self, draw_surface):
+        if self.sub_event is not None:
+            self.sub_event.draw(draw_surface)
+
+    def update(self, ticks):
+        if self.sub_event is not None:
+            self.sub_event.update(ticks)
+            if self.sub_event.is_dead:
+                self.sub_event = self.sub_event.end_event
+                if self.sub_event == "kill":
+                    self.is_dead = True
+                    self.sub_event = None
+
+    def handle_event(self, event):
+        if self.sub_event is not None:
+            self.sub_event.handle_event(event)
