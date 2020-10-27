@@ -339,8 +339,9 @@ class MoveScreen():
                 self.active_event = BoxSwitch(self.active_event.direction,
                                               self.box, self.box_header)
             elif next_event == "Exit":
-                self.active_event = Exit(self.player)
-            elif next_event == "ConfirmExit":
+                self.active_event = Exit(self.player,
+                                         self.box.active_move_event)
+            elif next_event == "ExitConfirmed":
                 self.is_dead = True
                 self.end_event = BillsPC(self.player)
                 self.pc_background = \
@@ -593,6 +594,7 @@ class Box():
             if self.sub_event.is_dead:
                 if self.sub_event.end_event is None:
                     self.sub_event = None
+                    self.active_move_event = None
 
 
 class BoxButton():
@@ -816,28 +818,47 @@ class BoxSwitch():
 
 
 class Exit():
-    def __init__(self, player):
+    def __init__(self, player, pokemon_held=None):
         """Create the exit dialogue event."""
         self.is_dead = False
         self.player = player
+        self.pokemon_held = pokemon_held
 
         # Confirm that the user wants to leave the PC
         self.response_box = ResponseBox(["Yes", "No"], (185, 90), width=7)
-        self.dialogue = FRAMES.getFrame(join("pc", "exit_box.png"))
+
+        if pokemon_held is None:
+            self.dialogue = FRAMES.getFrame(join("pc", "exit_box.png"))
+        else:
+            dialouge_box = FRAMES.getFrame(join("pc", "dialogue_box.png"))
+            self.dialogue = pygame.Surface(dialouge_box.get_size())
+            self.dialogue.set_colorkey((0, 0, 0))
+            self.dialogue.blit(dialouge_box, (0, 0))
+
+            # Create string and blit it to dialogue box
+            tm = TextMaker(join("fonts", "party_txt_font.png"), 240)
+            text_surf = \
+                tm.get_surface("You are holding a POKéMON!")
+            self.dialogue.blit(text_surf, (10, 11))
 
     def draw(self, draw_surface):
         """Draw the response box and question."""
-        self.response_box.draw(draw_surface)
+        if self.pokemon_held is None:
+            self.response_box.draw(draw_surface)
         draw_surface.blit(self.dialogue, (84, 131))
 
     def handle_event(self, event):
         """Handle the response box events."""
+        if self.pokemon_held is not None:
+            self.is_dead = True
+            self.end_event = "CloseBox"
+            return
         self.response_box.handle_event(event)
 
         if self.response_box.is_dead:
             self.is_dead = True
             if self.response_box.response == 0:
-                self.end_event = "ConfirmExit"
+                self.end_event = "ExitConfirmed"
             else:
                 self.end_event = "CloseBox"
 
