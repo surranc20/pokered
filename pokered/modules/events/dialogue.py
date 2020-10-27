@@ -11,7 +11,7 @@ from ..utils.UI.text_cursor import TextCursor
 
 class Dialogue():
     def __init__(self, dialogue_id, player, npc, box=0, gender="male",
-                 show_curs=True, turn=True, dy=0, replace=None, 
+                 show_curs=True, turn=True, dy=0, replace=None,
                  auto_finish=False):
         """Creates a Dialogue instance. The dialogue tells the object which
         lines the dialogue consists off. It requires the player and npc to
@@ -55,6 +55,8 @@ class Dialogue():
         self.turned = not turn
         self._show_curs = show_curs
         self._auto_finish = auto_finish
+
+        self._auto_finish_timer = 0
 
     def _blit_line(self):
         """Blits the next line to the line surface."""
@@ -101,6 +103,7 @@ class Dialogue():
 
     def update(self, ticks):
         """Updates the cursor so that it can bounce up and down."""
+        self._auto_finish_timer += ticks
         self._text_cursor.update(ticks)
         if self._auto_finish:
             self._blit_line()
@@ -114,7 +117,15 @@ class Dialogue():
 
     def is_over(self):
         """Determines whether the dialogue is over."""
-        return self._current_line == len(self._dialogue) + 1
+        time_met = True
+        if self._auto_finish:
+            time_met = self._auto_finish_timer > 1
+        return self._current_line >= len(self._dialogue) + 1 and time_met
+
+    @property
+    def is_dead(self):
+        """Here for compatibility."""
+        return self.is_over()
 
     def get_end_event(self):
         """Returns the event that happens after the dialgoue
