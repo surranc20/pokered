@@ -6,6 +6,12 @@ Requires:
    - Pygame
    - Pandas
 
+Controls:
+   - Movement: WASD
+   - Select: Enter key
+   - Back: B
+   - Menu: Shift key
+
 Current known bugs:
    - Need to add a change of direction timer to player to make them stop for a couple ticks when changing direction
 
