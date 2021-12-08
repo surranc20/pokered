@@ -55,7 +55,8 @@ class Pokemon(Drawable):
                             offset=_lookup)
 
         # Get the type of the pokemon.
-        with open(join("jsons", "pokemon.json"), "r") as pokemon_json:
+        with open(join("jsons", "pokemon.json", encoding="utf-8"), "r") as \
+                pokemon_json:
             pokemon = json.load(pokemon_json)
             pokemon_data = pokemon[pokemon_name.capitalize()]
 

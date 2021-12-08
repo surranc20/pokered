@@ -11,7 +11,8 @@ class StatCalculator:
         pass
 
     def calculate_main(self, pokemon, lvl):
-        with open(join("jsons", "pokemon.json"), "r") as pokemonfile:
+        with open(join("jsons", "pokemon.json", encoding="utf-8"), "r") as\
+                 pokemonfile:
             pokemon_j = json.load(pokemonfile)
             base_hp = pokemon_j[pokemon.name.capitalize()]["base"]["HP"]
             base_attack = \
