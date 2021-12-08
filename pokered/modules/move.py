@@ -7,7 +7,7 @@ class Move:
     def __init__(self, move_name):
         """Creates an instance of a pokemon move."""
         # Load the moves info from moves.json
-        with open(join("jsons", "moves.json", encoding="utf-8"), "r") as \
+        with open(join("jsons", "moves.json"), "r", encoding="utf-8") as \
                 moves_json:
             moves = json.load(moves_json)
             move = moves[move_name]
@@ -26,7 +26,7 @@ class Move:
         """If the move is a multi hit move then return the total number of
         hits the move will make in the current turn. Otherwise just
         return 1."""
-        with open(join("jsons", "moves.json"), "r") as moves_json:
+        with open(join("jsons", "moves.json"), "r", encoding="utf-8") as moves_json:
             moves = json.load(moves_json)
             multi = moves["Multi"]
         if multi.get(self.move_name, "Not") == "Not":
