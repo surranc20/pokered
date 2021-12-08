@@ -13,8 +13,9 @@ Controls:
    - Menu: Shift key
 
 Current known bugs:
-   - Need to add a change of direction timer to player to make them stop for a couple ticks when changing direction
+   - Need to add a change of direction timer to player to make them stop for a couple ticks when changing direction. 
+   - The PC is currently a work in progress and will likely crash if you mess around with it.
 
 
-
+This project was for educational purposes and all Pokémon assets are the property of Game Freak and Nintendo. The latest Pokémon games can be purchased here: https://www.pokemoncenter.com/category/video-game
 
