@@ -17,6 +17,11 @@ Current known bugs:
    - The PC is currently a work in progress and will likely crash if you mess around with it.
    - In general, the game has only been tested on MacOS (everything seems to work in Linux as well). There are some weird bugs that pop up when the game is run on a Windows machine. For example, talking to the shop keeper will result in a list index out of bounds error on a PC but on Mac/Linux everything is fine. 
 
+https://user-images.githubusercontent.com/32883324/145290859-faa171cc-3b73-4db6-9a48-b4fdbf6d14b1.mp4
 
 This project was for educational purposes and all Pokémon assets are the property of Game Freak and Nintendo. The latest Pokémon games can be purchased here: https://www.pokemoncenter.com/category/video-game
+
+
+
+
 
